@@ -32,7 +32,6 @@ public class TestController {
         log.info("{} {} {} {}", pageParam.getPage(), pageParam.getSize(), pageParam.getTitle(),pageParam.getId());
     }
 
-
     @Getter
     @Setter
     @Schema(name = "测试查询参数")
