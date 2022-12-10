@@ -1,6 +1,8 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.google.code.kaptcha.Producer;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -25,12 +28,14 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/sys/verifyCode")
 @RequiredArgsConstructor
+@Api(tags = "验证码")
 public class VerifyCodeController {
     public static final String VERIFY_CODE_KEY = "vc";
     private final Producer producer;
 
     @GetMapping("/image")
-    public void image(HttpServletResponse response, HttpSession httpSession) throws IOException {
+    @ApiOperation("图片格式")
+    public void image(@ApiIgnore HttpServletResponse response,@ApiIgnore HttpSession httpSession) throws IOException {
         final BufferedImage image = createImage(httpSession);
         //响应图片
         response.setContentType(MimeTypeUtils.IMAGE_JPEG_VALUE);
@@ -38,8 +43,9 @@ public class VerifyCodeController {
     }
 
     @GetMapping("/base64")
+    @ApiOperation("Base64格式")
     @ResponseBody
-    public String base64(HttpSession httpSession) throws IOException {
+    public String base64(@ApiIgnore HttpSession httpSession) throws IOException {
         //生成验证码
         final BufferedImage image = createImage(httpSession);
         //响应图片

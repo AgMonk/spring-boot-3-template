@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class Bpo implements Serializable {
+public class BasePo implements Serializable {
     @TableId(type = IdType.AUTO)
     @Column(comment = "id", isAutoIncrement = true)
     Long id;
@@ -27,7 +27,7 @@ public class Bpo implements Serializable {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     Long timeCreate;
 
-    public Bpo() {
+    public BasePo() {
         this.timeCreate = System.currentTimeMillis() / 1000;
     }
 }
