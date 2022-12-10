@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.docket;
+package com.gin.springboot3template.sys.config;
 
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * @author bx002
  */
 @Configuration
-public class Knife4jConfiguration {
+public class DocketConfig {
     @Bean
     public GroupedOpenApi verifyCode() {
         return GroupedOpenApi.builder()
