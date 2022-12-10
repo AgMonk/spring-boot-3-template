@@ -2,12 +2,12 @@ package com.gin.springboot3template.sys.base;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 /**
  * 基础分页查询参数
@@ -20,14 +20,14 @@ import javax.validation.constraints.Min;
 @Validated
 @Schema(name = "分页查询条件")
 public abstract class BasePageParam {
-    @Schema(description = "当前页")
+    @Schema(description = "当前页,默认值:1",defaultValue = "1")
     @Min(value = 1L, message = "页码最小为1")
     int page = 1;
 
-    @Schema(description = "每页条数")
+    @Schema(description = "每页条数,默认值:10",defaultValue = "10")
     @Min(value = 10L, message = "条数最小为1")
     @Max(value = 50L, message = "条数最大为50")
-    int size = 1;
+    int size = 10;
 
     /**
      * 向queryWrapper中添加条件
