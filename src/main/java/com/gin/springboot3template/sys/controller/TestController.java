@@ -11,15 +11,16 @@ import com.gin.springboot3template.sys.validation.EntityId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author : ginstone
@@ -44,12 +45,11 @@ public class TestController {
 
     @GetMapping("page1")
     @Operation(summary = "分页查询")
-    public Res<Void> test(                               Integer id) {
+    public Res<Void> test(Integer id) {
         final SystemUser systemUser = systemUserService.getById(id);
         System.out.println("systemUser = " + systemUser);
         return Res.of(null);
     }
-
 
 
     @Getter

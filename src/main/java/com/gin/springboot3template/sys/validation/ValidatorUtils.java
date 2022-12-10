@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.validation;
 
-import jakarta.validation.ConstraintValidatorContext;
 
+import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 import java.util.stream.Collectors;
 

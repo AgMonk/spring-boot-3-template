@@ -22,33 +22,21 @@ public class MySecurityConfig {
     /**
      * 接口文档放行
      */
-    public static final List<String> DOC_WHITE_LIST = List.of("/doc.html","/webjars/**","/v3/api-docs/**");
-    /**
-     * 验证码放行
-     */
-    public static final List<String> VERIFY_CODE_WHITE_LIST = List.of("/sys/verifyCode/**");
+    public static final List<String> DOC_WHITE_LIST = List.of("/doc.html", "/webjars/**", "/v3/api-docs/**");
     /**
      * 测试接口放行
      */
     public static final List<String> TEST_WHITE_LIST = List.of("/test/**");
-
     /**
-     * 测试用用户数据源
-     * @return 测试用用户数据源
+     * 验证码放行
      */
-    @Bean
-    UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager users = new InMemoryUserDetailsManager();
-        users.createUser(User.withUsername("admin").password("{noop}123").roles("admin").build());
-        return users;
-    }
-
+    public static final List<String> VERIFY_CODE_WHITE_LIST = List.of("/sys/verifyCode/**");
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
-                .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
+                .mvcMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
+                .mvcMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
 //                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated();
 
@@ -59,5 +47,16 @@ public class MySecurityConfig {
 
         http.csrf().disable();
         return http.build();
+    }
+
+    /**
+     * 测试用用户数据源
+     * @return 测试用用户数据源
+     */
+    @Bean
+    UserDetailsService userDetailsService() {
+        InMemoryUserDetailsManager users = new InMemoryUserDetailsManager();
+        users.createUser(User.withUsername("admin").password("{noop}123").roles("admin").build());
+        return users;
     }
 }

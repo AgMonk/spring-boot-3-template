@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-<!--        <version>2.7.6</version>-->
-        <version>3.0.0</version>
+        <version>2.7.6</version>
+        <!--        <version>3.0.0</version>-->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.gin</groupId>
@@ -53,7 +53,6 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
 
         <!-- mybatis自动建表 -->
@@ -123,9 +122,15 @@
         <!--springdoc 官方Starter-->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.0.0</version>
+            <artifactId>springdoc-openapi-webmvc-core</artifactId>
+            <version>1.6.13</version>
         </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.springdoc</groupId>-->
+        <!--            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>-->
+        <!--            <version>2.0.0</version>-->
+        <!--        </dependency>-->
 
         <!--knife4j - 接口文档UI-->
         <dependency>
@@ -134,7 +139,6 @@
             <!--在引用时请在maven中央仓库搜索3.X最新版本号-->
             <version>3.0.3</version>
         </dependency>
-
 
 
         <dependency>

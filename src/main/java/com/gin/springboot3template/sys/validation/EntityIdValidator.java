@@ -3,10 +3,10 @@ package com.gin.springboot3template.sys.validation;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.http.HttpStatus;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.io.Serializable;
 
 /**
@@ -21,6 +21,7 @@ public class EntityIdValidator implements ConstraintValidator<EntityId, Serializ
     private IService<?> service;
 
     private Class<?> clazz;
+
     @Override
     public void initialize(EntityId constraintAnnotation) {
         this.nullable = constraintAnnotation.nullable();
@@ -34,7 +35,7 @@ public class EntityIdValidator implements ConstraintValidator<EntityId, Serializ
     @Override
     public boolean isValid(Serializable serializable, ConstraintValidatorContext constraintValidatorContext) {
         if (this.service == null) {
-            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR,"服务器错误","未找到指定的service: " + clazz);
+            throw BusinessException.of(HttpStatus.INTERNAL_SERVER_ERROR, "服务器错误", "未找到指定的service: " + clazz);
         }
         if (value == null || "".equals(value)) {
             if (nullable) {
