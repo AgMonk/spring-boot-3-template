@@ -1,8 +1,7 @@
 package com.gin.springboot3template.sys.base;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
@@ -19,13 +18,13 @@ import javax.validation.constraints.Min;
 @Getter
 @Setter
 @Validated
-@ApiModel("分页查询条件")
+@Schema(name = "分页查询条件")
 public abstract class BasePageParam {
-    @ApiModelProperty(value = "当前页", example = "1", notes = "最小值为1")
+    @Schema(description = "当前页")
     @Min(value = 1L, message = "页码最小为1")
     int page = 1;
 
-    @ApiModelProperty(value = "每页条数", example = "10", notes = "最小值为10，最大值为50")
+    @Schema(description = "每页条数")
     @Min(value = 10L, message = "条数最小为1")
     @Max(value = 50L, message = "条数最大为50")
     int size = 1;

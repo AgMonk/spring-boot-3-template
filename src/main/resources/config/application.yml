@@ -57,7 +57,7 @@ mybatis-plus:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 
-# swagger 接口文档开关 (生产环境建议关闭)
+# 接口文档开关 (生产环境建议关闭)
 knife4j:
   enable: true
 

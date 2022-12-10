@@ -1,16 +1,16 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.base.BasePageParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,23 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 2022/12/10 11:55
  */
 @RestController
-@RequestMapping("/test")
-@Api(tags = "测试")
+@MyRestController("/test")
+@Tag(name = "测试")
 @Slf4j
 public class TestController {
 
     @GetMapping("page")
-    @ApiOperation("分页")
-    public void test(PageParam pageParam) {
+    @Operation(summary = "分页查询")
+    public void test(@ParameterObject PageParam pageParam) {
         log.info("{} {} {} ", pageParam.getPage(),pageParam.getSize(),pageParam.getTitle());
     }
 
 
     @Getter
     @Setter
-    @ApiModel("测试查询参数")
+    @Schema(name = "测试查询参数")
     public static class PageParam extends BasePageParam {
-        @ApiModelProperty("标题")
+        @Schema(description = "标题")
         String title;
 
         @Override

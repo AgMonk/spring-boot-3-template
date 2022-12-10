@@ -57,6 +57,7 @@
 
 
         <!-- mybatis自动建表 -->
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>com.gitee.sunchenbin.mybatis.actable</groupId>
             <artifactId>mybatis-enhance-actable</artifactId>
@@ -77,6 +78,7 @@
         </dependency>
 
         <!-- mybatis-plus -->
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -92,6 +94,7 @@
 
 
         <!--            验证码-->
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>com.github.penggle</groupId>
             <artifactId>kaptcha</artifactId>
@@ -116,13 +119,22 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!--knife4j - swagger 接口文档生成-->
+
+        <!--springdoc 官方Starter-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.13</version>
+        </dependency>
+
+        <!--knife4j - 接口文档UI-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <artifactId>knife4j-springdoc-ui</artifactId>
             <!--在引用时请在maven中央仓库搜索3.X最新版本号-->
             <version>3.0.3</version>
         </dependency>
+
 
 
         <dependency>

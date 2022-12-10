@@ -1,5 +1,7 @@
 package com.gin.springboot3template.sys.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,16 @@ import java.io.Serializable;
  * @version : v1.0.0
  * @since : 2022/12/5 10:21
  */
-public record Res<T>(String message, T data, Long timestamp) implements Serializable {
+@Schema(description = "统一响应对象")
+public record Res<T>(
+
+        @Schema(description = "消息")
+        String message,
+        @Schema(description = "数据")
+        T data,
+        @Schema(description = "时间戳(UNIX秒)")
+        Long timestamp
+) implements Serializable {
     public Res(String message, T data) {
         this(message, data, System.currentTimeMillis() / 1000);
     }

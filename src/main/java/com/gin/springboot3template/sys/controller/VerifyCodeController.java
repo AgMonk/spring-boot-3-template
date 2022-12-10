@@ -1,8 +1,10 @@
 package com.gin.springboot3template.sys.controller;
 
+import com.gin.springboot3template.sys.response.Res;
 import com.google.code.kaptcha.Producer;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
@@ -11,7 +13,6 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -28,14 +29,14 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/sys/verifyCode")
 @RequiredArgsConstructor
-@Api(tags = "验证码")
+@Tag(name = "验证码接口")
 public class VerifyCodeController {
     public static final String VERIFY_CODE_KEY = "vc";
     private final Producer producer;
 
     @GetMapping("/image")
-    @ApiOperation("图片格式")
-    public void image(@ApiIgnore HttpServletResponse response,@ApiIgnore HttpSession httpSession) throws IOException {
+    @Operation(summary = "图片格式")
+    public void image(@Parameter(hidden = true) HttpServletResponse response,@Parameter(hidden = true) HttpSession httpSession) throws IOException {
         final BufferedImage image = createImage(httpSession);
         //响应图片
         response.setContentType(MimeTypeUtils.IMAGE_JPEG_VALUE);
@@ -43,16 +44,16 @@ public class VerifyCodeController {
     }
 
     @GetMapping("/base64")
-    @ApiOperation("Base64格式")
+    @Operation(summary = "Base64格式")
     @ResponseBody
-    public String base64(@ApiIgnore HttpSession httpSession) throws IOException {
+    public Res<String> base64(@Parameter(hidden = true) HttpSession httpSession) throws IOException {
         //生成验证码
         final BufferedImage image = createImage(httpSession);
         //响应图片
         final FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         ImageIO.write(image,"jpeg",os);
         //返回 base64
-        return Base64.encodeBase64String(os.toByteArray());
+        return Res.of(Base64.encodeBase64String(os.toByteArray()));
     }
 
     private BufferedImage createImage(HttpSession httpSession) {
