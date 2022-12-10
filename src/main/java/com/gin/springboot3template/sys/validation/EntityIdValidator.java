@@ -41,6 +41,8 @@ public class EntityIdValidator implements ConstraintValidator<EntityId, Serializ
                 return true;
             }
 //            changeMessage(constraintValidatorContext,  "编号不允许为空");
+            constraintValidatorContext.disableDefaultConstraintViolation();
+            constraintValidatorContext.buildConstraintViolationWithTemplate("不允许为空").addConstraintViolation();
             return false;
         }
         if (service.getById(value) == null) {
