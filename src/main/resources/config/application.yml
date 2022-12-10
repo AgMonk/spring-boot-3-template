@@ -49,7 +49,7 @@ actable:
   table:
     auto: update
   model:
-    pack: com.${group}.*.module.*.entity,com.${group}.*.sys.user_info.entity
+    pack: com.${group}.*.module.*.entity,com.${group}.*.sys.*.entity,com.${group}.*.sys.entity
   database:
     type: mysql
 mybatis-plus:
