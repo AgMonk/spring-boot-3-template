@@ -1,0 +1,63 @@
+#空闲连接保活
+#解决druid 日志报错：discard long time none received connection:xxx
+druid:
+  mysql:
+    usePingMethod: false
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: SECURITY-TOKEN
+  #开启响应压缩
+  compression:
+    enabled: true
+    #压缩类型
+    mime-types: application/javascript,text/css,application/json,application/xml,text/html,text/xml,text/plain
+    #使用压缩的体积阈值
+    min-response-size: 1024
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  #      active: prod
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 2
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 6000
+      min-evictable-idle-time-millis: 60000
+      max-evictable-idle-time-millis: 500000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall,slf4j
+
+# actable的配置信息
+actable:
+  table:
+    auto: update
+  model:
+    pack: com.${group}.*.module.*.entity,com.${group}.*.sys.user_info.entity
+  database:
+    type: mysql
+mybatis-plus:
+  mapper-locations: classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml , classpath:mapper/*.xml
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+# swagger 接口文档开关 (生产环境建议关闭)
+knife4j:
+  enable: true
+

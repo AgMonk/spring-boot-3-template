@@ -1,0 +1,6 @@
+# 组名称
+group: gin
+
+spring:
+  profiles:
+    active: dev
