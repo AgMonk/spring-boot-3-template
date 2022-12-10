@@ -50,8 +50,10 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler({BindException.class})
     public ResponseEntity<Res<?>> exceptionHandler(BindException e) {
-        e.printStackTrace();
         final List<MyFieldError> fieldErrors = e.getFieldErrors().stream().map(MyFieldError::new).collect(Collectors.toList());
+        if (fieldErrors.size() == 0) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(Res.of(fieldErrors, "参数校验错误"), HttpStatus.BAD_REQUEST);
     }
 

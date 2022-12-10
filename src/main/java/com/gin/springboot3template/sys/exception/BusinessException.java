@@ -20,8 +20,12 @@ public class BusinessException extends RuntimeException {
     final String title;
     final List<String> messages;
 
-    public static BusinessException of(HttpStatus httpStatus,String title, List<String> messages) {
-        return new BusinessException(httpStatus,title, messages);
+    public static BusinessException of(HttpStatus httpStatus, String title, List<String> messages) {
+        return new BusinessException(httpStatus, title, messages);
+    }
+
+    public static BusinessException of(HttpStatus httpStatus, String title, String... messages) {
+        return new BusinessException(httpStatus, title, List.of(messages));
     }
 
 
