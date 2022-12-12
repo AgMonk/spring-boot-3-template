@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -27,6 +28,7 @@ import static com.gin.springboot3template.sys.controller.VerifyCodeController.VE
  * @version : v1.0.0
  * @since : 2022/12/5 10:04
  */
+@Component
 public class MyAuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, LogoutSuccessHandler, SessionInformationExpiredStrategy, AccessDeniedHandler {
 
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";

@@ -2,16 +2,18 @@ package com.gin.springboot3template.sys.security.component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -27,13 +29,16 @@ import static com.gin.springboot3template.sys.security.component.MyAuthenticatio
  * @version : v1.0.0
  * @since : 2022/12/6 15:40
  */
+@Component
 public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
     public static final String REMEMBER_ME_KEY = "rememberMe";
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MyLoginFilter(AuthenticationManager authenticationManager) {
-        super(authenticationManager);
+    public MyLoginFilter(AuthenticationConfiguration authenticationConfiguration, MyAuthenticationHandler authenticationHandler) throws Exception {
+        super(authenticationConfiguration.getAuthenticationManager());
+        setAuthenticationFailureHandler(authenticationHandler);
+        setAuthenticationSuccessHandler(authenticationHandler);
     }
 
     private static boolean isContentTypeJson(HttpServletRequest request) {
@@ -96,4 +101,10 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         return this.getAuthenticationManager().authenticate(authRequest);
     }
+
+    @PostConstruct
+    public void init() {
+        setFilterProcessesUrl("/sys/user/login");
+    }
+
 }

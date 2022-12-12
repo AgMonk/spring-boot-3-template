@@ -1,21 +1,21 @@
 package com.gin.springboot3template.sys.security.config;
 
-import com.gin.springboot3template.sys.security.component.MyAuthenticationHandler;
-import com.gin.springboot3template.sys.security.component.MyRememberMeServices;
-import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
+import com.gin.springboot3template.sys.security.component.MyLoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * SpringSecurity配置
@@ -40,18 +40,19 @@ public class MySecurityConfig {
      */
     public static final List<String> VERIFY_CODE_WHITE_LIST = List.of("/sys/verifyCode/**");
 
-
-    private final MyUserDetailsServiceImpl myUserDetailsService;
-    private final DataSource datasource;
-
-    private final MyAuthenticationHandler handler = new MyAuthenticationHandler();
-
+    /**
+     * 获取AuthenticationManager（认证管理器），登录时认证使用
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     /**
      * 自定义RememberMe服务token持久化仓库
      */
     @Bean
-    public PersistentTokenRepository persistentTokenRepository() {
+    public PersistentTokenRepository persistentTokenRepository(DataSource datasource) {
         final JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
         //设置数据源
         tokenRepository.setDataSource(datasource);
@@ -60,18 +61,8 @@ public class MySecurityConfig {
         return tokenRepository;
     }
 
-    /**
-     * 记住我服务实现
-     * @return 记住我服务实现
-     */
     @Bean
-    public MyRememberMeServices rememberMeServices() {
-        return new MyRememberMeServices(UUID.randomUUID().toString(), myUserDetailsService, persistentTokenRepository());
-    }
-
-
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, MyLoginFilter loginFilter) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
@@ -79,11 +70,19 @@ public class MySecurityConfig {
                 .anyRequest().authenticated();
 
 
-        http.formLogin().loginProcessingUrl("/sys/user/login");
+        //登陆
+        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
+        http.formLogin();
+
+        //登出
         http.logout().logoutUrl("/sys/user/logout");
 
 
+        //csrf验证 存储到Cookie中
         http.csrf().disable();
+//        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+
         return http.build();
     }
+
 }
