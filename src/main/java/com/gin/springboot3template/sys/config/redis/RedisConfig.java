@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.config.redis;
 
+import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @AllArgsConstructor
 @Slf4j
 public class RedisConfig {
-    private final RedisConnectionFactory redisConnectionFactory;
     private final RedisTemplate<Object, Object> redisTemplate;
 
-    public <T> RedisTemplate<String, T> createRedisJsonTemplate(String name) {
+    public static <T> RedisTemplate<String, T> createRedisJsonTemplate(String name) {
         log.info("创建 RedisTemplate:" + name);
         RedisTemplate<String, T> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
+        template.setConnectionFactory(SpringContextUtils.getContext().getBean(RedisConnectionFactory.class));
         //String的序列化
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());

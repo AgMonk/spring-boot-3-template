@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.security.config;
 
+import com.gin.springboot3template.sys.security.component.MyAuthenticationHandler;
 import com.gin.springboot3template.sys.security.component.MyLoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +63,9 @@ public class MySecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, MyLoginFilter loginFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   MyLoginFilter loginFilter,
+                                                   MyAuthenticationHandler authenticationHandler) throws Exception {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
@@ -77,10 +80,15 @@ public class MySecurityConfig {
         //登出
         http.logout().logoutUrl("/sys/user/logout");
 
+        //会话管理 引入依赖后已不再需要手动配置 sessionRegistry
+        http.sessionManagement()
+                .maximumSessions(1)
+                .expiredSessionStrategy(authenticationHandler);
 
         //csrf验证 存储到Cookie中
         http.csrf().disable();
 //        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+
 
         return http.build();
     }
