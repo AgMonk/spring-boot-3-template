@@ -14,6 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -80,19 +82,23 @@ public class MySecurityConfig {
         //登出
         http.logout().logoutUrl("/sys/user/logout");
 
+        //禁用 csrf
+//        http.csrf().disable();
+        //csrf验证 存储到Cookie中
+        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+        ;
+
         //会话管理 引入依赖后已不再需要手动配置 sessionRegistry
         http.sessionManagement()
                 .maximumSessions(1)
                 .expiredSessionStrategy(authenticationHandler);
 
-        //csrf验证 存储到Cookie中
-        http.csrf().disable();
-//        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-
         // 权限不足时的处理
-        http.exceptionHandling().accessDeniedHandler(authenticationHandler);
+//        http.exceptionHandling().accessDeniedHandler(authenticationHandler);
 
         return http.build();
     }
+
 
 }
