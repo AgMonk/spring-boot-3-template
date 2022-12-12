@@ -89,6 +89,8 @@ public class MySecurityConfig {
         http.csrf().disable();
 //        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
+        // 权限不足时的处理
+        http.exceptionHandling().accessDeniedHandler(authenticationHandler);
 
         return http.build();
     }
