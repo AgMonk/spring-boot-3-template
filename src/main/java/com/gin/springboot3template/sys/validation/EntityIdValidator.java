@@ -3,10 +3,10 @@ package com.gin.springboot3template.sys.validation;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.http.HttpStatus;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.io.Serializable;
 
 /**

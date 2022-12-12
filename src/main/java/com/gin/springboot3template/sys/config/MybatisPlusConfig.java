@@ -2,12 +2,9 @@ package com.gin.springboot3template.sys.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.mybatis.spring.annotation.MapperScan;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
 
 
 /**
@@ -15,9 +12,9 @@ import javax.annotation.PostConstruct;
  */
 @SuppressWarnings({"AliDeprecation", "deprecation"})
 @Configuration
-@MapperScan(value = {"com.gitee.sunchenbin.mybatis.actable.dao.*", "com.gin.*.*.dao", "com.gin.*.*.*.dao"})
+//@MapperScan(value = {"com.gitee.sunchenbin.mybatis.actable.dao.*", "com.gin.*.*.dao", "com.gin.*.*.*.dao"})
 //@ComponentScan(basePackages = {"com.gitee.sunchenbin.mybatis.actable.manager.*"})
-@ComponentScan(basePackages = {"com.gitee.sunchenbin.mybatis.actable.manager.*", "com.gin.*"})
+//@ComponentScan(basePackages = {"com.gitee.sunchenbin.mybatis.actable.manager.*", "com.gin.*"})
 public class MybatisPlusConfig {
 
     @Bean
