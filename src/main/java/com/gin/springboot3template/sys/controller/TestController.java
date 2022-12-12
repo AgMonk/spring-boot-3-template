@@ -51,7 +51,6 @@ public class TestController {
         return Res.of(null);
     }
 
-
     @Getter
     @Setter
     @Schema(name = "测试查询参数")

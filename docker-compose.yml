@@ -1,0 +1,8 @@
+services:
+  springboot3:
+    build:
+      context: ./
+    image: springboot3:latest
+    ports:
+      - "9898:8080"
+    restart: always
