@@ -4,12 +4,12 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
-import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
-import com.gitee.sunchenbin.mybatis.actable.annotation.TableComment;
-import com.gitee.sunchenbin.mybatis.actable.annotation.Unique;
-import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * 系统用户
@@ -19,22 +19,28 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName(value = "t_system_entity_user", autoResultMap = true)
-@TableComment("系统用户")
+@TableName(value = SystemUser.TABLE_NAME, autoResultMap = true)
+@Entity(name = SystemUser.TABLE_NAME)
 public class SystemUser extends BasePo {
-    @Column(comment = "用户名", isNull = false, length = 50)
-    @Unique
+    public static final String TABLE_NAME = "t_system_entity_user";
+    @Column(length = 50, nullable = false, unique = true)
+    @Comment("用户名")
     @TableField(updateStrategy = FieldStrategy.NEVER)
     String username;
-    @Column(comment = "密码", isNull = false, length = 100)
+    @Column(nullable = false, length = 100)
+    @Comment("密码")
     String password;
-    @Column(comment = "账号未过期", isNull = false, type = MySqlTypeConstant.TINYINT, defaultValue = "1")
+    @Column(nullable = false)
+    @Comment("账号未过期")
     Boolean accountNonExpired;
-    @Column(comment = "账号未锁定", isNull = false, type = MySqlTypeConstant.TINYINT, defaultValue = "1")
+    @Column(nullable = false)
+    @Comment("账号未锁定")
     Boolean accountNonLocked;
-    @Column(comment = "密码未过期", isNull = false, type = MySqlTypeConstant.TINYINT, defaultValue = "1")
+    @Column(nullable = false)
+    @Comment("密码未过期")
     Boolean credentialsNonExpired;
-    @Column(comment = "是否可用", isNull = false, type = MySqlTypeConstant.TINYINT, defaultValue = "1")
+    @Column(nullable = false)
+    @Comment("是否可用")
     Boolean enabled;
 
 }

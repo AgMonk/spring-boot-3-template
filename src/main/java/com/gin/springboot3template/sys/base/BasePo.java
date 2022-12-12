@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Comment;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -18,13 +19,17 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@MappedSuperclass
 public class BasePo implements Serializable {
     @TableId(type = IdType.AUTO)
-    @Column(comment = "id", isAutoIncrement = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Comment("ID")
     Long id;
 
-    @Column(comment = "记录创建时间", isNull = false)
+    @Column(nullable = false)
     @TableField(updateStrategy = FieldStrategy.NEVER)
+    @Comment("记录创建时间(UNIX秒)")
     Long timeCreate;
 
     public BasePo() {

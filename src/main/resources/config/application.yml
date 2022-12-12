@@ -43,15 +43,33 @@ spring:
       pool-prepared-statements: true
       max-pool-prepared-statement-per-connection-size: 20
       filters: stat,wall,slf4j
+  jpa:
+    database: mysql
+    # 在控制台打印SQL
+    show-sql: true
+    # 数据库平台
+    database-platform: mysql
+    hibernate:
+      # 每次启动项目时，数据库初始化策略
+      ddl-auto: update
+    properties:
+      hibernate:
+        # 指定默认的存储引擎为InnoDB
+        dialect: org.hibernate.dialect.MySQL57Dialect
+  # actable的配置信息
+#actable:
+#  table:
+#    auto: update
+#  model:
+#    pack: com.*.*.*.*.entity,com.*.*.*.entity,com.gin.springboot3template.sys.entity
+#  database:
+#    type: mysql
 
-# actable的配置信息
-actable:
-  table:
-    auto: update
-  model:
-    pack: com.*.*.*.*.entity,com.*.*.*.entity,com.gin.springboot3template.sys.entity
-  database:
-    type: mysql
+# JPA配置
+
+
+
+
 mybatis-plus:
   mapper-locations: classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml , classpath:mapper/*.xml
 mybatis:
