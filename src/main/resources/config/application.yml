@@ -55,7 +55,7 @@ spring:
     properties:
       hibernate:
         # 指定默认的存储引擎为InnoDB
-        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
   # actable的配置信息
 #actable:
 #  table:
