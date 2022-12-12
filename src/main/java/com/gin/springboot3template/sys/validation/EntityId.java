@@ -31,8 +31,6 @@ public @interface EntityId {
 
     Class<? extends Payload>[] payload() default {};
 
-    String value() default "";
-
     Class<? extends IService<?>> service();
 
     boolean nullable() default false;
