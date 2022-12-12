@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.entity.SystemUser;
 
 /**
@@ -8,4 +9,14 @@ import com.gin.springboot3template.sys.entity.SystemUser;
  * @since : 2022/12/10 16:45
  */
 public interface SystemUserService extends MyService<SystemUser> {
+    /**
+     * 根据用户名查询用户信息
+     * @param username 用户名
+     * @return 用户信息
+     */
+    default SystemUser getByUsername(String username) {
+        final QueryWrapper<SystemUser> qw = new QueryWrapper<>();
+        qw.eq("username", username);
+        return getOne(qw);
+    }
 }
