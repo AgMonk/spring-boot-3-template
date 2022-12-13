@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.springframework.security.core.userdetails.User;
 
 
 /**
@@ -42,5 +43,15 @@ public class SystemUser extends BasePo {
     @Column(nullable = false)
     @Comment("是否可用")
     Boolean enabled;
+
+    public User.UserBuilder createUser() {
+        return User.builder()
+                .username(username)
+                .password(password)
+                .accountExpired(!accountNonExpired)
+                .accountLocked(!accountNonLocked)
+                .credentialsExpired(!credentialsNonExpired)
+                .disabled(!enabled);
+    }
 
 }
