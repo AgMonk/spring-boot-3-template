@@ -3,11 +3,13 @@ package com.gin.springboot3template.sys.security.config;
 import com.gin.springboot3template.sys.security.component.MyAuthenticationHandler;
 import com.gin.springboot3template.sys.security.component.MyLoginFilter;
 import com.gin.springboot3template.sys.security.component.MyRememberMeServices;
+import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,6 +52,20 @@ public class MySecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    /**
+     * 允许抛出用户不存在的异常
+     * @param myUserDetailsService myUserDetailsService
+     * @return DaoAuthenticationProvider
+     */
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(MyUserDetailsServiceImpl myUserDetailsService) {
+        final DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(myUserDetailsService);
+        provider.setUserDetailsPasswordService(myUserDetailsService);
+        provider.setHideUserNotFoundExceptions(false);
+        return provider;
     }
 
     /**
