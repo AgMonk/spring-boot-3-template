@@ -12,7 +12,6 @@ import java.io.Serializable;
  */
 @Schema(description = "统一响应对象")
 public record Res<T>(
-
         @Schema(description = "消息")
         String message,
         @Schema(description = "数据")

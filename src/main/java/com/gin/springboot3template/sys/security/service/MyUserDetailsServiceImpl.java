@@ -3,14 +3,12 @@ package com.gin.springboot3template.sys.security.service;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 /**
@@ -23,15 +21,6 @@ import java.util.ArrayList;
 public class MyUserDetailsServiceImpl implements UserDetailsService, UserDetailsPasswordService {
 
     private final SystemUserService systemUserService;
-
-    /**
-     * 返回是否有权限访问
-     * @return 是否有权限访问
-     */
-    public boolean authorize(Authentication authentication, HttpServletRequest request, Integer id) {
-        System.out.println("id = " + id);
-        return false;
-    }
 
     /**
      * 根据用户名查询用户的认证授权信息

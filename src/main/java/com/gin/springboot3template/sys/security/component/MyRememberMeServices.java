@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gin.springboot3template.sys.security.component.MyLoginFilter.REMEMBER_ME_KEY;
-
 
 /**
  * @author : ginstone
@@ -19,6 +17,7 @@ import static com.gin.springboot3template.sys.security.component.MyLoginFilter.R
  */
 @Component
 public class MyRememberMeServices extends PersistentTokenBasedRememberMeServices {
+    public static final String REMEMBER_ME_KEY = "rememberMe";
     public static final List<String> TRUE_VALUES = List.of("true", "yes", "on", "1");
 
     public MyRememberMeServices(UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
@@ -28,7 +27,6 @@ public class MyRememberMeServices extends PersistentTokenBasedRememberMeServices
     @Override
     protected boolean rememberMeRequested(HttpServletRequest request, String parameter) {
         final String rememberMe = (String) request.getAttribute(REMEMBER_ME_KEY);
-        System.out.println("rememberMe = " + rememberMe);
         if (rememberMe != null) {
             for (String trueValue : TRUE_VALUES) {
                 if (trueValue.equalsIgnoreCase(rememberMe)) {
