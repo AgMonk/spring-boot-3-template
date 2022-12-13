@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -54,9 +55,13 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+        String detailMessage = e.getClass().getSimpleName() + " " + e.getLocalizedMessage();
+        if (e instanceof InsufficientAuthenticationException) {
+            detailMessage = "请登陆后再访问";
+        }
         response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(e.getClass().getSimpleName() + " " + e.getLocalizedMessage(), "认证异常")));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, "认证异常")));
     }
 
     /**

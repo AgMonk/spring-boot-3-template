@@ -22,9 +22,8 @@ public class SystemUserController {
     private final MyUserDetailsServiceImpl myUserDetailsService;
 
     @PostMapping("token")
-    @Operation(summary = "获取用户认证/授权信息", description = "包含用户名,账号状态,权限信息")
+    @Operation(summary = "获取用户认证/授权信息", description = "包含用户名,ID,账号状态,权限信息")
     public Res<MyUserDetails> token() {
-        System.out.println("1 = " + 1);
-        return Res.of(MyUserDetails.of());
+        return Res.of(MyUserDetails.of().with(myUserDetailsService.currentUser()));
     }
 }   

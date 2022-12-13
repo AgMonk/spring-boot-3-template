@@ -3,6 +3,8 @@ package com.gin.springboot3template.sys.security.service;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +23,16 @@ import java.util.ArrayList;
 public class MyUserDetailsServiceImpl implements UserDetailsService, UserDetailsPasswordService {
 
     private final SystemUserService systemUserService;
+
+    /**
+     * 当前用户
+     * @return 当前用户
+     */
+    public SystemUser currentUser() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        return systemUserService.getByUsername(username);
+    }
 
     /**
      * 根据用户名查询用户的认证授权信息

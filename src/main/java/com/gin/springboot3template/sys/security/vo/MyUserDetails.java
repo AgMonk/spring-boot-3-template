@@ -1,5 +1,7 @@
 package com.gin.springboot3template.sys.security.vo;
 
+import com.gin.springboot3template.sys.base.BaseVo;
+import com.gin.springboot3template.sys.entity.SystemUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +24,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Schema(description = "用户认证/授权信息")
-public class MyUserDetails {
-    @Schema(description = "用户名")
+public class MyUserDetails extends BaseVo {
+    @Schema(description = "用户名", title = "username")
     private String username;
     @Schema(description = "账号未过期")
     private boolean accountNonExpired;
@@ -35,10 +37,6 @@ public class MyUserDetails {
     private boolean enabled;
     @Schema(description = "权限")
     private Set<GrantedAuthority> authorities;
-
-    public MyUserDetails(UserDetails userDetails) {
-        BeanUtils.copyProperties(userDetails, this);
-    }
 
     /**
      * 获取当前用户认证/授权信息
@@ -54,6 +52,18 @@ public class MyUserDetails {
      * @return 用户认证/授权信息
      */
     public static MyUserDetails of(Authentication authentication) {
-        return new MyUserDetails(((UserDetails) authentication.getPrincipal()));
+        final MyUserDetails details = new MyUserDetails();
+        details.with(((UserDetails) authentication.getPrincipal()));
+        return details;
+    }
+
+    public MyUserDetails with(UserDetails userDetails) {
+        BeanUtils.copyProperties(userDetails, this);
+        return this;
+    }
+
+    public MyUserDetails with(SystemUser systemUser) {
+        BeanUtils.copyProperties(systemUser, this);
+        return this;
     }
 }

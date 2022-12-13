@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 
 /**
- * 统一响应类
+ * 统一响应对象
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/5 10:21
