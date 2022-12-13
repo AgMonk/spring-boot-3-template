@@ -40,6 +40,7 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
         setAuthenticationSuccessHandler(authenticationHandler);
         //rememberMe
         setRememberMeServices(rememberMeServices);
+        //登陆使用的路径
         setFilterProcessesUrl("/sys/user/login");
     }
 
@@ -48,11 +49,6 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
         return APPLICATION_JSON_CHARSET_UTF_8.equalsIgnoreCase(contentType) || MimeTypeUtils.APPLICATION_JSON_VALUE.equalsIgnoreCase(contentType);
     }
 
-    /**
-     * @param request  from which to extract parameters and perform the authentication
-     * @param response the response, which may be needed if the implementation has to do a
-     *                 redirect as part of a multi-stage authentication process (such as OpenID).
-     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 

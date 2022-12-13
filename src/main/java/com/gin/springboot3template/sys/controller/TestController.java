@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,7 @@ public class TestController {
 
     @GetMapping("page1")
     @Operation(summary = "分页查询")
+    @PreAuthorize("hasPermission(#id,'测试','权限')")
     public Res<Void> test(Integer id) {
         final SystemUser systemUser = systemUserService.getById(id);
         System.out.println("systemUser = " + systemUser);

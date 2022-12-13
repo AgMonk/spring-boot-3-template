@@ -32,4 +32,4 @@ public class KaptchaConfig {
         defaultKaptcha.setConfig(new Config(properties));
         return defaultKaptcha;
     }
-}   
+}

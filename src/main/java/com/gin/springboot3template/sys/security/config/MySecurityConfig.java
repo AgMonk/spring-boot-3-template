@@ -29,9 +29,9 @@ import java.util.List;
  * @version : v1.0.0
  * @since : 2022/12/10 11:53
  */
+@EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
-@EnableMethodSecurity
 public class MySecurityConfig {
     /**
      * 接口文档放行
@@ -92,14 +92,11 @@ public class MySecurityConfig {
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
 //                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
-
                 .anyRequest().authenticated()
         ;
 
         //登陆
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
-
-        //配置自定义登陆流程后需要关闭 否则可以使用原有登陆方式
 
         //登出
         http.logout().logoutUrl("/sys/user/logout").logoutSuccessHandler(authenticationHandler);
@@ -133,6 +130,4 @@ public class MySecurityConfig {
 
         return http.build();
     }
-
-
 }
