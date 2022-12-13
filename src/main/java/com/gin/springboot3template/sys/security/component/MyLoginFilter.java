@@ -2,7 +2,6 @@ package com.gin.springboot3template.sys.security.component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
@@ -35,10 +34,15 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MyLoginFilter(AuthenticationManager authenticationManager, MyAuthenticationHandler authenticationHandler) throws Exception {
+    public MyLoginFilter(AuthenticationManager authenticationManager,
+                         MyAuthenticationHandler authenticationHandler,
+                         MyRememberMeServices rememberMeServices) throws Exception {
         super(authenticationManager);
         setAuthenticationFailureHandler(authenticationHandler);
         setAuthenticationSuccessHandler(authenticationHandler);
+        //rememberMe
+        setRememberMeServices(rememberMeServices);
+        setFilterProcessesUrl("/sys/user/login");
     }
 
     private static boolean isContentTypeJson(HttpServletRequest request) {
@@ -102,9 +106,5 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
-    @PostConstruct
-    public void init() {
-        setFilterProcessesUrl("/sys/user/login");
-    }
 
 }

@@ -69,14 +69,14 @@ public class MySecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    MyLoginFilter loginFilter,
                                                    MyAuthenticationHandler authenticationHandler,
-                                                   MyRememberMeServices rememberMeServices) throws Exception {
+                                                   MyRememberMeServices rememberMeServices
+    ) throws Exception {
         //路径配置
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
-                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
+//                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated();
-
 
         //登陆
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
@@ -85,21 +85,24 @@ public class MySecurityConfig {
 //        http.formLogin();
 
         //登出
-        http.logout().logoutUrl("/sys/user/logout");
+        http.logout().logoutUrl("/sys/user/logout").logoutSuccessHandler(authenticationHandler);
 
         //禁用 csrf
 //        http.csrf().disable();
+
         //csrf验证 存储到Cookie中
         http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
         ;
 
-        //会话管理 引入redis-session依赖后已不再需要手动配置 sessionRegistry
+        //会话管理
         http.sessionManagement()
                 .maximumSessions(1)
                 .expiredSessionStrategy(authenticationHandler)
+        //引入redis-session依赖后已不再需要手动配置 sessionRegistry
+//                .sessionRegistry(new SpringSessionBackedSessionRegistry<>(new RedisIndexedSessionRepository(RedisConfig.createRedisTemplate())))
         //禁止后登陆挤下线
-//                .maxSessionsPreventsLogin(true)
+//               .maxSessionsPreventsLogin(true)
         ;
 
         //rememberMe

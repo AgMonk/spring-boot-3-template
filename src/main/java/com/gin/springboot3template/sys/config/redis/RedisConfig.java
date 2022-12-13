@@ -37,6 +37,16 @@ public class RedisConfig {
         return template;
     }
 
+    public static RedisTemplate<String, Object> createRedisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(SpringContextUtils.getContext().getBean(RedisConnectionFactory.class));
+        //String的序列化
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
+
     @Bean
     public RedisTemplate<String, Object> redisJsonTemplate(RedisConnectionFactory redisConnectionFactory) {
         return createRedisJsonTemplate("json");
