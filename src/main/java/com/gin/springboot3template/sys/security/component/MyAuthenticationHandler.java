@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -28,7 +29,7 @@ import static com.gin.springboot3template.sys.controller.VerifyCodeController.VE
 
 
 /**
- * 校验成功、失败，绘画过期处理
+ * 校验成功、失败，会话过期处理
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/5 10:04
@@ -38,10 +39,25 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         , AuthenticationFailureHandler
         , LogoutSuccessHandler
         , SessionInformationExpiredStrategy
-        , AccessDeniedHandler {
+        , AccessDeniedHandler, AuthenticationEntryPoint {
 
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    /**
+     * 认证失败处理
+     * @param request       that resulted in an <code>AuthenticationException</code>
+     * @param response      so that the user agent can begin authentication
+     * @param authException that caused the invocation
+     * @throws IOException      异常
+     * @throws ServletException 异常
+     */
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(e.getClass().getSimpleName() + " " + e.getLocalizedMessage(), "认证异常")));
+    }
 
     /**
      * 权限不足时的处理

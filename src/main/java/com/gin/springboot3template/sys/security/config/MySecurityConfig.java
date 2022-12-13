@@ -76,13 +76,14 @@ public class MySecurityConfig {
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
 //                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
-                .anyRequest().authenticated();
+
+                .anyRequest().authenticated()
+        ;
 
         //登陆
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
         //配置自定义登陆流程后需要关闭 否则可以使用原有登陆方式
-//        http.formLogin();
 
         //登出
         http.logout().logoutUrl("/sys/user/logout").logoutSuccessHandler(authenticationHandler);
@@ -109,7 +110,10 @@ public class MySecurityConfig {
         http.rememberMe().rememberMeServices(rememberMeServices);
 
         // 权限不足时的处理
-        http.exceptionHandling().accessDeniedHandler(authenticationHandler);
+        http.exceptionHandling()
+                .accessDeniedHandler(authenticationHandler)
+                .authenticationEntryPoint(authenticationHandler)
+        ;
 
         return http.build();
     }
