@@ -4,8 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.gin.springboot3template.sys.security.component.MyLoginFilter.REMEMBER_ME_KEY;
 
@@ -15,11 +17,12 @@ import static com.gin.springboot3template.sys.security.component.MyLoginFilter.R
  * @version : v1.0.0
  * @since : 2022/12/7 17:34
  */
+@Component
 public class MyRememberMeServices extends PersistentTokenBasedRememberMeServices {
     public static final List<String> TRUE_VALUES = List.of("true", "yes", "on", "1");
 
-    public MyRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
-        super(key, userDetailsService, tokenRepository);
+    public MyRememberMeServices(UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
+        super(UUID.randomUUID().toString(), userDetailsService, tokenRepository);
     }
 
     @Override

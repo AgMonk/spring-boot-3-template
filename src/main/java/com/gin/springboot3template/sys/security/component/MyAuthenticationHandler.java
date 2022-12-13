@@ -29,7 +29,11 @@ import static com.gin.springboot3template.sys.controller.VerifyCodeController.VE
  * @since : 2022/12/5 10:04
  */
 @Component
-public class MyAuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, LogoutSuccessHandler, SessionInformationExpiredStrategy, AccessDeniedHandler {
+public class MyAuthenticationHandler implements AuthenticationSuccessHandler
+        , AuthenticationFailureHandler
+        , LogoutSuccessHandler
+        , SessionInformationExpiredStrategy
+        , AccessDeniedHandler {
 
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -44,11 +48,11 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(null, "禁止访问")));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(accessDeniedException, "禁止访问")));
     }
 
     /**
-     *
+     * 认证失败时的处理
      */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -58,7 +62,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
     }
 
     /**
-     *
+     * 认证成功时的处理
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -71,6 +75,8 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
 
     /**
      * 会话过期处理
+     * @throws IOException      异常
+     * @throws ServletException 异常
      */
     @Override
     public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
@@ -81,6 +87,14 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler, Au
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(event.getSessionInformation(), message)));
     }
 
+    /**
+     * 登出成功处理
+     * @param request        请求
+     * @param response       响应
+     * @param authentication 认证信息
+     * @throws IOException      异常
+     * @throws ServletException 异常
+     */
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);

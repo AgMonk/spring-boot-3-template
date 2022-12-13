@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.security.config;
 
 import com.gin.springboot3template.sys.security.component.MyAuthenticationHandler;
 import com.gin.springboot3template.sys.security.component.MyLoginFilter;
+import com.gin.springboot3template.sys.security.component.MyRememberMeServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,7 +68,9 @@ public class MySecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    MyLoginFilter loginFilter,
-                                                   MyAuthenticationHandler authenticationHandler) throws Exception {
+                                                   MyAuthenticationHandler authenticationHandler,
+                                                   MyRememberMeServices rememberMeServices) throws Exception {
+        //路径配置
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
@@ -77,7 +80,9 @@ public class MySecurityConfig {
 
         //登陆
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
-        http.formLogin();
+
+        //配置自定义登陆流程后需要关闭 否则可以使用原有登陆方式
+//        http.formLogin();
 
         //登出
         http.logout().logoutUrl("/sys/user/logout");
@@ -89,13 +94,19 @@ public class MySecurityConfig {
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
         ;
 
-        //会话管理 引入依赖后已不再需要手动配置 sessionRegistry
+        //会话管理 引入redis-session依赖后已不再需要手动配置 sessionRegistry
         http.sessionManagement()
                 .maximumSessions(1)
-                .expiredSessionStrategy(authenticationHandler);
+                .expiredSessionStrategy(authenticationHandler)
+        //禁止后登陆挤下线
+//                .maxSessionsPreventsLogin(true)
+        ;
+
+        //rememberMe
+        http.rememberMe().rememberMeServices(rememberMeServices);
 
         // 权限不足时的处理
-//        http.exceptionHandling().accessDeniedHandler(authenticationHandler);
+        http.exceptionHandling().accessDeniedHandler(authenticationHandler);
 
         return http.build();
     }

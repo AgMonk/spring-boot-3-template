@@ -6,10 +6,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,8 +35,8 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MyLoginFilter(AuthenticationConfiguration authenticationConfiguration, MyAuthenticationHandler authenticationHandler) throws Exception {
-        super(authenticationConfiguration.getAuthenticationManager());
+    public MyLoginFilter(AuthenticationManager authenticationManager, MyAuthenticationHandler authenticationHandler) throws Exception {
+        super(authenticationManager);
         setAuthenticationFailureHandler(authenticationHandler);
         setAuthenticationSuccessHandler(authenticationHandler);
     }
