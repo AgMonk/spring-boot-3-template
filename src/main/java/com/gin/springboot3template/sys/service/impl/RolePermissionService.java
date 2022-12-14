@@ -18,16 +18,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class RolePermissionService {
+    // todo 添加、修改、删除角色
+
+
     // todo 查询指定用户的角色及其权限
     // todo 查询指定角色的权限
-    // todo 添加、修改、删除角色
-    // todo 为指定用户添加、修改、删除角色
     // todo 为指定角色添加、删除权限
+    // todo 为指定用户添加、修改、删除角色
 
     private final SystemRoleService systemRoleService;
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
     private final RelationUserRoleService relationUserRoleService;
 
-    
+
 }
