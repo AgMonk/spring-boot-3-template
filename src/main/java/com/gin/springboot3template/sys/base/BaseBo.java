@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 基础视图对象
+ * 基础业务对象
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/6 14:18
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Setter
 @Schema(name = "基础视图对象")
 @NoArgsConstructor
-public class BaseVo implements Serializable {
+public class BaseBo implements Serializable {
     @Schema(description = "ID")
     Long id;
 

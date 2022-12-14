@@ -43,6 +43,7 @@ spring:
       pool-prepared-statements: true
       max-pool-prepared-statement-per-connection-size: 20
       filters: stat,wall,slf4j
+  # JPA配置
   jpa:
     database: mysql
     # 在控制台打印SQL
@@ -56,19 +57,6 @@ spring:
       hibernate:
         # 指定默认的存储引擎为InnoDB
         dialect: org.hibernate.dialect.MySQLDialect
-  # actable的配置信息
-#actable:
-#  table:
-#    auto: update
-#  model:
-#    pack: com.*.*.*.*.entity,com.*.*.*.entity,com.gin.springboot3template.sys.entity
-#  database:
-#    type: mysql
-
-# JPA配置
-
-
-
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml

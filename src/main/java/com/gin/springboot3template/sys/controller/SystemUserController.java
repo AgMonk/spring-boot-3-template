@@ -3,7 +3,7 @@ package com.gin.springboot3template.sys.controller;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
-import com.gin.springboot3template.sys.security.vo.MyUserDetails;
+import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class SystemUserController {
 
     @PostMapping("token")
     @Operation(summary = "获取用户认证/授权信息", description = "包含用户名,ID,账号状态,权限信息")
-    public Res<MyUserDetails> token() {
-        return Res.of(MyUserDetails.of().with(myUserDetailsService.currentUser()));
+    public Res<MyUserDetailsVo> token() {
+        return Res.of(MyUserDetailsVo.of());
     }
 }   

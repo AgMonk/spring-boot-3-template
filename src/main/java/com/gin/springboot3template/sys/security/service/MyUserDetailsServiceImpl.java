@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.security.service;
 
 import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.security.bo.MyUserDetails;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -10,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 /**
  * @author : ginstone
@@ -47,9 +46,7 @@ public class MyUserDetailsServiceImpl implements UserDetailsService, UserDetails
         if (systemUser == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        return systemUser.createUser()
-                .authorities(new ArrayList<>())
-                .build();
+        return MyUserDetails.of(systemUser);
     }
 
     /**
@@ -63,8 +60,6 @@ public class MyUserDetailsServiceImpl implements UserDetailsService, UserDetails
         final SystemUser systemUser = systemUserService.getByUsername(user.getUsername());
         systemUser.setPassword(newPassword);
         systemUserService.updateById(systemUser);
-        return systemUser.createUser()
-                .authorities(new ArrayList<>())
-                .build();
+        return MyUserDetails.of(systemUser);
     }
 }

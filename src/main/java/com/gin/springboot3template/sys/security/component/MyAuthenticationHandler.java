@@ -2,7 +2,7 @@ package com.gin.springboot3template.sys.security.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.sys.response.Res;
-import com.gin.springboot3template.sys.security.vo.MyUserDetails;
+import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -104,7 +104,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetails.of(authentication), "登陆成功")));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "登陆成功")));
         //清理使用过的验证码
         request.getSession().removeAttribute(VERIFY_CODE_KEY);
     }
@@ -135,6 +135,6 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetails.of(authentication), "注销成功")));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "注销成功")));
     }
 }

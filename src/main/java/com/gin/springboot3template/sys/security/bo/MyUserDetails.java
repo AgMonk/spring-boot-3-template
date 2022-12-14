@@ -1,17 +1,16 @@
-package com.gin.springboot3template.sys.security.vo;
+package com.gin.springboot3template.sys.security.bo;
 
-import com.gin.springboot3template.sys.base.BaseVo;
-import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.base.BaseBo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,10 +22,11 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema(description = "用户认证/授权信息")
-public class MyUserDetails extends BaseVo {
-    @Schema(description = "用户名", title = "username")
+public class MyUserDetails extends BaseBo implements UserDetails {
+    @Schema(description = "用户名")
     private String username;
+    @Schema(description = "密码")
+    private String password;
     @Schema(description = "账号未过期")
     private boolean accountNonExpired;
     @Schema(description = "账号未锁定")
@@ -36,7 +36,7 @@ public class MyUserDetails extends BaseVo {
     @Schema(description = "是否可用")
     private boolean enabled;
     @Schema(description = "权限")
-    private Set<GrantedAuthority> authorities;
+    private Set<GrantedAuthority> authorities = new HashSet<>();
 
     /**
      * 获取当前用户认证/授权信息
@@ -51,19 +51,13 @@ public class MyUserDetails extends BaseVo {
      * @param authentication authentication
      * @return 用户认证/授权信息
      */
-    public static MyUserDetails of(Authentication authentication) {
+    public static MyUserDetails of(Object userDetails) {
         final MyUserDetails details = new MyUserDetails();
-        details.with(((UserDetails) authentication.getPrincipal()));
-        return details;
+        return details.with(userDetails);
     }
 
-    public MyUserDetails with(UserDetails userDetails) {
+    public MyUserDetails with(Object userDetails) {
         BeanUtils.copyProperties(userDetails, this);
-        return this;
-    }
-
-    public MyUserDetails with(SystemUser systemUser) {
-        BeanUtils.copyProperties(systemUser, this);
         return this;
     }
 }
