@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +24,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class MyUserDetails extends BaseBo implements UserDetails {
+    public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
+
+
     @Schema(description = "用户名")
     private String username;
     @Schema(description = "密码")
@@ -48,7 +52,7 @@ public class MyUserDetails extends BaseBo implements UserDetails {
 
     /**
      * 从 authentication 中获取用户认证/授权信息
-     * @param authentication authentication
+     * @param userDetails userDetails
      * @return 用户认证/授权信息
      */
     public static MyUserDetails of(Object userDetails) {
@@ -56,8 +60,34 @@ public class MyUserDetails extends BaseBo implements UserDetails {
         return details.with(userDetails);
     }
 
+    public void addAuthorities(Collection<GrantedAuthority> authorities) {
+        this.authorities.addAll(authorities);
+    }
+
+    public void addAuthority(GrantedAuthority authority) {
+        this.authorities.add(authority);
+    }
+
+    /**
+     * @param authority 权限
+     * @return 是否持有指定权限
+     */
+    public boolean hasAuthority(String authority) {
+        for (GrantedAuthority grantedAuthority : this.authorities) {
+            if (grantedAuthority.getAuthority().equalsIgnoreCase(authority)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasRole(String role) {
+        return hasAuthority(DEFAULT_ROLE_PREFIX + role);
+    }
+
     public MyUserDetails with(Object userDetails) {
         BeanUtils.copyProperties(userDetails, this);
         return this;
     }
+
 }

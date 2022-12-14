@@ -39,6 +39,7 @@ public class TestController {
 
     @GetMapping("page")
     @Operation(summary = "分页查询")
+    @PreAuthorize("hasAuthority('admin')")
     public Res<Void> test(@ParameterObject @Validated PageParam pageParam) {
         System.out.println("pageParam.getId() = " + pageParam.getId());
         return Res.of(null);
