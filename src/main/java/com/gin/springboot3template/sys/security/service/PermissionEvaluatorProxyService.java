@@ -54,10 +54,12 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
             return false;
         }
         final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        //如果持有 admin 角色 ，直接放行
         if (myUserDetails.hasRole(ROLE_ADMIN)) {
             return true;
         }
         initClassMap();
+        //从 classMap 中选择  权限评估器
         final AuthorityEvaluator authorityEvaluator = this.classMap.getOrDefault(targetDomainObject.getClass(), null);
         if (authorityEvaluator == null) {
             return false;
@@ -79,10 +81,12 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
             return false;
         }
         final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        //如果持有 admin 角色 ，直接放行
         if (myUserDetails.hasRole(ROLE_ADMIN)) {
             return true;
         }
         initNameMap();
+        //从 nameMap 中选择  权限评估器
         final AuthorityEvaluator authorityEvaluator = this.nameMap.getOrDefault(targetType, null);
         if (authorityEvaluator == null) {
             return false;
