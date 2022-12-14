@@ -31,16 +31,16 @@ public class SystemUser extends BasePo {
     @Column(nullable = false, length = 100)
     @Comment("密码")
     String password;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int default 1")
     @Comment("账号未过期")
     Boolean accountNonExpired;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int default 1")
     @Comment("账号未锁定")
     Boolean accountNonLocked;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int default 1")
     @Comment("密码未过期")
     Boolean credentialsNonExpired;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int default 1")
     @Comment("是否可用")
     Boolean enabled;
 
