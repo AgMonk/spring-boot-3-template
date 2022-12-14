@@ -25,9 +25,11 @@ public class SystemRole extends BasePo {
     @Column(length = 50, nullable = false, unique = true)
     @Comment("名称")
     String name;
+    @Column(length = 50, nullable = false, unique = true)
+    @Comment("中文名称")
+    String nameZh;
+    @Column(length = 200)
+    @Comment("备注")
+    String remark;
 
-    public SystemRole(String name) {
-        super();
-        this.name = name;
-    }
 }
