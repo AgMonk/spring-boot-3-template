@@ -165,8 +165,9 @@ public class RolePermissionService {
      * @param roleIds 角色id
      */
     public void roleDelByUserId(long userId, Collection<Long> roleIds) {
-        //todo
-
+        final QueryWrapper<RelationUserRole> qw = new QueryWrapper<>();
+        qw.in("role_id", roleIds).eq("user_id", userId);
+        relationUserRoleService.remove(qw);
     }
 
     /**
