@@ -20,9 +20,17 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * 为指定角色添加权限
      * @param roleId  角色id
      * @param permIds 权限id
+     * @return 添加好的权限
      */
-    default void add(long roleId, Collection<Long> permIds) {
-        //todo
+    default List<RelationRolePermission> add(long roleId, Collection<Long> permIds) {
+        final List<RelationRolePermission> rolePermissions = permIds.stream().map(pId -> {
+            final RelationRolePermission permission = new RelationRolePermission();
+            permission.setRoleId(roleId);
+            permission.setPermissionId(pId);
+            return permission;
+        }).toList();
+        saveBatch(rolePermissions);
+        return rolePermissions;
     }
 
     /**
@@ -40,7 +48,9 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * @param permIds 权限id
      */
     default void del(long roleId, Collection<Long> permIds) {
-        //todo
+        final QueryWrapper<RelationRolePermission> qw = new QueryWrapper<>();
+        qw.eq("role_id", roleId).in("permission_id", permIds);
+        remove(qw);
     }
 
     /**
