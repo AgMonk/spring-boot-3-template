@@ -3,6 +3,7 @@ package com.gin.springboot3template.sys.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.gin.springboot3template.sys.base.BaseBo;
 import com.gin.springboot3template.sys.base.BasePo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.Comment;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -88,6 +90,42 @@ public class RelationUserRole extends BasePo {
             BeanUtils.copyProperties(this, userRole);
             userRole.setUserId(userId);
             return userRole;
+        }
+    }
+
+    @Getter
+    @Setter
+    @Schema(name = "角色及其持有的权限")
+    public static class Bo extends BaseBo {
+        @Schema(description = "角色id")
+        Long roleId;
+        @Schema(description = "修改时间(UNIX秒)")
+        Long timeUpdate;
+        @Schema(description = "过期时间(UNIX秒)")
+        Long timeExpire;
+
+
+        @Schema(description = "名称")
+        String name;
+        @Schema(description = "中文名称")
+        String nameZh;
+        @Schema(description = "备注")
+        String remark;
+        @Schema(description = "权限")
+        List<SystemPermission> permissions;
+
+        public Bo(RelationUserRole userRole) {
+            BeanUtils.copyProperties(userRole, this);
+        }
+
+        /**
+         * 补充三个字段信息
+         * @param systemRole 角色
+         */
+        public void with(SystemRole systemRole) {
+            this.name = systemRole.getName();
+            this.nameZh = systemRole.getNameZh();
+            this.remark = systemRole.getRemark();
         }
     }
 }

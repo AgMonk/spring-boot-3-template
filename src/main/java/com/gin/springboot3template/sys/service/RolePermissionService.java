@@ -1,10 +1,9 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.bo.RolePermission;
-import com.gin.springboot3template.sys.bo.UserRole;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import com.gin.springboot3template.sys.entity.SystemRole;
+import com.gin.springboot3template.sys.entity.SystemUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,58 +27,43 @@ import java.util.List;
 public class RolePermissionService {
 
     private final SystemRoleService systemRoleService;
+    private final SystemUserService systemUserService;
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
     private final RelationUserRoleService relationUserRoleService;
 
-    /**
-     * 查询指定用户的角色及其权限
-     * @param userId 用户id
-     * @return 角色及其权限
-     */
-    public List<RolePermission> listAuthorityByUserId(long userId) {
-        //todo
-        return null;
-    }
 
     /**
      * 查询指定用户的角色及其权限
      * @param userId 用户id
      * @return 角色及其权限
      */
-    public List<UserRole> listAuthorityByUserId(Collection<Long> userId) {
+    public List<SystemUser.Bo> listAuthorityByUserId(Collection<Long> userId) {
+        //查询用户列表
+        final List<SystemUser.Bo> userData = systemUserService.listByIds(userId).stream().map(SystemUser.Bo::new).toList();
+
+        //查询用户持有的角色
+
+        //补充角色额外信息
+
+        //查询角色持有的权限
+
         //todo
-        return null;
+        return userData;
     }
 
-    /**
-     * 查询指定角色的权限
-     * @param roleIds 角色id
-     * @return 权限
-     */
-    public List<RolePermission> listPermissionsByRoleId(Collection<Long> roleIds) {
-        //todo
-        return null;
-    }
-
-    /**
-     * 查询指定用户的角色
-     * @param userId 用户id
-     * @return 角色
-     */
-    public List<RolePermission> listRolesByUserId(long userId) {
-        //todo
-        return null;
-    }
 
     /**
      * 查询指定用户的角色
      * @param userId 用户id
      * @return 角色
      */
-    public List<UserRole> listRolesByUserId(Collection<Long> userId) {
+    public List<SystemUser.Bo> listUserRole(Collection<Long> userId) {
         //todo
-        return null;
+        final List<SystemUser.Bo> data = systemUserService.listByIds(userId).stream().map(SystemUser.Bo::new).toList();
+
+        final List<RelationUserRole> relationUserRoles = relationUserRoleService.listByUserId(userId);
+        return data;
     }
 
 

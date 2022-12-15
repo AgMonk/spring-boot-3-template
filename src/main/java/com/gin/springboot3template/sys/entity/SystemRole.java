@@ -36,7 +36,9 @@ public class SystemRole extends BasePo {
     @Column(length = 200)
     @Comment("备注")
     String remark;
-
+    @Column
+    @Comment("修改时间(UNIX秒)")
+    Long timeUpdate;
 
     @Getter
     @Setter

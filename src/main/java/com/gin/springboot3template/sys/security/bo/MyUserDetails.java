@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 用户认证、权限信息
+ * 用户认证、权限信息(在系统内使用,不作为返回对象)
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/6 14:36
@@ -25,7 +25,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class MyUserDetails extends BaseBo implements UserDetails {
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-
 
     @Schema(description = "用户名")
     private String username;

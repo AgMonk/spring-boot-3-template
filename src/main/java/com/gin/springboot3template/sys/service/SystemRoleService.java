@@ -31,6 +31,7 @@ public interface SystemRoleService extends MyService<SystemRole> {
     default SystemRole updateByIdParam(long roleId, SystemRole.Param param) {
         final SystemRole entity = param.build();
         entity.setId(roleId);
+        entity.setTimeUpdate(System.currentTimeMillis() / 1000);
         updateById(entity);
         return entity;
     }
