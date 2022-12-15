@@ -2,17 +2,19 @@ package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.entity.*;
+import com.gin.springboot3template.sys.security.interfaze.AuthorityProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.gin.springboot3template.sys.security.bo.MyUserDetails.DEFAULT_ROLE_PREFIX;
 
 /**
  * 角色和权限联合服务
@@ -24,13 +26,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(rollbackFor = Exception.class)
-public class RolePermissionService {
+public class RolePermissionService implements AuthorityProvider {
 
     private final SystemRoleService systemRoleService;
     private final SystemUserService systemUserService;
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
     private final RelationUserRoleService relationUserRoleService;
+
+    /**
+     * 提供权限
+     * @param userId 用户id
+     * @return 权限
+     */
+    @Override
+    public Set<GrantedAuthority> getAuthorities(long userId) {
+        final SystemUser.Bo bo = listAuthorityByUserId(Collections.singleton(userId)).get(0);
+        Set<String> data = new HashSet<>();
+        bo.getRoles().forEach(role -> {
+            //添加角色
+            data.add(DEFAULT_ROLE_PREFIX + role.getName());
+            //添加权限
+            final List<SystemPermission> permissions = role.getPermissions();
+            if (!CollectionUtils.isEmpty(permissions)) {
+                permissions.stream().map(SystemPermission::getPath).forEach(data::add);
+            }
+        });
+        return data.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+    }
 
 
     /**

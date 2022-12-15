@@ -2,13 +2,18 @@ package com.gin.springboot3template.sys.security.service;
 
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.security.bo.MyUserDetails;
+import com.gin.springboot3template.sys.security.interfaze.AuthorityProvider;
+import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemUserService;
+import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 /**
  * @author : ginstone
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class MyUserDetailsServiceImpl implements UserDetailsService, UserDetailsPasswordService {
 
     private final SystemUserService systemUserService;
+    private final RolePermissionService rolePermissionService;
 
     /**
      * 根据用户名查询用户的认证授权信息
@@ -34,7 +40,13 @@ public class MyUserDetailsServiceImpl implements UserDetailsService, UserDetails
         if (systemUser == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        return MyUserDetails.of(systemUser);
+        final MyUserDetails userDetails = MyUserDetails.of(systemUser);
+
+        //权限提供者提供的权限
+        final Collection<AuthorityProvider> providers = SpringContextUtils.getContext().getBeansOfType(AuthorityProvider.class).values();
+        providers.forEach(a -> userDetails.addAuthorities(a.getAuthorities(systemUser.getId())));
+
+        return userDetails;
     }
 
     /**

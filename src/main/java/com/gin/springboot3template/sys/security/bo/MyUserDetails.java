@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -65,6 +66,14 @@ public class MyUserDetails extends BaseBo implements UserDetails {
 
     public void addAuthority(GrantedAuthority authority) {
         this.authorities.add(authority);
+    }
+
+    public void addPermission(String permission) {
+        addAuthority(new SimpleGrantedAuthority(permission));
+    }
+
+    public void addRole(String role) {
+        addPermission(DEFAULT_ROLE_PREFIX + role);
     }
 
     /**
