@@ -2,9 +2,9 @@ package com.gin.springboot3template.sys.security.service;
 
 import com.gin.springboot3template.sys.exception.AuthorityEvaluatorDuplicatedException;
 import com.gin.springboot3template.sys.security.bo.MyUserDetails;
-import com.gin.springboot3template.sys.security.interfaze.AuthorityEvaluator;
+import com.gin.springboot3template.sys.security.interfaze.ClassAuthorityEvaluator;
+import com.gin.springboot3template.sys.security.interfaze.TypeNameAuthorityEvaluator;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -26,20 +26,11 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
     /**
      * 通过class来选择 AuthorityEvaluator 的Map
      */
-    HashMap<Class<?>, AuthorityEvaluator> classMap;
+    HashMap<Class<?>, ClassAuthorityEvaluator> classMap;
     /**
      * 通过name来选择 AuthorityEvaluator 的Map
      */
-    HashMap<String, AuthorityEvaluator> nameMap;
-
-    /**
-     * 从容器中获取 AuthorityEvaluator Bean
-     * @return AuthorityEvaluator Bean
-     */
-    @NotNull
-    private static Collection<AuthorityEvaluator> getAuthorityEvaluators() {
-        return SpringContextUtils.getContext().getBeansOfType(AuthorityEvaluator.class).values();
-    }
+    HashMap<String, TypeNameAuthorityEvaluator> nameMap;
 
     /**
      * 判断指定用户对指定资源持有指定权限
@@ -60,7 +51,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         }
         initClassMap();
         //从 classMap 中选择  权限评估器
-        final AuthorityEvaluator authorityEvaluator = this.classMap.getOrDefault(targetDomainObject.getClass(), null);
+        final ClassAuthorityEvaluator authorityEvaluator = this.classMap.getOrDefault(targetDomainObject.getClass(), null);
         if (authorityEvaluator == null) {
             return false;
         }
@@ -87,7 +78,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         }
         initNameMap();
         //从 nameMap 中选择  权限评估器
-        final AuthorityEvaluator authorityEvaluator = this.nameMap.getOrDefault(targetType, null);
+        final TypeNameAuthorityEvaluator authorityEvaluator = this.nameMap.getOrDefault(targetType, null);
         if (authorityEvaluator == null) {
             return false;
         }
@@ -101,9 +92,9 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         if (this.classMap != null) {
             return;
         }
-        HashMap<Class<?>, AuthorityEvaluator> map = new HashMap<>(1);
-        final Collection<AuthorityEvaluator> authorityEvaluators = getAuthorityEvaluators();
-        for (AuthorityEvaluator authorityEvaluator : authorityEvaluators) {
+        HashMap<Class<?>, ClassAuthorityEvaluator> map = new HashMap<>(1);
+        final Collection<ClassAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(ClassAuthorityEvaluator.class).values();
+        for (ClassAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
             final List<Class<?>> targetClass = authorityEvaluator.getTargetClass();
             for (Class<?> c : targetClass) {
                 if (!map.containsKey(c)) {
@@ -123,9 +114,9 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         if (this.nameMap != null) {
             return;
         }
-        HashMap<String, AuthorityEvaluator> map = new HashMap<>(1);
-        final Collection<AuthorityEvaluator> authorityEvaluators = getAuthorityEvaluators();
-        for (AuthorityEvaluator authorityEvaluator : authorityEvaluators) {
+        HashMap<String, TypeNameAuthorityEvaluator> map = new HashMap<>(1);
+        final Collection<TypeNameAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(TypeNameAuthorityEvaluator.class).values();
+        for (TypeNameAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
             final List<String> targetTypes = authorityEvaluator.getTargetTypes();
             for (String type : targetTypes) {
                 if (!map.containsKey(type)) {
