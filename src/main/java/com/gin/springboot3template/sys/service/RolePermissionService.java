@@ -13,7 +13,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色和权限统一服务
@@ -138,7 +140,37 @@ public class RolePermissionService {
      * @param params 角色id
      */
     public void roleConfigByUserId(long userId, Collection<RelationUserRole.Param> params) {
-        //todo
+        // 查询指定用户持有的角色id
+        //已有数据 (含有id)
+        final List<RelationUserRole> oldData = relationUserRoleService.listByUserId(Collections.singleton(userId));
+        //新数据 (不含id)
+        final List<RelationUserRole> newData = new ArrayList<>(params.stream().map(i -> i.build(userId)).toList());
+
+        //过滤出不存在的，进行删除
+        final List<RelationUserRole> data2Del = oldData.stream().filter(o -> !newData.contains(o)).toList();
+        if (data2Del.size() > 0) {
+            relationUserRoleService.removeBatchByIds(data2Del.stream().map(RelationUserRole::getRoleId).collect(Collectors.toList()));
+            oldData.removeAll(data2Del);
+        }
+
+        //过滤出新增的，进行添加
+        final List<RelationUserRole> data2Add = newData.stream().filter(o -> !oldData.contains(o)).toList();
+        if (data2Add.size() > 0) {
+            relationUserRoleService.saveBatch(data2Add);
+            newData.removeAll(data2Add);
+        }
+
+        //过滤出已经存在的，进行修改
+        if (newData.size() > 0) {
+            final long now = System.currentTimeMillis() / 1000;
+            final List<RelationUserRole> data2Update = newData.stream().peek(nd -> {
+                // 补充id
+                nd.setId(oldData.stream().filter(od -> od.equals(nd)).toList().get(0).getId());
+                // 设置修改时间
+                nd.setTimeUpdate(now);
+            }).toList();
+            relationUserRoleService.updateBatchById(data2Update);
+        }
 
     }
 

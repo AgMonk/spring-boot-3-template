@@ -1,5 +1,7 @@
 package com.gin.springboot3template.sys.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +17,8 @@ import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 /**
  * 用户持有的角色
@@ -34,14 +38,37 @@ public class RelationUserRole extends BasePo {
     public static final String TABLE_NAME = "t_system_relation_user_role";
     @Column(nullable = false)
     @Comment("用户id")
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     Long userId;
     @Column(nullable = false)
     @Comment("角色id")
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     Long roleId;
+
+    @Column
+    @Comment("修改时间(UNIX秒)")
+    Long timeUpdate;
 
     @Column(nullable = false)
     @Comment("过期时间(UNIX秒)")
     Long timeExpire;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RelationUserRole that = (RelationUserRole) o;
+        return getUserId().equals(that.getUserId()) && getRoleId().equals(that.getRoleId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUserId(), getRoleId());
+    }
 
     @Getter
     @Setter
