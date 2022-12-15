@@ -27,9 +27,6 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class RolePermissionService {
 
-    // todo 查询持有指定角色的用户
-
-
     private final SystemRoleService systemRoleService;
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
@@ -95,6 +92,15 @@ public class RolePermissionService {
     }
 
     /**
+     * 为指定角色配置权限
+     * @param roleId  角色id
+     * @param permIds 权限id
+     */
+    public void permissionConfigByRoleId(long roleId, Collection<Long> permIds) {
+        //todo
+    }
+
+    /**
      * 为指定角色删除权限
      * @param roleId  角色id
      * @param permIds 权限id
@@ -125,6 +131,16 @@ public class RolePermissionService {
     }
 
     /**
+     * 为指定用户配置角色
+     * @param userId  用户id
+     * @param roleIds 角色id
+     */
+    public void roleConfigByUserId(long userId, Collection<Long> roleIds) {
+        //todo
+
+    }
+
+    /**
      * 删除角色(连带删除所有对该角色的持有)
      * @param roleId 角色id
      * @return 被删除的角色
@@ -141,16 +157,6 @@ public class RolePermissionService {
         qw.in("role_id", roleId);
         relationUserRoleService.remove(qw);
         return systemRoles;
-    }
-
-    /**
-     * 移除用户对指定角色的持有
-     * @param userIds 用户id
-     * @param roleId  角色id
-     */
-    public void roleDelByRoleId(long roleId, Collection<Long> userIds) {
-        //todo
-
     }
 
     /**
