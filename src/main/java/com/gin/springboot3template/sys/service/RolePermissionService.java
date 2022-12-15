@@ -122,20 +122,22 @@ public class RolePermissionService {
 
     /**
      * 为指定用户添加角色
-     * @param userId  用户id
-     * @param roleIds 角色id
+     * @param userId 用户id
+     * @param params 参数
+     * @return 添加好的角色
      */
-    public void roleAddByUserId(long userId, Collection<Long> roleIds) {
-        //todo
-
+    public List<RelationUserRole> roleAddByUserId(long userId, Collection<RelationUserRole.Param> params) {
+        final List<RelationUserRole> userRoles = params.stream().map(i -> i.build(userId)).toList();
+        relationUserRoleService.saveBatch(userRoles);
+        return userRoles;
     }
 
     /**
      * 为指定用户配置角色
-     * @param userId  用户id
-     * @param roleIds 角色id
+     * @param userId 用户id
+     * @param params 角色id
      */
-    public void roleConfigByUserId(long userId, Collection<Long> roleIds) {
+    public void roleConfigByUserId(long userId, Collection<RelationUserRole.Param> params) {
         //todo
 
     }
