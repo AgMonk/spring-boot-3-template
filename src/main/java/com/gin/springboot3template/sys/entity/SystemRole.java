@@ -2,12 +2,16 @@ package com.gin.springboot3template.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.springframework.beans.BeanUtils;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * 系统角色
@@ -31,5 +35,27 @@ public class SystemRole extends BasePo {
     @Column(length = 200)
     @Comment("备注")
     String remark;
+
+
+    @Getter
+    @Setter
+    @Schema(name = "参数对象(添加/修改)")
+    @Validated
+    public static class Param {
+        @Schema(description = "名称")
+        @NotNull
+        String name;
+        @Schema(description = "中文名称")
+        @NotNull
+        String nameZh;
+        @Schema(description = "备注")
+        String remark;
+
+        public SystemRole build() {
+            final SystemRole systemRole = new SystemRole();
+            BeanUtils.copyProperties(this, systemRole);
+            return systemRole;
+        }
+    }
 
 }
