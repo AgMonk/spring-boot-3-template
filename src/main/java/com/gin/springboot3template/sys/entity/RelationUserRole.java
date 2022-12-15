@@ -72,7 +72,7 @@ public class RelationUserRole extends BasePo {
 
     @Getter
     @Setter
-    @Schema(name = "参数对象(添加)")
+    @Schema(name = "参数对象(添加/修改)")
     @Validated
     public static class Param {
         @Schema(description = "角色id")

@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
         //过滤出不存在的，进行删除
         final List<RelationUserRole> data2Del = oldData.stream().filter(o -> !newData.contains(o)).toList();
         if (data2Del.size() > 0) {
-            removeBatchByIds(data2Del.stream().map(RelationUserRole::getRoleId).collect(Collectors.toList()));
+            removeBatchByIds(data2Del.stream().map(BasePo::getId).collect(Collectors.toList()));
             oldData.removeAll(data2Del);
         }
 

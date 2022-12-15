@@ -1,11 +1,15 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : ginstone
@@ -16,6 +20,16 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public interface RelationRolePermissionService extends MyService<RelationRolePermission> {
 
+    @NotNull
+    private static List<RelationRolePermission> build(long roleId, Collection<Long> permIds) {
+        return permIds.stream().map(pId -> {
+            final RelationRolePermission permission = new RelationRolePermission();
+            permission.setRoleId(roleId);
+            permission.setPermissionId(pId);
+            return permission;
+        }).toList();
+    }
+
     /**
      * 为指定角色添加权限
      * @param roleId  角色id
@@ -23,12 +37,7 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * @return 添加好的权限
      */
     default List<RelationRolePermission> add(long roleId, Collection<Long> permIds) {
-        final List<RelationRolePermission> rolePermissions = permIds.stream().map(pId -> {
-            final RelationRolePermission permission = new RelationRolePermission();
-            permission.setRoleId(roleId);
-            permission.setPermissionId(pId);
-            return permission;
-        }).toList();
+        final List<RelationRolePermission> rolePermissions = build(roleId, permIds);
         saveBatch(rolePermissions);
         return rolePermissions;
     }
@@ -39,7 +48,24 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * @param permIds 权限id
      */
     default void config(long roleId, Collection<Long> permIds) {
-        //todo
+        //已有数据 (含有id)
+        final List<RelationRolePermission> oldData = listByRoleId(Collections.singleton(roleId));
+        //新数据 (不含id)
+        final List<RelationRolePermission> newData = build(roleId, permIds);
+
+
+        //过滤出不存在的，进行删除
+        final List<RelationRolePermission> data2Del = oldData.stream().filter(o -> !newData.contains(o)).toList();
+        if (data2Del.size() > 0) {
+            removeBatchByIds(data2Del.stream().map(BasePo::getId).collect(Collectors.toList()));
+        }
+
+        //过滤出新增的，进行添加
+        final List<RelationRolePermission> data2Add = newData.stream().filter(o -> !oldData.contains(o)).toList();
+        if (data2Add.size() > 0) {
+            saveBatch(data2Add);
+        }
+
     }
 
     /**
