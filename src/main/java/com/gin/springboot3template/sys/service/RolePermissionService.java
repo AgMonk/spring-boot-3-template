@@ -1,9 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.entity.RelationUserRole;
-import com.gin.springboot3template.sys.entity.SystemRole;
-import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色和权限联合服务
@@ -43,12 +43,41 @@ public class RolePermissionService {
         final List<SystemUser.Bo> userData = systemUserService.listByIds(userId).stream().map(SystemUser.Bo::new).toList();
 
         //查询用户持有的角色
+        final List<RelationUserRole.Bo> userRoles = relationUserRoleService.listByUserId(userId).stream().map(RelationUserRole.Bo::new).toList();
+        // 如果没有角色 直接返回
+        if (userRoles.size() == 0) {
+            return userData;
+        }
+        //将角色放入用户bo
+        userData.forEach(u -> u.setRoles(userRoles.stream().filter(i -> i.getUserId().equals(u.getId())).collect(Collectors.toList())));
 
-        //补充角色额外信息
+        // 角色id去重
+        final List<Long> roleId = userRoles.stream().map(RelationUserRole.Bo::getRoleId).distinct().sorted().toList();
+        // 查询角色信息
+        final List<SystemRole> systemRoles = systemRoleService.listByIds(roleId);
+        // 构建map
+        HashMap<Long, SystemRole> roleHashMap = new HashMap<>(systemRoles.size());
+        systemRoles.forEach(i -> roleHashMap.put(i.getId(), i));
+        //补充角色三个字段信息
+        userRoles.forEach(i -> i.with(roleHashMap.get(i.getRoleId())));
 
-        //查询角色持有的权限
-
-        //todo
+        // 角色持有的权限信息
+        final List<RelationRolePermission> rolePermissions = relationRolePermissionService.listByRoleId(roleId);
+        // 如果没有权限 直接返回
+        if (rolePermissions.size() == 0) {
+            return userData;
+        }
+        // 权限id去重
+        final List<Long> permissionId = rolePermissions.stream().map(RelationRolePermission::getPermissionId).distinct().sorted().toList();
+        // 权限列表
+        final List<SystemPermission> permissions = systemPermissionService.listByIds(permissionId);
+        //为每个角色补充权限信息
+        userRoles.forEach(role -> {
+            // 该角色持有的权限id
+            final List<Long> permId = rolePermissions.stream().filter(i -> i.getRoleId().equals(role.getRoleId())).map(RelationRolePermission::getPermissionId).toList();
+            // 放入权限
+            role.setPermissions(permissions.stream().filter(i -> permId.contains(i.getId())).collect(Collectors.toList()));
+        });
         return userData;
     }
 

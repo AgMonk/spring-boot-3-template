@@ -97,6 +97,8 @@ public class RelationUserRole extends BasePo {
     @Setter
     @Schema(name = "角色及其持有的权限")
     public static class Bo extends BaseBo {
+        @Schema(description = "用户id")
+        Long userId;
         @Schema(description = "角色id")
         Long roleId;
         @Schema(description = "修改时间(UNIX秒)")
@@ -123,6 +125,9 @@ public class RelationUserRole extends BasePo {
          * @param systemRole 角色
          */
         public void with(SystemRole systemRole) {
+            if (systemRole == null) {
+                return;
+            }
             this.name = systemRole.getName();
             this.nameZh = systemRole.getNameZh();
             this.remark = systemRole.getRemark();
