@@ -11,7 +11,7 @@ import java.util.List;
  * @version : v1.0.0
  * @since : 2022/12/14 13:52
  */
-public interface ClassAuthorityEvaluator extends AuthorityProvider {
+public interface ClassAuthorityEvaluator {
     /**
      * 用于向 PermissionEvaluatorProxyService 注册，不能重复
      * @return 本类所管理的资源class
