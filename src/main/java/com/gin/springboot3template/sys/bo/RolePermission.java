@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(name = "角色及其持有的权限")
 public class RolePermission extends BaseBo {
     @Schema(description = "名称")
     String name;

@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -20,16 +21,20 @@ import org.hibernate.annotations.Comment;
 @TableName(value = SystemPermission.TABLE_NAME, autoResultMap = true)
 @Entity(name = SystemPermission.TABLE_NAME)
 @NoArgsConstructor
+@Schema(name = "接口权限")
 public class SystemPermission extends BasePo {
     public static final String TABLE_NAME = "t_system_entity_permission";
     @Column(length = 50, nullable = false, unique = true)
     @Comment("路径")
+    @Schema(description = "路径")
     String path;
     @Column(length = 100)
     @Comment("摘要")
+    @Schema(description = "摘要")
     String summary;
     @Column(length = 100)
     @Comment("描述")
+    @Schema(description = "描述")
     String description;
 
     public SystemPermission(String path) {

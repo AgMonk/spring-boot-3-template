@@ -24,7 +24,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @param params 参数
      * @return 添加好的角色
      */
-    default List<RelationUserRole> addByUserIdParam(long userId, Collection<RelationUserRole.Param> params) {
+    default List<RelationUserRole> add(long userId, Collection<RelationUserRole.Param> params) {
         final List<RelationUserRole> userRoles = params.stream().map(i -> i.build(userId)).toList();
         saveBatch(userRoles);
         return userRoles;
@@ -35,7 +35,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @param userId 用户id
      * @param params 参数
      */
-    default void configByUserIdParam(long userId, Collection<RelationUserRole.Param> params) {
+    default void config(long userId, Collection<RelationUserRole.Param> params) {
         // 查询指定用户持有的角色id
         //已有数据 (含有id)
         final List<RelationUserRole> oldData = listByUserId(Collections.singleton(userId));
@@ -74,7 +74,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @param userId  用户id
      * @param roleIds 角色id
      */
-    default void delByUserIdRoleId(long userId, Collection<Long> roleIds) {
+    default void del(long userId, Collection<Long> roleIds) {
         final QueryWrapper<RelationUserRole> qw = new QueryWrapper<>();
         qw.in("role_id", roleIds).eq("user_id", userId);
         remove(qw);

@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 角色和权限统一服务
+ * 角色和权限联合服务
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/14 17:10
@@ -82,32 +82,6 @@ public class RolePermissionService {
         return null;
     }
 
-    /**
-     * 为指定角色添加权限
-     * @param roleId  角色id
-     * @param permIds 权限id
-     */
-    public void permissionAddByRoleId(long roleId, Collection<Long> permIds) {
-        //todo
-    }
-
-    /**
-     * 为指定角色配置权限
-     * @param roleId  角色id
-     * @param permIds 权限id
-     */
-    public void permissionConfigByRoleId(long roleId, Collection<Long> permIds) {
-        //todo
-    }
-
-    /**
-     * 为指定角色删除权限
-     * @param roleId  角色id
-     * @param permIds 权限id
-     */
-    public void permissionDelByRoleId(long roleId, Collection<Long> permIds) {
-        //todo
-    }
 
     /**
      * 删除角色(连带删除所有对该角色的持有)
