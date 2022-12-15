@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.security.bo;
+package com.gin.springboot3template.sys.bo;
 
 import com.gin.springboot3template.sys.base.BaseBo;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 角色持有的权限
+ * 用户持有的角色
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/14 17:57
@@ -17,11 +17,9 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RolePermission extends BaseBo {
-    @Schema(description = "角色ID")
-    Long roleId;
+public class UserRole extends BaseBo {
 
-    @Schema(description = "权限")
-    List<String> permissions;
+    @Schema(description = "角色和权限")
+    List<RolePermission> rolePermissions;
 
 }   

@@ -25,6 +25,12 @@ public class SystemPermission extends BasePo {
     @Column(length = 50, nullable = false, unique = true)
     @Comment("路径")
     String path;
+    @Column(length = 100)
+    @Comment("摘要")
+    String summary;
+    @Column(length = 100)
+    @Comment("描述")
+    String description;
 
     public SystemPermission(String path) {
         super();
