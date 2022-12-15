@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,8 @@ public class SystemRole extends BasePo {
     @Setter
     @Schema(name = "参数对象(添加/修改)")
     @Validated
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Param {
         @Schema(description = "名称")
         @NotNull
@@ -50,6 +53,11 @@ public class SystemRole extends BasePo {
         String nameZh;
         @Schema(description = "备注")
         String remark;
+
+        public Param(String name, String nameZh) {
+            this.name = name;
+            this.nameZh = nameZh;
+        }
 
         public SystemRole build() {
             final SystemRole systemRole = new SystemRole();
