@@ -83,20 +83,6 @@ public class RolePermissionService {
 
 
     /**
-     * 查询指定用户的角色
-     * @param userId 用户id
-     * @return 角色
-     */
-    public List<SystemUser.Bo> listUserRole(Collection<Long> userId) {
-        //todo
-        final List<SystemUser.Bo> data = systemUserService.listByIds(userId).stream().map(SystemUser.Bo::new).toList();
-
-        final List<RelationUserRole> relationUserRoles = relationUserRoleService.listByUserId(userId);
-        return data;
-    }
-
-
-    /**
      * 删除角色(连带删除所有对该角色的持有)
      * @param roleId 角色id
      * @return 被删除的角色
