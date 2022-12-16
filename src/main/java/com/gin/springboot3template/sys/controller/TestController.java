@@ -3,6 +3,7 @@ package com.gin.springboot3template.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.base.BasePageParam;
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.SystemUserService;
@@ -36,15 +37,15 @@ public class TestController {
 
     @GetMapping("page")
     @Operation(summary = "分页查询")
-    @PreAuthorize("hasAuthority('/test/page') or hasRole('admin')")
-    public Res<Void> test(@ParameterObject @Validated PageParam pageParam) {
+    @PreAuthorize("hasPermission(#request.requestURI,'角色','admin')")
+    public Res<Void> test(@ParameterObject @Validated PageParam pageParam, HttpServletRequest request) {
         System.out.println("pageParam.getId() = " + pageParam.getId());
         return Res.of(null);
     }
 
     @GetMapping("page1")
     @Operation(summary = "分页查询")
-    @PreAuthorize("hasPermission(#request.requestURI,'路径','访问')")
+    @PreAuthorize(Constant.EVALUATOR_HAS_PERMISSION_PATH)
     public Res<Void> test(Integer id, HttpServletRequest request) {
         final SystemUser systemUser = systemUserService.getById(id);
         System.out.println("systemUser = " + systemUser);
