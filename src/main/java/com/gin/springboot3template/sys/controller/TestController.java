@@ -9,6 +9,7 @@ import com.gin.springboot3template.sys.service.SystemUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +44,8 @@ public class TestController {
 
     @GetMapping("page1")
     @Operation(summary = "分页查询")
-    @PreAuthorize("hasPermission(#id,'测试','权限')")
-    public Res<Void> test(Integer id) {
+    @PreAuthorize("hasPermission(#request.requestURI,'路径','访问')")
+    public Res<Void> test(Integer id, HttpServletRequest request) {
         final SystemUser systemUser = systemUserService.getById(id);
         System.out.println("systemUser = " + systemUser);
         return Res.of(null);

@@ -64,11 +64,11 @@ public class SystemPermission extends BasePo {
         setPath(path);
         setPreAuthorize(preAuthorize.value());
         if (operation != null) {
-            setSummary(operation.summary());
-            setDescription(operation.description());
+            this.summary = "".equals(operation.summary()) ? null : operation.summary();
+            this.description = "".equals(operation.description()) ? null : operation.description();
         }
         if (tag != null) {
-            setGroupName(tag.name());
+            this.groupName = "".equals(tag.name()) ? null : tag.name();
         }
     }
 

@@ -6,9 +6,10 @@ import com.gin.springboot3template.sys.security.bo.MyUserDetails;
 import com.gin.springboot3template.sys.security.interfaze.ClassAuthorityEvaluator;
 import com.gin.springboot3template.sys.security.interfaze.TypeNameAuthorityEvaluator;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,7 +22,8 @@ import java.util.List;
  * @version : v1.0.0
  * @since : 2022/12/14 13:31
  */
-@Service
+@Component
+@Slf4j
 public class PermissionEvaluatorProxyService implements PermissionEvaluator {
     /**
      * 通过class来选择 AuthorityEvaluator 的Map
@@ -41,6 +43,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
+        log.debug("检查权限: {} {}", targetDomainObject, permission);
         if (targetDomainObject == null) {
             return false;
         }
@@ -53,6 +56,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         //从 classMap 中选择  权限评估器
         final ClassAuthorityEvaluator authorityEvaluator = this.classMap.getOrDefault(targetDomainObject.getClass(), null);
         if (authorityEvaluator == null) {
+            log.warn("没有负责该 Class 的权限评估器: " + targetDomainObject.getClass());
             return false;
         }
         return authorityEvaluator.hasPermission(myUserDetails, targetDomainObject, permission);
@@ -68,6 +72,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
+        log.debug("检查权限: {} {} {}", targetId, targetType, permission);
         if (targetId == null) {
             return false;
         }
@@ -80,6 +85,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         //从 nameMap 中选择  权限评估器
         final TypeNameAuthorityEvaluator authorityEvaluator = this.nameMap.getOrDefault(targetType, null);
         if (authorityEvaluator == null) {
+            log.warn("没有负责该类型的权限评估器: " + targetType);
             return false;
         }
         return authorityEvaluator.hasPermission(myUserDetails, targetId, permission);

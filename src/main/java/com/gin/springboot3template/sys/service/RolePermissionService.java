@@ -44,13 +44,17 @@ public class RolePermissionService implements AuthorityProvider {
      */
     @Override
     public Set<GrantedAuthority> getAuthorities(long userId) {
-        final List<SystemUser.Bo> roles = listAuthorityByUserId(Collections.singleton(userId));
-        if (roles.size() == 0) {
+        final List<SystemUser.Bo> roleList = listAuthorityByUserId(Collections.singleton(userId));
+        if (roleList.size() == 0) {
             return new HashSet<>();
         }
-        final SystemUser.Bo bo = roles.get(0);
+        final SystemUser.Bo bo = roleList.get(0);
         Set<String> data = new HashSet<>();
-        bo.getRoles().forEach(role -> {
+        final List<RelationUserRole.Bo> userRoles = bo.getRoles();
+        if (CollectionUtils.isEmpty(userRoles)) {
+            return new HashSet<>();
+        }
+        userRoles.forEach(role -> {
             //添加角色
             data.add(DEFAULT_ROLE_PREFIX + role.getName());
             //添加权限
