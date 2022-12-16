@@ -111,6 +111,8 @@ public class RelationUserRole extends BasePo {
         String name;
         @Schema(description = "中文名称")
         String nameZh;
+        @Schema(description = "描述")
+        String description;
         @Schema(description = "备注")
         String remark;
         @Schema(description = "权限")
@@ -131,6 +133,7 @@ public class RelationUserRole extends BasePo {
             this.name = systemRole.getName();
             this.nameZh = systemRole.getNameZh();
             this.remark = systemRole.getRemark();
+            this.description = systemRole.getDescription();
         }
     }
 }

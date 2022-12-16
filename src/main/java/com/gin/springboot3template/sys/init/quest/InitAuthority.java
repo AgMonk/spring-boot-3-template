@@ -92,14 +92,13 @@ public class InitAuthority implements ApplicationRunner {
         initRoles();
 
         initAdminUser();
-        // todo 自动创建 admin 账号 , 赋予admin角色 , 每次启动赋予随机密码
     }
 
     /**
      * 初始化超管账号
      */
     private void initAdminUser() {
-
+        //todo
     }
 
     /**
@@ -152,7 +151,7 @@ public class InitAuthority implements ApplicationRunner {
     }
 
     /**
-     * 初始化角色,创建 admin 角色
+     * 初始化角色,创建 角色 超管(admin) 角色管理员(roleAdmin) 角色分发员(roleDistributor)
      */
     private void initRoles() {
         // todo 自动创建 admin 角色

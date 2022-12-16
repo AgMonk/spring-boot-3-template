@@ -13,5 +13,7 @@ public class Constant {
     public static final String HAS_PERMISSION = "hasPermission";
     public static final String REMEMBER_ME_KEY = "rememberMe";
     public static final String ROLE_ADMIN = "admin";
+    public static final String ROLE_ROLE_ADMIN = "roleAdmin";
+    public static final String ROLE_ROLE_DISTRIBUTOR = "roleDistributor";
     public static final String VERIFY_CODE_KEY = "vc";
 }

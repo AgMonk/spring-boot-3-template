@@ -34,6 +34,9 @@ public class SystemRole extends BasePo {
     @Comment("中文名称")
     String nameZh;
     @Column(length = 200)
+    @Comment("描述")
+    String description;
+    @Column(length = 200)
     @Comment("备注")
     String remark;
     @Column
@@ -53,13 +56,10 @@ public class SystemRole extends BasePo {
         @Schema(description = "中文名称")
         @NotNull
         String nameZh;
+        @Schema(description = "描述")
+        String description;
         @Schema(description = "备注")
         String remark;
-
-        public Param(String name, String nameZh) {
-            this.name = name;
-            this.nameZh = nameZh;
-        }
 
         public SystemRole build() {
             final SystemRole systemRole = new SystemRole();
