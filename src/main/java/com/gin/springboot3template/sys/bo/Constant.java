@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.bo;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 常量
@@ -40,18 +41,6 @@ public class Constant {
     public static final String API_UPDATE = "update";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-    /**
-     * 判断根据路径访问的权限
-     */
-    public static final String EVALUATOR_HAS_PERMISSION_PATH = "hasPermission(#request.requestURI,'路径','访问')";
-    /**
-     * 权限评估期负责类型
-     */
-    public static final String EVALUATOR_TYPE_PATH = "路径";
-    /**
-     * 权限评估期负责类型
-     */
-    public static final String EVALUATOR_TYPE_ROLE = "角色";
     public static final String HAS_PERMISSION = "hasPermission";
     public static final String REMEMBER_ME_KEY = "rememberMe";
     /**
@@ -71,4 +60,25 @@ public class Constant {
      */
     public static final List<String> DEFAULT_ROLES = List.of(ROLE_ADMIN, ROLE_ROLE_ADMIN, ROLE_ROLE_DISTRIBUTOR);
     public static final String VERIFY_CODE_KEY = "vc";
+
+    /**
+     * 权限评估相关
+     */
+    public static class Evaluator {
+
+        public static final Pattern HAS_PERMISSION_PATTERN = Pattern.compile("^hasPermission\\((.+?),(.+?),(.+?)\\)$");
+        /**
+         * 判断根据路径访问的权限
+         */
+        public static final String STRING_PATH = "hasPermission(#request.requestURI,'路径','访问')";
+        public static final Pattern STRING_PATTERN = Pattern.compile("^'(.*)'$");
+        /**
+         * 权限评估期负责类型
+         */
+        public static final String TYPE_PATH = "路径";
+        /**
+         * 权限评估期负责类型
+         */
+        public static final String TYPE_ROLE = "角色";
+    }
 }

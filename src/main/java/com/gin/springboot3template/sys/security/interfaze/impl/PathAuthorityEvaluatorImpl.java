@@ -18,7 +18,7 @@ import java.util.List;
 public class PathAuthorityEvaluatorImpl implements TypeNameAuthorityEvaluator {
     @Override
     public List<String> getTargetTypes() {
-        return Collections.singletonList(Constant.EVALUATOR_TYPE_PATH);
+        return Collections.singletonList(Constant.Evaluator.TYPE_PATH);
     }
 
     @Override

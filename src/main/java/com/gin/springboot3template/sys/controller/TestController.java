@@ -37,7 +37,7 @@ public class TestController {
 
     @GetMapping("page")
     @Operation(summary = "分页查询")
-    @PreAuthorize("hasPermission(#request.requestURI,'角色','admin')")
+    @PreAuthorize("hasPermission('admin','角色','访问')")
     public Res<Void> test(@ParameterObject @Validated PageParam pageParam, HttpServletRequest request) {
         System.out.println("pageParam.getId() = " + pageParam.getId());
         return Res.of(null);
@@ -45,7 +45,7 @@ public class TestController {
 
     @GetMapping("page1")
     @Operation(summary = "分页查询")
-    @PreAuthorize(Constant.EVALUATOR_HAS_PERMISSION_PATH)
+    @PreAuthorize(Constant.Evaluator.STRING_PATH)
     public Res<Void> test(Integer id, HttpServletRequest request) {
         final SystemUser systemUser = systemUserService.getById(id);
         System.out.println("systemUser = " + systemUser);
