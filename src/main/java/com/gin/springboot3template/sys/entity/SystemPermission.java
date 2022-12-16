@@ -1,14 +1,21 @@
 package com.gin.springboot3template.sys.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.Objects;
 
 /**
  * 系统权限
@@ -27,8 +34,13 @@ public class SystemPermission extends BasePo {
     @Column(length = 50, nullable = false, unique = true)
     @Comment("路径")
     @Schema(description = "路径")
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     String path;
-    @Column(length = 100)
+    @Column(length = 50)
+    @Comment("分组")
+    @Schema(description = "分组")
+    String groupName;
+    @Column(length = 50)
     @Comment("摘要")
     @Schema(description = "摘要")
     String summary;
@@ -37,8 +49,53 @@ public class SystemPermission extends BasePo {
     @Schema(description = "描述")
     String description;
 
+    @Column(length = 100)
+    @Comment("权限检查")
+    @Schema(description = "权限检查")
+    String preAuthorize;
+
     public SystemPermission(String path) {
         super();
         this.path = path;
+    }
+
+    public SystemPermission(String path, Tag tag, Operation operation, PreAuthorize preAuthorize) {
+        super();
+        setPath(path);
+        setPreAuthorize(preAuthorize.value());
+        if (operation != null) {
+            setSummary(operation.summary());
+            setDescription(operation.description());
+        }
+        if (tag != null) {
+            setGroupName(tag.name());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SystemPermission that = (SystemPermission) o;
+        return getPath().equals(that.getPath());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPath());
+    }
+
+    /**
+     * 更新权限数据
+     * @param systemPermission 新数据
+     */
+    public void update(SystemPermission systemPermission) {
+        this.groupName = systemPermission.getGroupName();
+        this.summary = systemPermission.getSummary();
+        this.description = systemPermission.getDescription();
     }
 }

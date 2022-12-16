@@ -35,7 +35,7 @@ public class VerifyCodeController {
     private final Producer producer;
 
     @GetMapping("/base64")
-    @Operation(summary = "Base64格式")
+    @Operation(summary = "Base64格式", description = "获取验证码")
     @ResponseBody
     public Res<String> base64(@Parameter(hidden = true) HttpSession httpSession) throws IOException {
         //生成验证码
