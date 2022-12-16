@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * 初始化任务模板
+ * 初始化 超管用户 角色 权限
  * @author bx002
  */
 @Component
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 @Slf4j
 @RequiredArgsConstructor
 @Order(1)
-public class InitRolePermission implements ApplicationRunner {
+public class InitAuthority implements ApplicationRunner {
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
 

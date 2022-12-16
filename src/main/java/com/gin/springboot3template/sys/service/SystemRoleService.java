@@ -1,7 +1,11 @@
 package com.gin.springboot3template.sys.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author : ginstone
@@ -16,10 +20,21 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param param 参数
      * @return 添加好的角色
      */
-    default SystemRole addByParam(SystemRole.Param param) {
-        final SystemRole entity = param.build();
-        save(entity);
-        return entity;
+    default List<SystemRole> addByParam(Collection<SystemRole.Param> param) {
+        final List<SystemRole> roles = param.stream().map(SystemRole.Param::build).toList();
+        saveBatch(roles);
+        return roles;
+    }
+
+    /**
+     * 通过名称查询角色
+     * @param name 名称
+     * @return 角色
+     */
+    default SystemRole getByName(String name) {
+        final QueryWrapper<SystemRole> qw = new QueryWrapper<>();
+        qw.eq("name", name);
+        return getOne(qw);
     }
 
     /**
