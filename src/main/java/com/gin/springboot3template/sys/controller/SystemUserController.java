@@ -7,6 +7,7 @@ import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @MyRestController("/sys/user")
 @RequiredArgsConstructor
 @Tag(name = "用户接口")
+@Slf4j
 public class SystemUserController {
     private final MyUserDetailsServiceImpl myUserDetailsService;
 

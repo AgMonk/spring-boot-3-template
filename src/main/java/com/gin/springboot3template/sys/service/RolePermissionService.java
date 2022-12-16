@@ -2,9 +2,11 @@ package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.entity.*;
+import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.security.interfaze.AuthorityProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.gin.springboot3template.sys.bo.Constant.DEFAULT_ROLES;
 import static com.gin.springboot3template.sys.bo.Constant.DEFAULT_ROLE_PREFIX;
 
 /**
@@ -116,6 +119,10 @@ public class RolePermissionService implements AuthorityProvider {
         }
         //删除角色
         final List<SystemRole> systemRoles = systemRoleService.listByIds(roleId);
+        // 禁止删除 默认角色
+        if (systemRoles.stream().map(SystemRole::getName).anyMatch(DEFAULT_ROLES::contains)) {
+            throw BusinessException.of(HttpStatus.FORBIDDEN, "禁止操作", "禁止删除系统预设角色");
+        }
         systemRoleService.removeByIds(roleId);
         //连带删除所有对该角色的持有
         final QueryWrapper<RelationUserRole> qw = new QueryWrapper<>();

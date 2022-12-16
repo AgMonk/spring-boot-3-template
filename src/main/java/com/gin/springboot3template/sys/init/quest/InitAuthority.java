@@ -145,7 +145,7 @@ public class InitAuthority implements ApplicationRunner {
         if (this.fullPermission.size() > 0) {
             log.info("移除角色对已移除权限的持有");
             final QueryWrapper<RelationRolePermission> qw = new QueryWrapper<>();
-            qw.in("permission_id", this.fullPermission.stream().map(BasePo::getId).toList());
+            qw.notIn("permission_id", this.fullPermission.stream().map(BasePo::getId).toList());
             relationRolePermissionService.remove(qw);
         }
     }
