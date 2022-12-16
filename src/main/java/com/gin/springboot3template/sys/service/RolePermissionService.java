@@ -14,7 +14,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.gin.springboot3template.sys.security.bo.MyUserDetails.DEFAULT_ROLE_PREFIX;
+import static com.gin.springboot3template.sys.bo.Constant.DEFAULT_ROLE_PREFIX;
 
 /**
  * 角色和权限联合服务

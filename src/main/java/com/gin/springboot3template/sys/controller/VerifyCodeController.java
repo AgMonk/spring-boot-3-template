@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.controller;
 
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.response.Res;
 import com.google.code.kaptcha.Producer;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Tag(name = "验证码接口")
 public class VerifyCodeController {
-    public static final String VERIFY_CODE_KEY = "vc";
     private final Producer producer;
 
     @GetMapping("/base64")
@@ -60,7 +60,7 @@ public class VerifyCodeController {
         //生成验证码
         final String verifyCode = producer.createText();
         //保存到 session 中（或redis中）
-        httpSession.setAttribute(VERIFY_CODE_KEY, verifyCode);
+        httpSession.setAttribute(Constant.VERIFY_CODE_KEY, verifyCode);
         //生成图片
         return producer.createImage(verifyCode);
     }

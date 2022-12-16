@@ -37,7 +37,7 @@ import java.util.Objects;
         @UniqueConstraint(name = "unique_user_role", columnNames = {"userId", "roleId"}),
 })
 public class RelationUserRole extends BasePo {
-    public static final String TABLE_NAME = "t_system_relation_user_role";
+    protected static final String TABLE_NAME = "t_system_relation_user_role";
     @Column(nullable = false)
     @Comment("用户id")
     @TableField(updateStrategy = FieldStrategy.NEVER)

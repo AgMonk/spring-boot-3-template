@@ -28,7 +28,7 @@ import java.util.Objects;
         @UniqueConstraint(name = "unique_user_role", columnNames = {"roleId", "permissionId"}),
 })
 public class RelationRolePermission extends BasePo {
-    public static final String TABLE_NAME = "t_system_relation_role_permission";
+    protected static final String TABLE_NAME = "t_system_relation_role_permission";
     @Column(nullable = false)
     @Comment("角色id")
     Long roleId;

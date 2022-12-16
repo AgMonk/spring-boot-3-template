@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.security.component;
 
+import com.gin.springboot3template.sys.bo.Constant;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
@@ -17,8 +18,7 @@ import java.util.UUID;
  */
 @Component
 public class MyRememberMeServices extends PersistentTokenBasedRememberMeServices {
-    public static final String REMEMBER_ME_KEY = "rememberMe";
-    public static final List<String> TRUE_VALUES = List.of("true", "yes", "on", "1");
+    private static final List<String> TRUE_VALUES = List.of("true", "yes", "on", "1");
 
     public MyRememberMeServices(UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
         super(UUID.randomUUID().toString(), userDetailsService, tokenRepository);
@@ -26,7 +26,7 @@ public class MyRememberMeServices extends PersistentTokenBasedRememberMeServices
 
     @Override
     protected boolean rememberMeRequested(HttpServletRequest request, String parameter) {
-        final String rememberMe = (String) request.getAttribute(REMEMBER_ME_KEY);
+        final String rememberMe = (String) request.getAttribute(Constant.REMEMBER_ME_KEY);
         if (rememberMe != null) {
             for (String trueValue : TRUE_VALUES) {
                 if (trueValue.equalsIgnoreCase(rememberMe)) {

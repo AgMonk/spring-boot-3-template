@@ -26,7 +26,7 @@ import org.springframework.validation.annotation.Validated;
 @Entity(name = SystemRole.TABLE_NAME)
 @NoArgsConstructor
 public class SystemRole extends BasePo {
-    public static final String TABLE_NAME = "t_system_entity_role";
+    protected static final String TABLE_NAME = "t_system_entity_role";
     @Column(length = 50, nullable = false, unique = true)
     @Comment("名称")
     String name;

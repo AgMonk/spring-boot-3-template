@@ -3,6 +3,7 @@ package com.gin.springboot3template.sys.init.quest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.base.BasePo;
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
@@ -40,7 +41,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Order(1)
 public class InitRolePermission implements ApplicationRunner {
-    public static final String HAS_PERMISSION = "hasPermission";
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
 
@@ -89,9 +89,17 @@ public class InitRolePermission implements ApplicationRunner {
 
         initPermissions();
 
+        initRoles();
 
-        // todo 自动创建 admin 角色
+        initAdminUser();
         // todo 自动创建 admin 账号 , 赋予admin角色 , 每次启动赋予随机密码
+    }
+
+    /**
+     * 初始化超管账号
+     */
+    private void initAdminUser() {
+
     }
 
     /**
@@ -119,7 +127,7 @@ public class InitRolePermission implements ApplicationRunner {
                 final ArrayList<SystemPermission> list = new ArrayList<>();
                 final Operation operation = method.getAnnotation(Operation.class);
                 final PreAuthorize preAuthorize = method.getAnnotation(PreAuthorize.class);
-                if (CollectionUtils.isEmpty(apiPaths) || preAuthorize == null || preAuthorize.value().contains(HAS_PERMISSION)) {
+                if (CollectionUtils.isEmpty(apiPaths) || preAuthorize == null || preAuthorize.value().contains(Constant.HAS_PERMISSION)) {
                     return null;
                 }
                 for (String prePath : prePaths) {
@@ -141,5 +149,12 @@ public class InitRolePermission implements ApplicationRunner {
             qw.in("permission_id", this.fullPermission.stream().map(BasePo::getId).toList());
             relationRolePermissionService.remove(qw);
         }
+    }
+
+    /**
+     * 初始化角色,创建 admin 角色
+     */
+    private void initRoles() {
+        // todo 自动创建 admin 角色
     }
 }

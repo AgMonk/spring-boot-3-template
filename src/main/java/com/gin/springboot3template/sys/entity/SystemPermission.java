@@ -30,7 +30,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Schema(name = "接口权限")
 public class SystemPermission extends BasePo {
-    public static final String TABLE_NAME = "t_system_entity_permission";
+    protected static final String TABLE_NAME = "t_system_entity_permission";
     @Column(length = 50, nullable = false, unique = true)
     @Comment("路径")
     @Schema(description = "路径")

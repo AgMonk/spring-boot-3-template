@@ -28,7 +28,7 @@ import java.util.List;
 @TableName(value = SystemUser.TABLE_NAME, autoResultMap = true)
 @Entity(name = SystemUser.TABLE_NAME)
 public class SystemUser extends BasePo {
-    public static final String TABLE_NAME = "t_system_entity_user";
+    protected static final String TABLE_NAME = "t_system_entity_user";
     @Column(length = 50, nullable = false, unique = true)
     @Comment("用户名")
     @TableField(updateStrategy = FieldStrategy.NEVER)

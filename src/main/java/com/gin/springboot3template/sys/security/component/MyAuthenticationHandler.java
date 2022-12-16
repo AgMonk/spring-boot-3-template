@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.security.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import jakarta.servlet.ServletException;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.gin.springboot3template.sys.controller.VerifyCodeController.VERIFY_CODE_KEY;
+import static com.gin.springboot3template.sys.bo.Constant.VERIFY_CODE_KEY;
 
 
 /**
@@ -42,8 +43,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         , SessionInformationExpiredStrategy
         , AccessDeniedHandler, AuthenticationEntryPoint {
 
-    public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * 认证失败处理
@@ -59,7 +59,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         if (e instanceof InsufficientAuthenticationException) {
             detailMessage = "请登陆后再访问";
         }
-        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, "认证异常")));
     }
@@ -82,7 +82,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         } else if (accessDeniedException instanceof AuthorizationServiceException) {
             detailMessage = AuthorizationServiceException.class.getSimpleName() + " " + accessDeniedException.getLocalizedMessage();
         }
-        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, "禁止访问")));
     }
@@ -92,7 +92,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(exception.getLocalizedMessage(), "登陆失败")));
     }
@@ -102,7 +102,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "登陆成功")));
         //清理使用过的验证码
@@ -118,7 +118,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
     public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
         String message = "该账号已从其他设备登陆,如果不是您自己的操作请及时修改密码";
         final HttpServletResponse response = event.getResponse();
-        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(event.getSessionInformation(), message)));
     }
@@ -133,7 +133,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      */
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        response.setContentType(APPLICATION_JSON_CHARSET_UTF_8);
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "注销成功")));
     }

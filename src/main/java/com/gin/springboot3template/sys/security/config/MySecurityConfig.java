@@ -36,15 +36,15 @@ public class MySecurityConfig {
     /**
      * 接口文档放行
      */
-    public static final List<String> DOC_WHITE_LIST = List.of("/doc.html", "/webjars/**", "/v3/api-docs/**");
+    private static final List<String> DOC_WHITE_LIST = List.of("/doc.html", "/webjars/**", "/v3/api-docs/**");
     /**
      * 测试接口放行
      */
-    public static final List<String> TEST_WHITE_LIST = List.of("/test/**");
+    private static final List<String> TEST_WHITE_LIST = List.of("/test/**");
     /**
      * 验证码放行
      */
-    public static final List<String> VERIFY_CODE_WHITE_LIST = List.of("/sys/verifyCode/**");
+    private static final List<String> VERIFY_CODE_WHITE_LIST = List.of("/sys/verifyCode/**");
 
     /**
      * 获取AuthenticationManager（认证管理器），登录时认证使用

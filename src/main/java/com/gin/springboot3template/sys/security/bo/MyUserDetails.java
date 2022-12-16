@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.security.bo;
 
 import com.gin.springboot3template.sys.base.BaseBo;
+import com.gin.springboot3template.sys.bo.Constant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class MyUserDetails extends BaseBo implements UserDetails {
-    public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
     @Schema(description = "用户名")
     private String username;
@@ -73,7 +73,7 @@ public class MyUserDetails extends BaseBo implements UserDetails {
     }
 
     public void addRole(String role) {
-        addPermission(DEFAULT_ROLE_PREFIX + role);
+        addPermission(Constant.DEFAULT_ROLE_PREFIX + role);
     }
 
     /**
@@ -90,7 +90,7 @@ public class MyUserDetails extends BaseBo implements UserDetails {
     }
 
     public boolean hasRole(String role) {
-        return hasAuthority(DEFAULT_ROLE_PREFIX + role);
+        return hasAuthority(Constant.DEFAULT_ROLE_PREFIX + role);
     }
 
     public MyUserDetails with(Object userDetails) {

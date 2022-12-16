@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.security.service;
 
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.exception.AuthorityEvaluatorDuplicatedException;
 import com.gin.springboot3template.sys.security.bo.MyUserDetails;
 import com.gin.springboot3template.sys.security.interfaze.ClassAuthorityEvaluator;
@@ -22,7 +23,6 @@ import java.util.List;
  */
 @Service
 public class PermissionEvaluatorProxyService implements PermissionEvaluator {
-    public static final String ROLE_ADMIN = "admin";
     /**
      * 通过class来选择 AuthorityEvaluator 的Map
      */
@@ -46,7 +46,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         }
         final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
         //如果持有 admin 角色 ，直接放行
-        if (myUserDetails.hasRole(ROLE_ADMIN)) {
+        if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
             return true;
         }
         initClassMap();
@@ -73,7 +73,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         }
         final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
         //如果持有 admin 角色 ，直接放行
-        if (myUserDetails.hasRole(ROLE_ADMIN)) {
+        if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
             return true;
         }
         initNameMap();
