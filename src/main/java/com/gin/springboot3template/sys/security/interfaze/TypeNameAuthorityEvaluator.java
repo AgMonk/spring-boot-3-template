@@ -32,4 +32,6 @@ public interface TypeNameAuthorityEvaluator {
         return false;
     }
 
+    //todo 提供对权限不足的解释方法
+
 }
