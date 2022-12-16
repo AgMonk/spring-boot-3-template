@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,17 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public interface SystemPermissionService extends MyService<SystemPermission> {
     org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SystemPermissionService.class);
+
+    /**
+     * 根据路径查询权限
+     * @param path 路径
+     * @return 权限
+     */
+    default SystemPermission getByPath(String path) {
+        final QueryWrapper<SystemPermission> qw = new QueryWrapper<>();
+        qw.eq("path", path);
+        return getOne(qw);
+    }
 
     /**
      * 根据包扫描结果更新权限数据

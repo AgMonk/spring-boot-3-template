@@ -6,8 +6,6 @@ import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.SystemUserService;
-import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
-import com.gin.springboot3template.sys.validation.EntityId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +35,7 @@ public class TestController {
 
     @GetMapping("page")
     @Operation(summary = "分页查询")
-    @PreAuthorize("hasPermOrAdmin('/test/page')")
+    @PreAuthorize("hasAuthority('/test/page') or hasRole('admin')")
     public Res<Void> test(@ParameterObject @Validated PageParam pageParam) {
         System.out.println("pageParam.getId() = " + pageParam.getId());
         return Res.of(null);
@@ -58,7 +56,7 @@ public class TestController {
     public static class PageParam extends BasePageParam {
         @Schema(description = "ID")
         @NotNull
-        @EntityId(service = SystemUserServiceImpl.class)
+//        @EntityId(service = SystemUserServiceImpl.class)
         Integer id;
 
         @Override

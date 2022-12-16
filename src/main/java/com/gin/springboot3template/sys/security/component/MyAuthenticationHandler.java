@@ -84,7 +84,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         }
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, "禁止访问")));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, Constant.ACCESS_DENIED)));
     }
 
     /**

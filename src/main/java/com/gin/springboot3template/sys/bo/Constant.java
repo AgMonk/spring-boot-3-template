@@ -9,6 +9,7 @@ import java.util.List;
  * @since : 2022/12/16 12:26
  */
 public class Constant {
+    public static final String ACCESS_DENIED = "禁止访问";
     /**
      * 添加接口路径
      */
