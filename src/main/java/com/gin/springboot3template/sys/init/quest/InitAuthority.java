@@ -3,7 +3,6 @@ package com.gin.springboot3template.sys.init.quest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.base.BasePo;
-import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
@@ -126,7 +125,7 @@ public class InitAuthority implements ApplicationRunner {
                 final ArrayList<SystemPermission> list = new ArrayList<>();
                 final Operation operation = method.getAnnotation(Operation.class);
                 final PreAuthorize preAuthorize = method.getAnnotation(PreAuthorize.class);
-                if (CollectionUtils.isEmpty(apiPaths) || preAuthorize == null || preAuthorize.value().contains(Constant.HAS_PERMISSION)) {
+                if (CollectionUtils.isEmpty(apiPaths) || preAuthorize == null) {
                     return null;
                 }
                 for (String prePath : prePaths) {
