@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.response.ResPage;
 
+import java.util.function.Function;
+
 /**
  * @author : ginstone
  * @version : v1.0.0
@@ -17,7 +19,7 @@ public interface MyService<T> extends IService<T> {
      * @param param 参数
      * @return 分页数据
      */
-    default ResPage<T> pageByParam(BasePageParam param) {
+    default Page<T> pageByParam(BasePageParam param) {
         return pageByParam(param, new QueryWrapper<>());
     }
 
@@ -27,10 +29,34 @@ public interface MyService<T> extends IService<T> {
      * @param qw    查询条件
      * @return 分页数据
      */
-    default ResPage<T> pageByParam(BasePageParam param, QueryWrapper<T> qw) {
+    default Page<T> pageByParam(BasePageParam param, QueryWrapper<T> qw) {
         qw = qw != null ? qw : new QueryWrapper<>();
         //添加条件
         param.handleQueryWrapper(qw);
-        return ResPage.of(page(new Page<>(param.getPage(), param.getSize()), qw));
+        return page(new Page<>(param.getPage(), param.getSize()), qw);
     }
+
+    /**
+     * 根据参数执行分页查询 ,并返回转换后的对象
+     * @param param 参数
+     * @param func  转换方法
+     * @return 分页数据
+     */
+    default <R> ResPage<R> pageByParam(BasePageParam param, Function<T, R> func) {
+        return pageByParam(param, null, func);
+    }
+
+    /**
+     * 根据参数执行分页查询 ,并返回转换后的对象
+     * @param param 参数
+     * @param qw    查询条件
+     * @param func  转换方法
+     * @param <R>   转换目标类型
+     * @return 分页数据
+     */
+    default <R> ResPage<R> pageByParam(BasePageParam param, QueryWrapper<T> qw, Function<T, R> func) {
+        return ResPage.of(pageByParam(param, qw), func);
+    }
+
+
 }

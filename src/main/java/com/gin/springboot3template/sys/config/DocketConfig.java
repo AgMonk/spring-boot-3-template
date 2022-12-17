@@ -20,18 +20,9 @@ public class DocketConfig {
     @Bean
     public GroupedOpenApi user() {
         return GroupedOpenApi.builder()
-                .group("用户")
-                .pathsToMatch("/sys/user/**")
+                .group("用户_角色_权限")
+                .pathsToMatch("/sys/**")
                 .build();
     }
-
-    @Bean
-    public GroupedOpenApi verifyCode() {
-        return GroupedOpenApi.builder()
-                .group("验证码")
-                .pathsToMatch("/sys/verifyCode/**")
-                .build();
-    }
-
 
 }

@@ -1,11 +1,18 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
+import com.gin.springboot3template.sys.entity.SystemRole;
+import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * 角色接口
@@ -21,11 +28,17 @@ public class SystemRoleController {
     /**
      * 接口路径前缀
      */
-    protected static final String API_PREFIX = "/sys/role";
+    public static final String API_PREFIX = "/sys/role";
 
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
     /*todo 添加角色 修改角色 删除角色 分页查询角色 查询所有角色 通过关键字检索角色*/
 
+    @GetMapping("page")
+    @Operation(summary = "分页查询")
+//    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public ResPage<SystemRole.Vo> page(@ParameterObject @Validated SystemRole.PageParam pageParam, HttpServletRequest request) {
+        return systemRoleService.pageByParam(pageParam, SystemRole.Vo::new);
+    }
 
 }

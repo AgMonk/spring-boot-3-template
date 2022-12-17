@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.base.BasePo;
+import com.gin.springboot3template.sys.base.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,19 +46,43 @@ public class SystemRole extends BasePo {
     @Comment("修改时间(UNIX秒)")
     Long timeUpdate;
 
+    @Getter
+    @Setter
+    @Schema
+    public static class Vo extends BaseVo {
+        @Schema(description = "名称")
+        String name;
+        @Schema(description = "中文名称")
+        String nameZh;
+        @Schema(description = "描述")
+        String description;
+        @Schema(description = "备注")
+        String remark;
+        @Schema(description = "修改时间(UNIX秒)")
+        Long timeUpdate;
+
+        public Vo(SystemRole systemRole) {
+            BeanUtils.copyProperties(systemRole, this);
+        }
+    }
 
     @Getter
     @Setter
-    @Schema(name = "分页查询参数")
+    @Schema
     public static class PageParam extends BasePageParam {
-        @Schema(description = "ID")
-        @NotNull
-//        @EntityId(service = SystemUserServiceImpl.class)
-        Integer id;
+        @Schema(description = "关键字(名称,中文名称,描述,备注)")
+        Integer key;
 
         @Override
         public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
-            System.out.println("id = " + id);
+            queryWrapper
+                    .eq("name", key).or()
+                    .eq("name_zh", key).or()
+                    .like("name", key).or()
+                    .like("name_zh", key).or()
+                    .like("description", key).or()
+                    .like("remark", key).or()
+            ;
         }
     }
 

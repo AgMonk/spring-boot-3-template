@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author : ginstone
@@ -36,9 +37,20 @@ public class ResPage<T> extends Res<List<T>> {
         data.setPage(page.getCurrent());
         data.setSize(page.getSize());
         data.setTotal(page.getTotal());
-        data.setData(page.getRecords());
         data.setTotalPage(page.getPages());
         data.setMessage(CollectionUtils.isEmpty(page.getRecords()) ? Constant.MESSAGE_DATA_NOT_FOUND : "ok");
+        data.setData(page.getRecords());
+        return data;
+    }
+
+    public static <T, R> ResPage<R> of(Page<T> page, Function<T, R> func) {
+        final ResPage<R> data = new ResPage<>();
+        data.setPage(page.getCurrent());
+        data.setSize(page.getSize());
+        data.setTotal(page.getTotal());
+        data.setTotalPage(page.getPages());
+        data.setMessage(CollectionUtils.isEmpty(page.getRecords()) ? Constant.MESSAGE_DATA_NOT_FOUND : "ok");
+        data.setData(page.getRecords().stream().map(func).toList());
         return data;
     }
 
