@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gin.springboot3template.sys.dao.SystemUserDao;
 import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
+import com.gin.springboot3template.sys.service.SystemUserInfoService;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SystemUserServiceImpl extends ServiceImpl<SystemUserDao, SystemUser> implements SystemUserService {
     private final PasswordEncoder passwordEncoder;
+    private final SystemUserInfoService systemUserInfoService;
 
     @Override
     public void changePwd(Long userId, String oldPass, String newPass) {
@@ -53,7 +57,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserDao, SystemUser
         user.setPassword(passwordEncoder.encode(regForm.getPassword()));
         save(user);
 
-
-        //todo 写入个人信息
+        //写入个人信息
+        final SystemUserInfo info = new SystemUserInfo();
+        BeanUtils.copyProperties(regForm, info);
+        info.setUserId(user.getId());
+        systemUserInfoService.save(info);
     }
 }

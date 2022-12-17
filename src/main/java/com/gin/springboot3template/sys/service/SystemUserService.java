@@ -25,6 +25,10 @@ public interface SystemUserService extends MyService<SystemUser> {
      */
     void changePwd(Long userId, String newPass);
 
+    /**
+     * 注册
+     * @param regForm 注册表单
+     */
     void reg(RegForm regForm);
 
     /**

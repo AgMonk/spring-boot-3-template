@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.dto;
 
+import com.gin.springboot3template.sys.validation.Phone;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -16,13 +17,24 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @Setter
 public class RegForm {
-    @Schema(description = "用户名")
+    @Schema(description = "用户名,长度范围为 [6,20]")
     @NotNull
+    @Length(min = 6, max = 20)
     String username;
     @Schema(description = "密码,长度范围为 [6,20]")
     @NotNull
     @Length(min = 6, max = 20)
     String password;
 
-    //todo 个人信息部分
+    // 个人信息部分
+
+    @NotNull
+    @Schema(description = "昵称,长度范围为 [3,10]")
+    @Length(min = 3, max = 10)
+    String nickname;
+    @Schema(description = "联系电话,支持的格式为:11位手机/7位固话/带区号固话(可-号分隔)")
+    @Phone
+    String phone;
+    @Schema(description = "生日(UNIX秒)")
+    Long birthday;
 }
