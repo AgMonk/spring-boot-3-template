@@ -135,6 +135,6 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "注销成功")));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "登出成功")));
     }
 }

@@ -13,7 +13,7 @@ public class MySecurityUtils {
      * 当前用户的认证/权限信息
      * @return 当前用户的认证/权限信息
      */
-    public MyUserDetails currentUserDetails() {
+    public static MyUserDetails currentUserDetails() {
         return ((MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 }   

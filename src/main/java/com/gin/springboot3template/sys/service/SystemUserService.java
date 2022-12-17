@@ -11,11 +11,18 @@ import com.gin.springboot3template.sys.entity.SystemUser;
 public interface SystemUserService extends MyService<SystemUser> {
     /**
      * 修改密码
+     * @param userId  需要修改密码的用户id
      * @param oldPass 旧密码
      * @param newPass 新密码
      */
-    default void changePwd(String oldPass, String newPass) {
-    }
+    void changePwd(Long userId, String oldPass, String newPass);
+
+    /**
+     * 修改密码
+     * @param userId  用户id
+     * @param newPass 新密码
+     */
+    void changePwd(Long userId, String newPass);
 
     /**
      * 根据用户名查询用户信息

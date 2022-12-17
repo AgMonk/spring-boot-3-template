@@ -1,27 +1,30 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
+import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.io.IOException;
 
 /**
  * 用户接口
@@ -43,17 +46,16 @@ public class SystemUserController {
     private final SystemUserService systemUserService;
 
     @PostMapping("changePwd")
-    @Operation(summary = "修改密码")
-    public void changePwd(@Parameter(hidden = true) HttpServletRequest request, @Parameter(hidden = true) HttpServletResponse response
-            , @RequestParam @Parameter(description = "旧密码") String oldPass, @RequestParam @Parameter(description = "新密码") String newPass) {
-        //todo
+    @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
+    public void changePwd(@Parameter(hidden = true) HttpServletRequest request
+            , @Parameter(hidden = true) HttpServletResponse response
+            , @RequestParam @Parameter(description = "旧密码") String oldPass
+            , @RequestParam @Parameter(description = "新密码,长度范围为 [6,20]") @Length(min = 6, max = 20) String newPass) throws ServletException, IOException {
+        final Long userId = MySecurityUtils.currentUserDetails().getId();
 
-        systemUserService.changePwd(oldPass, newPass);
+        systemUserService.changePwd(userId, oldPass, newPass);
 //        登出
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
+        request.getRequestDispatcher(Constant.LOGOUT_URI).forward(request, response);
     }
 
     @GetMapping("findUserInfo")
@@ -64,13 +66,14 @@ public class SystemUserController {
 
     @PostMapping("login")
     @Operation(summary = "登陆", description = "需要先获取验证码,参数可以传body也可以传form")
-    public void login(@RequestBody LoginForm loginForm) {
+    public Res<MyUserDetailsVo> login(@RequestBody LoginForm loginForm) {
         //假登陆接口 ,用于生成 doc
 
         System.out.println("login...");
+        return null;
     }
 
-    @GetMapping("logout")
+    @PostMapping("logout")
     @Operation(summary = "登出")
     public void logout() {
         //假登出接口 ,用于生成 doc

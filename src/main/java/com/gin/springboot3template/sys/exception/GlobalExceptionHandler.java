@@ -6,6 +6,7 @@ import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.SystemPermissionService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Res<Void>> exceptionHandler(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<>(Res.of(null, "服务器错误 请通知管理员"), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * 参数校验处理
+     * @param e 阐述校验异常
+     * @return 处理
+     */
+    @ResponseBody
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<Res<String>> exceptionHandler(ConstraintViolationException e) {
+        return new ResponseEntity<>(Res.of(e.getLocalizedMessage(), "参数校验异常"), HttpStatus.BAD_REQUEST);
     }
 
     /**

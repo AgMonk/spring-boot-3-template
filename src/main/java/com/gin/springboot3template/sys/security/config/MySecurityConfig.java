@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.security.config;
 
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.security.component.MyAuthenticationHandler;
 import com.gin.springboot3template.sys.security.component.MyLoginFilter;
 import com.gin.springboot3template.sys.security.component.MyRememberMeServices;
@@ -108,7 +109,7 @@ public class MySecurityConfig {
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
         //登出
-        http.logout().logoutUrl("/sys/user/logout").logoutSuccessHandler(authenticationHandler);
+        http.logout().logoutUrl(Constant.LOGOUT_URI).logoutSuccessHandler(authenticationHandler);
 
         //禁用 csrf
 //        http.csrf().disable();
