@@ -1,13 +1,17 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
+import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
+import com.gin.springboot3template.sys.service.SystemUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 用户接口
@@ -24,6 +28,7 @@ public class SystemUserAdminController {
      * 接口路径前缀
      */
     public static final String API_PREFIX = SystemUserController.API_PREFIX + "/admin";
+    private final SystemUserService systemUserService;
     private final MyUserDetailsServiceImpl myUserDetailsService;
 
     @PostMapping("addRole")
@@ -36,6 +41,13 @@ public class SystemUserAdminController {
     @Operation(summary = "为指定用户配置角色")
     public void configRole() {
 //todo
+    }
+
+    @PostMapping("createUser")
+    @Operation(summary = "创建用户")
+    public Res<Void> createUser(@RequestBody RegForm regForm) {
+        systemUserService.reg(regForm);
+        return Res.of(null, "创建成功");
     }
 
     @PostMapping("delRole")
@@ -79,6 +91,4 @@ public class SystemUserAdminController {
     public void updateUserInfo() {
         //todo
     }
-
-
 }

@@ -2,8 +2,10 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.config.SystemConfig;
 import com.gin.springboot3template.sys.dto.LoginForm;
 import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
@@ -18,6 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,8 +45,8 @@ public class SystemUserController {
      */
     public static final String API_PREFIX = "/sys/user";
     private final MyUserDetailsServiceImpl myUserDetailsService;
-
     private final SystemUserService systemUserService;
+    private final SystemConfig systemConfig;
 
     @PostMapping("changePwd")
     @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
@@ -65,7 +69,7 @@ public class SystemUserController {
 
     @PostMapping("login")
     @Operation(summary = "登陆", description = "假登陆接口 ,用于生成 doc;<br/>需要先获取验证码,参数可以传body也可以传form")
-    public Res<MyUserDetailsVo> login(@RequestBody LoginForm loginForm) {
+    public Res<MyUserDetailsVo> login(@RequestBody @Validated LoginForm loginForm) {
         System.out.println("login...");
         return null;
     }
@@ -78,7 +82,10 @@ public class SystemUserController {
 
     @PostMapping("reg")
     @Operation(summary = "注册用户")
-    public Res<Void> reg(@RequestBody RegForm regForm) {
+    public Res<Void> reg(@RequestBody @Validated RegForm regForm) {
+        if (!systemConfig.isNewUser()) {
+            throw BusinessException.of(HttpStatus.FORBIDDEN, "注册功能已关闭");
+        }
         systemUserService.reg(regForm);
         return Res.of(null, "注册成功");
     }

@@ -1,3 +1,7 @@
 spring:
   profiles:
     active: dev
+
+system:
+  #注册功能开放 关闭后只能由管理员创建新用户
+  newUser: true

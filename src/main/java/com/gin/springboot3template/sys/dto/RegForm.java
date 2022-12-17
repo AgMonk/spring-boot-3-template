@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
  * @version : v1.0.0
  * @since : 2022/12/17 16:48
  */
-@Schema(description = "登录表单")
+@Schema(description = "注册表单")
 @Getter
 @Setter
 public class RegForm {
