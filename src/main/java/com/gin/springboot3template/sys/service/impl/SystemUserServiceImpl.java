@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gin.springboot3template.sys.dao.SystemUserDao;
+import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.service.SystemUserService;
@@ -39,5 +40,20 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserDao, SystemUser
         user.setId(userId);
         user.setPassword(passwordEncoder.encode(newPass));
         updateById(user);
+    }
+
+    @Override
+    public void reg(RegForm regForm) {
+        if (getByUsername(regForm.getUsername()) != null) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "用户名已存在");
+        }
+        //注册用户
+        final SystemUser user = new SystemUser();
+        user.setUsername(regForm.getUsername());
+        user.setPassword(passwordEncoder.encode(regForm.getPassword()));
+        save(user);
+
+
+        //todo 写入个人信息
     }
 }

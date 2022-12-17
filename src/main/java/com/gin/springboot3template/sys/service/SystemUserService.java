@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
 
 /**
@@ -23,6 +24,8 @@ public interface SystemUserService extends MyService<SystemUser> {
      * @param newPass 新密码
      */
     void changePwd(Long userId, String newPass);
+
+    void reg(RegForm regForm);
 
     /**
      * 根据用户名查询用户信息

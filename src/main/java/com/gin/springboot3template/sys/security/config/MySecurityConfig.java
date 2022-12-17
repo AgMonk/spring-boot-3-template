@@ -45,6 +45,10 @@ public class MySecurityConfig {
      */
     private static final List<String> TEST_WHITE_LIST = List.of("/test/**");
     /**
+     * 白名单:注册
+     */
+    private static final List<String> WHITE_LIST = List.of("/sys/user/reg");
+    /**
      * 验证码放行
      */
     private static final List<String> VERIFY_CODE_WHITE_LIST = List.of("/sys/verifyCode/**");
@@ -101,6 +105,7 @@ public class MySecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
+                .requestMatchers(HttpMethod.GET, WHITE_LIST.toArray(new String[0])).permitAll()
 //                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated()
         ;

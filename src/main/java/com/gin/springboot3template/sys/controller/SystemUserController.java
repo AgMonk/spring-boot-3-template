@@ -2,6 +2,8 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.dto.LoginForm;
+import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
@@ -9,14 +11,11 @@ import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,25 +64,23 @@ public class SystemUserController {
     }
 
     @PostMapping("login")
-    @Operation(summary = "登陆", description = "需要先获取验证码,参数可以传body也可以传form")
+    @Operation(summary = "登陆", description = "假登陆接口 ,用于生成 doc;<br/>需要先获取验证码,参数可以传body也可以传form")
     public Res<MyUserDetailsVo> login(@RequestBody LoginForm loginForm) {
-        //假登陆接口 ,用于生成 doc
-
         System.out.println("login...");
         return null;
     }
 
     @PostMapping("logout")
-    @Operation(summary = "登出")
+    @Operation(summary = "登出", description = "假登出接口 ,用于生成 doc")
     public void logout() {
-        //假登出接口 ,用于生成 doc
         System.out.println("logout...");
     }
 
     @PostMapping("reg")
     @Operation(summary = "注册用户")
-    public void reg() {
-        //todo
+    public Res<Void> reg(@RequestBody RegForm regForm) {
+        systemUserService.reg(regForm);
+        return Res.of(null, "注册成功");
     }
 
     @PostMapping("token")
@@ -98,17 +95,4 @@ public class SystemUserController {
         //todo
     }
 
-    @Schema(description = "登录表单")
-    @Getter
-    @Setter
-    public static class LoginForm {
-        @Schema(description = "用户名")
-        String username;
-        @Schema(description = "密码")
-        String password;
-        @Schema(description = "验证码")
-        String vc;
-        @Schema(description = "记住我( true / yes / on / 1 表示开启) ")
-        String rememberMe;
-    }
 }
