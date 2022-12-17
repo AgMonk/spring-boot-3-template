@@ -66,7 +66,8 @@ public class Constant {
      */
     public static class Evaluator {
 
-        public static final Pattern HAS_PERMISSION_PATTERN = Pattern.compile("^hasPermission\\((.+?),(.+?),(.+?)\\)$");
+        public static final Pattern HAS_PERMISSION_CLASS_PATTERN = Pattern.compile("^hasPermission\\((.+?),(.+?)\\)$");
+        public static final Pattern HAS_PERMISSION_TYPE_PATTERN = Pattern.compile("^hasPermission\\((.+?),(.+?),(.+?)\\)$");
         /**
          * 判断根据路径访问的权限
          */

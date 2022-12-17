@@ -31,7 +31,4 @@ public interface TypeNameAuthorityEvaluator {
     default boolean hasPermission(MyUserDetails userDetails, Serializable targetId, Object permission) {
         return false;
     }
-
-    //todo 提供对权限不足的解释方法
-
 }

@@ -5,7 +5,9 @@ import com.gin.springboot3template.sys.exception.AuthorityEvaluatorDuplicatedExc
 import com.gin.springboot3template.sys.security.bo.MyUserDetails;
 import com.gin.springboot3template.sys.security.interfaze.ClassAuthorityEvaluator;
 import com.gin.springboot3template.sys.security.interfaze.TypeNameAuthorityEvaluator;
+import com.gin.springboot3template.sys.service.SystemPermissionService;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -23,8 +25,11 @@ import java.util.List;
  * @since : 2022/12/14 13:31
  */
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class PermissionEvaluatorProxyService implements PermissionEvaluator {
+    private final SystemPermissionService systemPermissionService;
+
     /**
      * 通过class来选择 AuthorityEvaluator 的Map
      */
@@ -34,32 +39,42 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
      */
     HashMap<String, TypeNameAuthorityEvaluator> nameMap;
 
-    /**
-     * 判断指定用户对指定资源持有指定权限
-     * @param authentication     用户认证信息
-     * @param targetDomainObject 判断的资源
-     * @param permission         权限
-     * @return 是否持有权限
-     */
-    @Override
-    public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        log.debug("检查权限: {} {}", targetDomainObject, permission);
-        if (targetDomainObject == null) {
-            return false;
+    public ClassAuthorityEvaluator getClassAuthorityEvaluator(Class<?> clazz) {
+        if (this.classMap == null) {
+            HashMap<Class<?>, ClassAuthorityEvaluator> map = new HashMap<>(1);
+            final Collection<ClassAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(ClassAuthorityEvaluator.class).values();
+            for (ClassAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
+                final List<Class<?>> targetClass = authorityEvaluator.getTargetClass();
+                for (Class<?> c : targetClass) {
+                    if (!map.containsKey(c)) {
+                        map.put(c, authorityEvaluator);
+                    } else {
+                        throw new AuthorityEvaluatorDuplicatedException("类:" + c.getSimpleName());
+                    }
+                }
+            }
+            this.classMap = map;
         }
-        final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
-        //如果持有 admin 角色 ，直接放行
-        if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
-            return true;
+        return this.classMap.getOrDefault(clazz, null);
+    }
+
+    public TypeNameAuthorityEvaluator getTypeNameAuthorityEvaluator(String targetType) {
+        if (this.nameMap == null) {
+            HashMap<String, TypeNameAuthorityEvaluator> map = new HashMap<>(1);
+            final Collection<TypeNameAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(TypeNameAuthorityEvaluator.class).values();
+            for (TypeNameAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
+                final List<String> targetTypes = authorityEvaluator.getTargetTypes();
+                for (String type : targetTypes) {
+                    if (!map.containsKey(type)) {
+                        map.put(type, authorityEvaluator);
+                    } else {
+                        throw new AuthorityEvaluatorDuplicatedException(type);
+                    }
+                }
+            }
+            this.nameMap = map;
         }
-        initClassMap();
-        //从 classMap 中选择  权限评估器
-        final ClassAuthorityEvaluator authorityEvaluator = this.classMap.getOrDefault(targetDomainObject.getClass(), null);
-        if (authorityEvaluator == null) {
-            log.warn("没有负责该 Class 的权限评估器: " + targetDomainObject.getClass());
-            return false;
-        }
-        return authorityEvaluator.hasPermission(myUserDetails, targetDomainObject, permission);
+        return this.nameMap.getOrDefault(targetType, null);
     }
 
     /**
@@ -81,9 +96,8 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
             return true;
         }
-        initNameMap();
         //从 nameMap 中选择  权限评估器
-        final TypeNameAuthorityEvaluator authorityEvaluator = this.nameMap.getOrDefault(targetType, null);
+        final TypeNameAuthorityEvaluator authorityEvaluator = getTypeNameAuthorityEvaluator(targetType);
         if (authorityEvaluator == null) {
             log.warn("没有负责该类型的权限评估器: " + targetType);
             return false;
@@ -92,47 +106,29 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
     }
 
     /**
-     * 初始化 classMap
+     * 判断指定用户对指定资源持有指定权限
+     * @param authentication     用户认证信息
+     * @param targetDomainObject 判断的资源
+     * @param permission         权限
+     * @return 是否持有权限
      */
-    public void initClassMap() {
-        if (this.classMap != null) {
-            return;
+    @Override
+    public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
+        log.debug("检查权限: {} {}", targetDomainObject, permission);
+        if (targetDomainObject == null) {
+            return false;
         }
-        HashMap<Class<?>, ClassAuthorityEvaluator> map = new HashMap<>(1);
-        final Collection<ClassAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(ClassAuthorityEvaluator.class).values();
-        for (ClassAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
-            final List<Class<?>> targetClass = authorityEvaluator.getTargetClass();
-            for (Class<?> c : targetClass) {
-                if (!map.containsKey(c)) {
-                    map.put(c, authorityEvaluator);
-                } else {
-                    throw new AuthorityEvaluatorDuplicatedException("类:" + c.getSimpleName());
-                }
-            }
+        final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        //如果持有 admin 角色 ，直接放行
+        if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
+            return true;
         }
-        this.classMap = map;
+        //从 classMap 中选择  权限评估器
+        final ClassAuthorityEvaluator authorityEvaluator = getClassAuthorityEvaluator(targetDomainObject.getClass());
+        if (authorityEvaluator == null) {
+            log.warn("没有负责该 Class 的权限评估器: " + targetDomainObject.getClass());
+            return false;
+        }
+        return authorityEvaluator.hasPermission(myUserDetails, targetDomainObject, permission);
     }
-
-    /**
-     * 初始化 nameMap
-     */
-    public void initNameMap() {
-        if (this.nameMap != null) {
-            return;
-        }
-        HashMap<String, TypeNameAuthorityEvaluator> map = new HashMap<>(1);
-        final Collection<TypeNameAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(TypeNameAuthorityEvaluator.class).values();
-        for (TypeNameAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
-            final List<String> targetTypes = authorityEvaluator.getTargetTypes();
-            for (String type : targetTypes) {
-                if (!map.containsKey(type)) {
-                    map.put(type, authorityEvaluator);
-                } else {
-                    throw new AuthorityEvaluatorDuplicatedException(type);
-                }
-            }
-        }
-        this.nameMap = map;
-    }
-
 }

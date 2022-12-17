@@ -62,11 +62,6 @@ public class SystemPermission extends BasePo {
     @Schema(description = "权限报错提示")
     String note;
 
-    public SystemPermission(String path) {
-        super();
-        this.path = path;
-    }
-
     public SystemPermission(String path, Tag tag, Operation operation, PreAuthorize preAuthorize) {
         super();
         final String authorize = preAuthorize.value();
@@ -111,22 +106,12 @@ public class SystemPermission extends BasePo {
     }
 
     /**
-     * 更新权限数据
-     * @param systemPermission 新数据
-     */
-    public void update(SystemPermission systemPermission) {
-        this.groupName = systemPermission.getGroupName();
-        this.summary = systemPermission.getSummary();
-        this.description = systemPermission.getDescription();
-    }
-
-    /**
      * 尝试解析 SpeL表达式 提供报错提示
      * @param preAuthorize SpeL表达式
      * @return 报错提示
      */
     private String parsePreAuthorize(String preAuthorize) {
-        final Matcher matcher = HAS_PERMISSION_PATTERN.matcher(preAuthorize);
+        final Matcher matcher = HAS_PERMISSION_TYPE_PATTERN.matcher(preAuthorize);
         if (!matcher.find()) {
             return null;
         }
