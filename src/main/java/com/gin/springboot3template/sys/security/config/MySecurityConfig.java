@@ -68,6 +68,7 @@ public class MySecurityConfig {
         return provider;
     }
 
+
     /**
      * 自定义RememberMe服务token持久化仓库
      */
@@ -127,6 +128,7 @@ public class MySecurityConfig {
                 .accessDeniedHandler(authenticationHandler)
                 .authenticationEntryPoint(authenticationHandler)
         ;
+
 
         return http.build();
     }
