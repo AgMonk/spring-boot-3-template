@@ -56,7 +56,7 @@ public class SystemRole extends BasePo {
         Integer id;
 
         @Override
-        protected void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
+        public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
             System.out.println("id = " + id);
         }
     }

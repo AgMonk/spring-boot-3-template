@@ -31,10 +31,10 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param name 名称
      * @return 角色
      */
-    default SystemRole getByName(String name) {
+    default List<SystemRole> listByName(Collection<String> name) {
         final QueryWrapper<SystemRole> qw = new QueryWrapper<>();
-        qw.eq("name", name);
-        return getOne(qw);
+        qw.in("name", name);
+        return list(qw);
     }
 
     /**
