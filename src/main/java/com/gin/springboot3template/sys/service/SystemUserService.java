@@ -10,6 +10,14 @@ import com.gin.springboot3template.sys.entity.SystemUser;
  */
 public interface SystemUserService extends MyService<SystemUser> {
     /**
+     * 修改密码
+     * @param oldPass 旧密码
+     * @param newPass 新密码
+     */
+    default void changePwd(String oldPass, String newPass) {
+    }
+
+    /**
      * 根据用户名查询用户信息
      * @param username 用户名
      * @return 用户信息

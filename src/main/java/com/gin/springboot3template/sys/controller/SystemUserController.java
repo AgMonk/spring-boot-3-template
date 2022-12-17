@@ -4,16 +4,24 @@ import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
+import com.gin.springboot3template.sys.service.SystemUserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户接口
@@ -32,10 +40,20 @@ public class SystemUserController {
     public static final String API_PREFIX = "/sys/user";
     private final MyUserDetailsServiceImpl myUserDetailsService;
 
+    private final SystemUserService systemUserService;
+
     @PostMapping("changePwd")
     @Operation(summary = "修改密码")
-    public void changePwd() {
+    public void changePwd(@Parameter(hidden = true) HttpServletRequest request, @Parameter(hidden = true) HttpServletResponse response
+            , @RequestParam @Parameter(description = "旧密码") String oldPass, @RequestParam @Parameter(description = "新密码") String newPass) {
         //todo
+
+        systemUserService.changePwd(oldPass, newPass);
+//        登出
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
     }
 
     @GetMapping("findUserInfo")

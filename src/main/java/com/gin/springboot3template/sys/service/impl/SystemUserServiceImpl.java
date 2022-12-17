@@ -5,6 +5,7 @@ import com.gin.springboot3template.sys.dao.SystemUserDao;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,5 +18,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class SystemUserServiceImpl extends ServiceImpl<SystemUserDao, SystemUser> implements SystemUserService {
-
+    private final PasswordEncoder passwordEncoder;
 }   
