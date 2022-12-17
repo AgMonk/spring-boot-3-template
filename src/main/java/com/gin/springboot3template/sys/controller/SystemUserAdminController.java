@@ -44,10 +44,28 @@ public class SystemUserAdminController {
 //todo
     }
 
+    @GetMapping("findUserInfo")
+    @Operation(summary = "查询指定用户的个人信息")
+    public void findUserInfo() {
+        //todo
+    }
+
     @GetMapping("listRole")
     @Operation(summary = "查询用户持有的角色")
     public void listRole() {
 //todo
+    }
+
+    @PostMapping("lock")
+    @Operation(summary = "锁定/解锁指定用户", description = "锁定用户不能登陆")
+    public void lock() {
+        //todo
+    }
+
+    @GetMapping("page")
+    @Operation(summary = "分页查询用户账号信息")
+    public void page() {
+        //todo
     }
 
     @PostMapping("resetPassword")
@@ -55,5 +73,12 @@ public class SystemUserAdminController {
     public void reset() {
 //todo
     }
+
+    @PostMapping("updateUserInfo")
+    @Operation(summary = "修改指定用户的个人信息")
+    public void updateUserInfo() {
+        //todo
+    }
+
 
 }
