@@ -33,6 +33,6 @@ public abstract class BasePageParam {
      * 向queryWrapper中添加条件
      * @param queryWrapper 查询条件
      */
-    protected abstract void handleQueryWrapper(QueryWrapper<?> queryWrapper);
+    public abstract void handleQueryWrapper(QueryWrapper<?> queryWrapper);
 
 }   

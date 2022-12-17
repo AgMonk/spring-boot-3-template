@@ -1,6 +1,8 @@
 package com.gin.springboot3template.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.base.BasePo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -42,6 +44,22 @@ public class SystemRole extends BasePo {
     @Column
     @Comment("修改时间(UNIX秒)")
     Long timeUpdate;
+
+
+    @Getter
+    @Setter
+    @Schema(name = "分页查询参数")
+    public static class PageParam extends BasePageParam {
+        @Schema(description = "ID")
+        @NotNull
+//        @EntityId(service = SystemUserServiceImpl.class)
+        Integer id;
+
+        @Override
+        protected void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
+            System.out.println("id = " + id);
+        }
+    }
 
     @Getter
     @Setter
