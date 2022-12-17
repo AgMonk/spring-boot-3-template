@@ -41,7 +41,10 @@ public class Constant {
     public static final String API_UPDATE = "update";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-    public static final String HAS_PERMISSION = "hasPermission";
+    /**
+     * preAuthority注解的内容,含义为:需要访问当前接口uri的权限,或者是admin角色
+     */
+    public static final String PRE_AUTHORITY_URI_OR_ADMIN = "hasAuthority(#request.requestURI) or hasRole('admin')";
     public static final String REMEMBER_ME_KEY = "rememberMe";
     /**
      * 预设角色 超管

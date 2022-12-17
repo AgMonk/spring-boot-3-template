@@ -45,7 +45,7 @@ public class TestController {
 
     @GetMapping("page1")
     @Operation(summary = "分页查询")
-    @PreAuthorize(Constant.Evaluator.STRING_PATH)
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<Void> test(Integer id, HttpServletRequest request) {
         final SystemUser systemUser = systemUserService.getById(id);
         System.out.println("systemUser = " + systemUser);

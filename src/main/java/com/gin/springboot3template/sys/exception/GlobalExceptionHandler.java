@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.exception;
 
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.bo.ExpressionExceptionParser;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.SystemPermissionService;
@@ -40,8 +41,10 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<Res<SystemPermission>> exceptionHandler(AccessDeniedException e, HttpServletRequest request) {
-        return new ResponseEntity<>(Res.of(systemPermissionService.getByPath(request.getRequestURI()), Constant.ACCESS_DENIED), HttpStatus.FORBIDDEN);
+    public ResponseEntity<Res<String>> exceptionHandler(AccessDeniedException e, HttpServletRequest request) {
+        final SystemPermission permission = systemPermissionService.getByPath(request.getRequestURI());
+        final String message = permission == null ? null : new ExpressionExceptionParser(permission.getPreAuthorize(), request).explain();
+        return new ResponseEntity<>(Res.of(message, Constant.ACCESS_DENIED), HttpStatus.FORBIDDEN);
     }
 
     /**
