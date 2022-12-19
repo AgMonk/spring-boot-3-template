@@ -59,13 +59,15 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("lock")
-    @Operation(summary = "锁定/解锁指定用户", description = "锁定用户不能登陆<br/>" + MESSAGE_NOT_CONFIG_ADMIN)
+    @Operation(summary = "锁定/解锁指定用户", description = "切换锁定和解锁状态;<br/>锁定用户不能登陆;<br/>" + MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void lock(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+    public Res<Void> lock(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-
-        //todo
-
+        final SystemUser user = systemUserService.getById(userId);
+        final String message = user.getAccountNonLocked() ? "已锁定" : "已解锁";
+        user.setAccountNonLocked(!user.getAccountNonLocked());
+        systemUserService.updateById(user);
+        return Res.of(null, message);
     }
 
     @GetMapping("page")
