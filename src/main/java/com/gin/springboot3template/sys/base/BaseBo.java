@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-@Schema(name = "基础视图对象")
+@Schema(description = "基础视图对象")
 @NoArgsConstructor
 public class BaseBo implements Serializable {
     @Schema(description = "ID")

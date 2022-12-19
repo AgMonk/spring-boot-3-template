@@ -52,7 +52,7 @@ public class SystemUser extends BasePo {
 
     @Getter
     @Setter
-    @Schema(name = "用户账号信息")
+    @Schema(description = "用户账号信息")
     public static class Vo extends BaseVo {
         @Schema(description = "用户名")
         private String username;
@@ -72,7 +72,7 @@ public class SystemUser extends BasePo {
 
     @Getter
     @Setter
-    @Schema(name = "用户及其持有的角色&权限")
+    @Schema(description = "用户及其持有的角色&权限")
     public static class Bo extends BaseBo {
         @Schema(description = "角色&权限")
         List<RelationUserRole.Bo> roles;

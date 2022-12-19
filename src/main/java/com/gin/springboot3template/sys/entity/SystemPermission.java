@@ -28,7 +28,7 @@ import java.util.Objects;
 @TableName(value = SystemPermission.TABLE_NAME, autoResultMap = true)
 @Entity(name = SystemPermission.TABLE_NAME)
 @NoArgsConstructor
-@Schema(name = "接口权限")
+@Schema(description = "接口权限")
 public class SystemPermission extends BasePo {
     protected static final String TABLE_NAME = "t_system_entity_permission";
     @Column(length = 50, nullable = false, unique = true)

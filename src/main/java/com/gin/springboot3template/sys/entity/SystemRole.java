@@ -88,7 +88,7 @@ public class SystemRole extends BasePo {
 
     @Getter
     @Setter
-    @Schema(name = "参数对象(添加/修改)")
+    @Schema(description = "参数对象(添加/修改)")
     @Validated
     @NoArgsConstructor
     @AllArgsConstructor

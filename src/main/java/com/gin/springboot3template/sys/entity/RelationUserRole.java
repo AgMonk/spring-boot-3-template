@@ -74,7 +74,7 @@ public class RelationUserRole extends BasePo {
 
     @Getter
     @Setter
-    @Schema(name = "参数对象(添加/修改)")
+    @Schema(description = "参数对象(添加/修改)")
     @Validated
     public static class Param {
         @Schema(description = "角色id")
@@ -95,7 +95,7 @@ public class RelationUserRole extends BasePo {
 
     @Getter
     @Setter
-    @Schema(name = "角色及其持有的权限")
+    @Schema(description = "角色及其持有的权限")
     public static class Bo extends BaseBo {
         @Schema(description = "用户id")
         Long userId;

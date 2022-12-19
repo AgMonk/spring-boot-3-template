@@ -54,7 +54,7 @@ public class TestController {
 
     @Getter
     @Setter
-    @Schema(name = "测试查询参数")
+    @Schema(description = "测试查询参数")
     public static class PageParam extends BasePageParam {
         @Schema(description = "ID")
         @NotNull

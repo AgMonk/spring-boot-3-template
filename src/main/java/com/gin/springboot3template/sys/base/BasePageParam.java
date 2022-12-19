@@ -18,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 @Setter
 @Validated
-@Schema(name = "分页查询条件")
+@Schema(description = "分页查询条件")
 public abstract class BasePageParam {
     @Schema(description = "当前页,默认值:1", defaultValue = "1")
     @Min(value = 1L, message = "页码最小为1")
