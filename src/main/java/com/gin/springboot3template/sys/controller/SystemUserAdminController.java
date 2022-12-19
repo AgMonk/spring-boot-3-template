@@ -1,9 +1,11 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
+import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import com.gin.springboot3template.sys.service.SystemUserInfoService;
@@ -12,8 +14,11 @@ import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,8 +70,14 @@ public class SystemUserAdminController {
 
     @GetMapping("findUserInfo")
     @Operation(summary = "查询指定用户的个人信息")
-    public void findUserInfo() {
-        //todo
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<SystemUserInfo.Vo> findUserInfo(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+        final SystemUserInfo userInfo = systemUserInfoService.getByUserId(userId);
+        if (userInfo == null) {
+            throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
+        }
+        final SystemUserInfo.Vo vo = new SystemUserInfo.Vo(userInfo);
+        return Res.of(vo);
     }
 
     @GetMapping("listRole")

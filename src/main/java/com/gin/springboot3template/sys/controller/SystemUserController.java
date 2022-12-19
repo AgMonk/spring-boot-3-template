@@ -52,8 +52,8 @@ public class SystemUserController {
 
     @PostMapping("changePwd")
     @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
-    public void changePwd(@Parameter(hidden = true) HttpServletRequest request
-            , @Parameter(hidden = true) HttpServletResponse response
+    public void changePwd(HttpServletRequest request
+            , HttpServletResponse response
             , @RequestParam @Parameter(description = "旧密码") String oldPass
             , @RequestParam @Parameter(description = "新密码,长度范围为 [6,20]") @Length(min = 6, max = 20) String newPass) throws ServletException, IOException {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
