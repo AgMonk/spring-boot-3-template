@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
+import com.gin.springboot3template.sys.dto.SystemRoleForm;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,8 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param param 参数
      * @return 添加好的角色
      */
-    default List<SystemRole> addByParam(Collection<SystemRole.Param> param) {
-        final List<SystemRole> roles = param.stream().map(SystemRole.Param::build).toList();
+    default List<SystemRole> addByParam(Collection<SystemRoleForm> param) {
+        final List<SystemRole> roles = param.stream().map(SystemRoleForm::build).toList();
         saveBatch(roles);
         return roles;
     }
@@ -72,7 +73,7 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param param  参数
      * @return 修改后的角色
      */
-    default SystemRole updateByIdParam(long roleId, SystemRole.Param param) {
+    default SystemRole updateByIdParam(long roleId, SystemRoleForm param) {
         final SystemRole entity = param.build();
         entity.setId(roleId);
         entity.setTimeUpdate(System.currentTimeMillis() / 1000);

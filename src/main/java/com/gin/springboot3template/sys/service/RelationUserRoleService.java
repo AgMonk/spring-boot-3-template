@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
+import com.gin.springboot3template.sys.dto.RelationUserRoleForm;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @param params 参数
      * @return 添加好的角色
      */
-    default List<RelationUserRole> add(long userId, Collection<RelationUserRole.Param> params) {
+    default List<RelationUserRole> add(long userId, Collection<RelationUserRoleForm> params) {
         final List<RelationUserRole> userRoles = params.stream().map(i -> i.build(userId)).toList();
         saveBatch(userRoles);
         return userRoles;
@@ -36,7 +37,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @param userId 用户id
      * @param params 参数
      */
-    default List<RelationUserRole> config(long userId, Collection<RelationUserRole.Param> params) {
+    default List<RelationUserRole> config(long userId, Collection<RelationUserRoleForm> params) {
         // 查询指定用户持有的角色id
         //已有数据 (含有id)
         final List<RelationUserRole> oldData = listByUserId(Collections.singleton(userId));

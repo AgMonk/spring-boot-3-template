@@ -2,7 +2,10 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.bo.SystemUserBo;
 import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.dto.RelationUserRoleForm;
+import com.gin.springboot3template.sys.dto.SystemUserInfoForm;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
@@ -11,6 +14,8 @@ import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.*;
 import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
+import com.gin.springboot3template.sys.vo.SystemUserInfoVo;
+import com.gin.springboot3template.sys.vo.SystemUserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,8 +63,8 @@ public class SystemUserAdminController {
     @PostMapping("create")
     @Operation(summary = "创建用户")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemUser.Vo> create(@RequestBody @Validated RegForm regForm) {
-        return Res.of(new SystemUser.Vo(systemUserService.reg(regForm)), "创建成功");
+    public Res<SystemUserVo> create(@RequestBody @Validated RegForm regForm) {
+        return Res.of(new SystemUserVo(systemUserService.reg(regForm)), "创建成功");
     }
 
     @PostMapping("lock")
@@ -96,9 +101,9 @@ public class SystemUserAdminController {
     @PostMapping("roleAdd")
     @Operation(summary = "为指定用户添加角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<RelationUserRole>> roleAdd(HttpServletRequest request, @EntityId(service = SystemUserServiceImpl.class) @RequestParam Long userId, @RequestBody @Validated Collection<RelationUserRole.Param> params) {
+    public Res<List<RelationUserRole>> roleAdd(HttpServletRequest request, @EntityId(service = SystemUserServiceImpl.class) @RequestParam Long userId, @RequestBody @Validated Collection<RelationUserRoleForm> params) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-        systemRoleService.validateRoleId(params.stream().map(RelationUserRole.Param::getRoleId).toList());
+        systemRoleService.validateRoleId(params.stream().map(RelationUserRoleForm::getRoleId).toList());
         final List<RelationUserRole> roleList = relationUserRoleService.add(userId, params);
         return Res.of(roleList);
     }
@@ -106,9 +111,9 @@ public class SystemUserAdminController {
     @PostMapping("roleConfig")
     @Operation(summary = "为指定用户配置角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<RelationUserRole>> roleConfig(HttpServletRequest request, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, @RequestBody @Validated Collection<RelationUserRole.Param> params) {
+    public Res<List<RelationUserRole>> roleConfig(HttpServletRequest request, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, @RequestBody @Validated Collection<RelationUserRoleForm> params) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-        systemRoleService.validateRoleId(params.stream().map(RelationUserRole.Param::getRoleId).toList());
+        systemRoleService.validateRoleId(params.stream().map(RelationUserRoleForm::getRoleId).toList());
         final List<RelationUserRole> roleList = relationUserRoleService.config(userId, params);
         return Res.of(roleList);
     }
@@ -125,26 +130,26 @@ public class SystemUserAdminController {
     @GetMapping("roleList")
     @Operation(summary = "查询用户持有的角色")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SystemUser.Bo>> roleList(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+    public Res<List<SystemUserBo>> roleList(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
         return Res.of(rolePermissionService.listAuthorityByUserId(Collections.singleton(userId)));
     }
 
     @GetMapping("userInfoFind")
     @Operation(summary = "查询指定用户的个人信息")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemUserInfo.Vo> userInfoFind(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+    public Res<SystemUserInfoVo> userInfoFind(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
         final SystemUserInfo userInfo = systemUserInfoService.getByUserId(userId);
         if (userInfo == null) {
             throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
         }
-        final SystemUserInfo.Vo vo = new SystemUserInfo.Vo(userInfo);
+        final SystemUserInfoVo vo = new SystemUserInfoVo(userInfo);
         return Res.of(vo);
     }
 
     @PostMapping("userInfoUpdate")
     @Operation(summary = "修改指定用户的个人信息", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<Object> userInfoUpdate(HttpServletRequest request, @RequestBody @Validated SystemUserInfo.Param param, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId) {
+    public Res<Object> userInfoUpdate(HttpServletRequest request, @RequestBody @Validated SystemUserInfoForm param, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
 
 

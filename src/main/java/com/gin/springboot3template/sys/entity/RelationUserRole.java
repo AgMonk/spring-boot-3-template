@@ -3,23 +3,16 @@ package com.gin.springboot3template.sys.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.gin.springboot3template.sys.base.BaseBo;
 import com.gin.springboot3template.sys.base.BasePo;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.springframework.beans.BeanUtils;
-import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -72,68 +65,5 @@ public class RelationUserRole extends BasePo {
         return Objects.hash(getUserId(), getRoleId());
     }
 
-    @Getter
-    @Setter
-    @Schema(description = "参数对象(添加/修改)")
-    @Validated
-    public static class Param {
-        @Schema(description = "角色id")
-        @NotNull
-        Long roleId;
 
-        @Schema(description = "过期时间(UNIX秒) 不小于0 0表示不过期")
-        @Min(0L)
-        Long timeExpire;
-
-        public RelationUserRole build(long userId) {
-            final RelationUserRole userRole = new RelationUserRole();
-            BeanUtils.copyProperties(this, userRole);
-            userRole.setUserId(userId);
-            return userRole;
-        }
-    }
-
-    @Getter
-    @Setter
-    @Schema(description = "角色及其持有的权限")
-    public static class Bo extends BaseBo {
-        @Schema(description = "用户id")
-        Long userId;
-        @Schema(description = "角色id")
-        Long roleId;
-        @Schema(description = "修改时间(UNIX秒)")
-        Long timeUpdate;
-        @Schema(description = "过期时间(UNIX秒)")
-        Long timeExpire;
-
-
-        @Schema(description = "名称")
-        String name;
-        @Schema(description = "中文名称")
-        String nameZh;
-        @Schema(description = "描述")
-        String description;
-        @Schema(description = "备注")
-        String remark;
-        @Schema(description = "权限")
-        List<SystemPermission> permissions;
-
-        public Bo(RelationUserRole userRole) {
-            BeanUtils.copyProperties(userRole, this);
-        }
-
-        /**
-         * 补充三个字段信息
-         * @param systemRole 角色
-         */
-        public void with(SystemRole systemRole) {
-            if (systemRole == null) {
-                return;
-            }
-            this.name = systemRole.getName();
-            this.nameZh = systemRole.getNameZh();
-            this.remark = systemRole.getRemark();
-            this.description = systemRole.getDescription();
-        }
-    }
 }

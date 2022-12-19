@@ -1,7 +1,12 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.entity.*;
+import com.gin.springboot3template.sys.bo.RelationUserRoleBo;
+import com.gin.springboot3template.sys.bo.SystemUserBo;
+import com.gin.springboot3template.sys.entity.RelationRolePermission;
+import com.gin.springboot3template.sys.entity.RelationUserRole;
+import com.gin.springboot3template.sys.entity.SystemPermission;
+import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.security.interfaze.AuthorityProvider;
 import lombok.RequiredArgsConstructor;
@@ -56,13 +61,13 @@ public class RolePermissionService implements AuthorityProvider {
      */
     @Override
     public Set<GrantedAuthority> getAuthorities(long userId) {
-        final List<SystemUser.Bo> roleList = listAuthorityByUserId(Collections.singleton(userId));
+        final List<SystemUserBo> roleList = listAuthorityByUserId(Collections.singleton(userId));
         if (roleList.size() == 0) {
             return new HashSet<>();
         }
-        final SystemUser.Bo bo = roleList.get(0);
+        final SystemUserBo bo = roleList.get(0);
         Set<String> data = new HashSet<>();
-        final List<RelationUserRole.Bo> userRoles = bo.getRoles();
+        final List<RelationUserRoleBo> userRoles = bo.getRoles();
         if (CollectionUtils.isEmpty(userRoles)) {
             return new HashSet<>();
         }
@@ -88,12 +93,12 @@ public class RolePermissionService implements AuthorityProvider {
      * @param userId 用户id
      * @return 角色及其权限
      */
-    public List<SystemUser.Bo> listAuthorityByUserId(Collection<Long> userId) {
+    public List<SystemUserBo> listAuthorityByUserId(Collection<Long> userId) {
         //查询用户列表
-        final List<SystemUser.Bo> userData = systemUserService.listByIds(userId).stream().map(SystemUser.Bo::new).toList();
+        final List<SystemUserBo> userData = systemUserService.listByIds(userId).stream().map(SystemUserBo::new).toList();
 
         //查询用户持有的角色
-        final List<RelationUserRole.Bo> userRoles = relationUserRoleService.listByUserId(userId).stream().map(RelationUserRole.Bo::new).toList();
+        final List<RelationUserRoleBo> userRoles = relationUserRoleService.listByUserId(userId).stream().map(RelationUserRoleBo::new).toList();
         // 如果没有角色 直接返回
         if (userRoles.size() == 0) {
             return userData;
@@ -102,7 +107,7 @@ public class RolePermissionService implements AuthorityProvider {
         userData.forEach(u -> u.setRoles(userRoles.stream().filter(i -> i.getUserId().equals(u.getId())).collect(Collectors.toList())));
 
         // 角色id去重
-        final List<Long> roleId = userRoles.stream().map(RelationUserRole.Bo::getRoleId).distinct().sorted().toList();
+        final List<Long> roleId = userRoles.stream().map(RelationUserRoleBo::getRoleId).distinct().sorted().toList();
         // 查询角色信息
         final List<SystemRole> systemRoles = systemRoleService.listByIds(roleId);
         // 构建map

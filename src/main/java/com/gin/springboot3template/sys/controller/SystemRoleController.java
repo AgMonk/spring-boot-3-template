@@ -1,10 +1,11 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
-import com.gin.springboot3template.sys.entity.SystemRole;
+import com.gin.springboot3template.sys.dto.SystemRolePageParam;
 import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
+import com.gin.springboot3template.sys.vo.SystemRoleVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +37,9 @@ public class SystemRoleController {
     @GetMapping("page")
     @Operation(summary = "分页查询")
 //    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public ResPage<SystemRole.Vo> page(@ParameterObject @Validated SystemRole.PageParam pageParam, HttpServletRequest request) {
+    public ResPage<SystemRoleVo> page(@ParameterObject @Validated SystemRolePageParam pageParam, HttpServletRequest request) {
         // todo 添加筛选条件: 持有指定角色的用户
-        return systemRoleService.pageByParam(pageParam, SystemRole.Vo::new);
+        return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
     }
 
 }

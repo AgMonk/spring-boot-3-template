@@ -4,17 +4,12 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
-import com.gin.springboot3template.sys.base.BaseVo;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.springframework.beans.BeanUtils;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * 用户个人信息
@@ -44,43 +39,5 @@ public class SystemUserInfo extends BasePo {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     Long birthday;
 
-    @Getter
-    @Setter
-    @Schema(description = "用户个人信息参数对象")
-    @Validated
-    public static class Param {
-        @Schema(description = "昵称")
-        @NotNull
-        String nickname;
-        @Schema(description = "联系电话")
-        String phone;
-        @Schema(description = "生日(UNIX秒)")
-        Long birthday;
 
-        public SystemUserInfo build(long userId) {
-            final SystemUserInfo userRole = new SystemUserInfo();
-            BeanUtils.copyProperties(this, userRole);
-            userRole.setUserId(userId);
-            return userRole;
-        }
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @Schema(description = "用户个人信息")
-    public static class Vo extends BaseVo {
-        @Schema(description = "用户id")
-        Long userId;
-        @Schema(description = "昵称")
-        String nickname;
-        @Schema(description = "联系电话")
-        String phone;
-        @Schema(description = "生日(UNIX秒)")
-        Long birthday;
-
-        public Vo(SystemUserInfo systemUserInfo) {
-            BeanUtils.copyProperties(systemUserInfo, this);
-        }
-    }
 }

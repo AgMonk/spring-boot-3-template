@@ -5,7 +5,7 @@ import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.config.SystemConfig;
 import com.gin.springboot3template.sys.dto.LoginForm;
 import com.gin.springboot3template.sys.dto.RegForm;
-import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.dto.SystemUserInfoForm;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
@@ -13,6 +13,8 @@ import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import com.gin.springboot3template.sys.service.SystemUserInfoService;
 import com.gin.springboot3template.sys.service.SystemUserService;
+import com.gin.springboot3template.sys.vo.SystemUserInfoVo;
+import com.gin.springboot3template.sys.vo.SystemUserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,13 +68,13 @@ public class SystemUserController {
 
     @GetMapping("findUserInfo")
     @Operation(summary = "查询自己的个人信息")
-    public Res<SystemUserInfo.Vo> findUserInfo() {
+    public Res<SystemUserInfoVo> findUserInfo() {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
         final SystemUserInfo userInfo = systemUserInfoService.getByUserId(userId);
         if (userInfo == null) {
             throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
         }
-        final SystemUserInfo.Vo vo = new SystemUserInfo.Vo(userInfo);
+        final SystemUserInfoVo vo = new SystemUserInfoVo(userInfo);
         return Res.of(vo);
     }
 
@@ -91,11 +93,11 @@ public class SystemUserController {
 
     @PostMapping("reg")
     @Operation(summary = "注册用户")
-    public Res<SystemUser.Vo> reg(@RequestBody @Validated RegForm regForm) {
+    public Res<SystemUserVo> reg(@RequestBody @Validated RegForm regForm) {
         if (!systemConfig.isNewUser()) {
             throw BusinessException.of(HttpStatus.FORBIDDEN, "注册功能已关闭");
         }
-        return Res.of(new SystemUser.Vo(systemUserService.reg(regForm)), "注册成功");
+        return Res.of(new SystemUserVo(systemUserService.reg(regForm)), "注册成功");
     }
 
     @PostMapping("token")
@@ -106,7 +108,7 @@ public class SystemUserController {
 
     @PostMapping("updateUserInfo")
     @Operation(summary = "修改自己的个人信息")
-    public Res<Void> updateUserInfo(@RequestBody @Validated SystemUserInfo.Param param) {
+    public Res<Void> updateUserInfo(@RequestBody @Validated SystemUserInfoForm param) {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
         systemUserInfoService.saveOrUpdate(userId, param);
         return Res.of(null, "修改成功");
