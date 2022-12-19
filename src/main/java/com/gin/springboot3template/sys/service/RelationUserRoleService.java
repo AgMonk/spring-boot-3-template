@@ -98,4 +98,15 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
         qw.in("user_id", userId);
         return list(qw);
     }
+
+    /**
+     * 查询持有指定角色的用户id
+     * @param roleIds 角色id
+     * @return 用户id
+     */
+    default List<Long> listUserIdByRoleId(Collection<Long> roleIds) {
+        final QueryWrapper<RelationUserRole> qw = new QueryWrapper<>();
+        qw.in("role_id", roleIds).select("user_id");
+        return list(qw).stream().map(RelationUserRole::getUserId).toList();
+    }
 }

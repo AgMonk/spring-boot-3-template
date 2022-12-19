@@ -10,6 +10,7 @@ import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
+import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.*;
 import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
@@ -80,8 +81,8 @@ public class SystemUserAdminController {
     @GetMapping("page")
     @Operation(summary = "分页查询用户账号信息")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void page(@ParameterObject @Validated SystemUserPageParam pageParam, HttpServletRequest request) {
-        //todo
+    public ResPage<SystemUserVo> page(@ParameterObject @Validated SystemUserPageParam pageParam, HttpServletRequest request) {
+        return systemUserService.pageByParam(pageParam, SystemUserVo::new);
     }
 
     @PostMapping("resetPassword")
