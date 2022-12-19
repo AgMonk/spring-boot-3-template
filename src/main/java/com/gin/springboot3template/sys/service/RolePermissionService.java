@@ -16,8 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.gin.springboot3template.sys.bo.Constant.DEFAULT_ROLES;
-import static com.gin.springboot3template.sys.bo.Constant.DEFAULT_ROLE_PREFIX;
+import static com.gin.springboot3template.sys.bo.Constant.*;
 
 /**
  * 角色和权限联合服务
@@ -36,6 +35,19 @@ public class RolePermissionService implements AuthorityProvider {
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
     private final RelationUserRoleService relationUserRoleService;
+
+    /**
+     * 不能对 持有 admin 角色 的用户操作
+     * @param userId 用户id
+     */
+    public void forbiddenConfigAdminUser(long userId) {
+        final List<String> authorities = getAuthorities(userId).stream().map(GrantedAuthority::getAuthority).toList();
+        String roleAdmin = DEFAULT_ROLE_PREFIX + ROLE_ADMIN;
+        if (authorities.contains(roleAdmin)) {
+            throw BusinessException.of(HttpStatus.FORBIDDEN, MESSAGE_NOT_CONFIG_ADMIN);
+        }
+    }
+
 
     /**
      * 提供权限

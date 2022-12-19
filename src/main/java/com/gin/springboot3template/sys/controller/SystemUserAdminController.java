@@ -3,13 +3,12 @@ package com.gin.springboot3template.sys.controller;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.entity.RelationUserRole;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
-import com.gin.springboot3template.sys.service.RolePermissionService;
-import com.gin.springboot3template.sys.service.SystemUserInfoService;
-import com.gin.springboot3template.sys.service.SystemUserService;
+import com.gin.springboot3template.sys.service.*;
 import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,16 +18,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collection;
 import java.util.List;
 
-import static com.gin.springboot3template.sys.bo.Constant.*;
+import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_NOT_CONFIG_ADMIN;
 
 /**
  * 用户接口
@@ -48,29 +47,36 @@ public class SystemUserAdminController {
     private final SystemUserService systemUserService;
     private final SystemUserInfoService systemUserInfoService;
     private final RolePermissionService rolePermissionService;
+    private final RelationUserRoleService relationUserRoleService;
+    private final SystemRoleService systemRoleService;
 
     @PostMapping("addRole")
     @Operation(summary = "为指定用户添加角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void addRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-        validatedNotAdmin(userId);
-
-//todo
+    public Res<List<RelationUserRole>> addRole(HttpServletRequest request
+            , @EntityId(service = SystemUserServiceImpl.class) @RequestParam Long userId
+            , @RequestBody @Validated Collection<RelationUserRole.Param> params
+    ) {
+        rolePermissionService.forbiddenConfigAdminUser(userId);
+        systemRoleService.validateRoleId(params.stream().map(RelationUserRole.Param::getRoleId).toList());
+        final List<RelationUserRole> roleList = relationUserRoleService.add(userId, params);
+        return Res.of(roleList);
     }
 
     @PostMapping("configRole")
     @Operation(summary = "为指定用户配置角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public void configRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-        validatedNotAdmin(userId);
+        rolePermissionService.forbiddenConfigAdminUser(userId);
+        //todo 不能对 admin 角色进行操作
 
-//todo
+        //todo
     }
 
     @PostMapping("createUser")
     @Operation(summary = "创建用户")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemUser.Vo> createUser(@RequestBody RegForm regForm) {
+    public Res<SystemUser.Vo> createUser(@RequestBody @Validated RegForm regForm) {
         return Res.of(new SystemUser.Vo(systemUserService.reg(regForm)), "创建成功");
     }
 
@@ -78,8 +84,9 @@ public class SystemUserAdminController {
     @Operation(summary = "为指定用户删除角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public void delRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-//todo
-        validatedNotAdmin(userId);
+        //todo
+        rolePermissionService.forbiddenConfigAdminUser(userId);
+        //todo 不能对 admin 角色进行操作
 
 
     }
@@ -107,7 +114,7 @@ public class SystemUserAdminController {
     @Operation(summary = "锁定/解锁指定用户", description = "锁定用户不能登陆<br/>" + MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public void lock(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-        validatedNotAdmin(userId);
+        rolePermissionService.forbiddenConfigAdminUser(userId);
 
         //todo
 
@@ -124,7 +131,7 @@ public class SystemUserAdminController {
     @Operation(summary = "重置用户的密码", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public void reset(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-        validatedNotAdmin(userId);
+        rolePermissionService.forbiddenConfigAdminUser(userId);
 
         //todo
     }
@@ -132,23 +139,17 @@ public class SystemUserAdminController {
     @PostMapping("updateUserInfo")
     @Operation(summary = "修改指定用户的个人信息", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<Object> updateUserInfo(@RequestBody @Validated SystemUserInfo.Param param, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-        validatedNotAdmin(userId);
+    public Res<Object> updateUserInfo(HttpServletRequest request,
+                                      @RequestBody @Validated SystemUserInfo.Param param,
+                                      @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId) {
+        rolePermissionService.forbiddenConfigAdminUser(userId);
 
 
         systemUserInfoService.saveOrUpdate(userId, param);
         return Res.of(null, "修改成功");
     }
 
-    /**
-     * 不能对 持有 admin 角色 的用户操作
-     * @param userId 用户id
-     */
-    private void validatedNotAdmin(long userId) {
-        final List<String> authorities = rolePermissionService.getAuthorities(userId).stream().map(GrantedAuthority::getAuthority).toList();
-        String roleAdmin = DEFAULT_ROLE_PREFIX + ROLE_ADMIN;
-        if (authorities.contains(roleAdmin)) {
-            throw BusinessException.of(HttpStatus.FORBIDDEN, MESSAGE_NOT_CONFIG_ADMIN);
-        }
+    private void validatedNotAdmin(Collection<Long> roleId) {
+        systemRoleService.forbiddenConfigAdminRole(roleId);
     }
 }

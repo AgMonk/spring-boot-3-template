@@ -43,6 +43,7 @@ public class Constant {
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
     public static final String LOGOUT_URI = "/sys/user/logout";
     public static final String MESSAGE_DATA_NOT_FOUND = "没有找到数据";
+    public static final String MESSAGE_FORBIDDEN_CONFIG_ADMIN = "不能分配/取消分配 admin 角色";
     public static final String MESSAGE_NOT_CONFIG_ADMIN = "不能对持有 admin 角色 的用户进行操作";
     /**
      * preAuthority注解的内容,含义为:需要访问当前接口uri的权限,或者是admin角色

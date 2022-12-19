@@ -1,11 +1,18 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.entity.SystemRole;
+import com.gin.springboot3template.sys.exception.BusinessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_FORBIDDEN_CONFIG_ADMIN;
+import static com.gin.springboot3template.sys.bo.Constant.ROLE_ADMIN;
 
 /**
  * @author : ginstone
@@ -24,6 +31,28 @@ public interface SystemRoleService extends MyService<SystemRole> {
         final List<SystemRole> roles = param.stream().map(SystemRole.Param::build).toList();
         saveBatch(roles);
         return roles;
+    }
+
+    /**
+     * 不能分配/取消分配 admin 角色
+     * @param roleId 角色id
+     */
+    default void forbiddenConfigAdminRole(Collection<Long> roleId) {
+        final SystemRole systemRole = getByName(ROLE_ADMIN);
+        if (roleId.contains(systemRole.getId())) {
+            throw BusinessException.of(HttpStatus.FORBIDDEN, MESSAGE_FORBIDDEN_CONFIG_ADMIN);
+        }
+    }
+
+    /**
+     * 通过名称查询角色
+     * @param name 名称
+     * @return 角色
+     */
+    default SystemRole getByName(String name) {
+        final QueryWrapper<SystemRole> qw = new QueryWrapper<>();
+        qw.eq("name", name);
+        return getOne(qw);
     }
 
     /**
@@ -49,5 +78,17 @@ public interface SystemRoleService extends MyService<SystemRole> {
         entity.setTimeUpdate(System.currentTimeMillis() / 1000);
         updateById(entity);
         return entity;
+    }
+
+    /**
+     * 校验角色ID存在
+     * @param roleId 角色ID
+     */
+    default void validateRoleId(Collection<Long> roleId) {
+        final List<Long> idExists = listByIds(roleId).stream().map(BasePo::getId).toList();
+        final List<Long> idNotExists = roleId.stream().filter(i -> !idExists.contains(i)).toList();
+        if (idNotExists.size() > 0) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "参数错误,如下角色ID不存在", idNotExists.stream().map(String::valueOf).collect(Collectors.toList()));
+        }
     }
 }

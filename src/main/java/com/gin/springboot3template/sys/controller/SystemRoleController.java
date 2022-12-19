@@ -31,7 +31,7 @@ public class SystemRoleController {
     public static final String API_PREFIX = "/sys/role";
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
-    /*todo 添加角色 修改角色 删除角色 分页查询角色 查询所有角色 通过关键字检索角色*/
+    /* todo 添加角色 修改角色 删除角色 分页查询角色 查询所有角色 通过关键字检索角色*/
 
     @GetMapping("page")
     @Operation(summary = "分页查询")
