@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_NOT_CONFIG_ADMIN;
@@ -115,8 +116,8 @@ public class SystemUserAdminController {
     @GetMapping("roleList")
     @Operation(summary = "查询用户持有的角色")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void roleList(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-//todo
+    public Res<List<SystemUser.Bo>> roleList(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+        return Res.of(rolePermissionService.listAuthorityByUserId(Collections.singleton(userId)));
     }
 
     @GetMapping("userInfoFind")
