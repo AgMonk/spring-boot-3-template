@@ -2,7 +2,7 @@ package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
-import com.gin.springboot3template.sys.dto.RelationUserRoleForm;
+import com.gin.springboot3template.sys.dto.form.RelationUserRoleForm;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import org.springframework.transaction.annotation.Transactional;
 

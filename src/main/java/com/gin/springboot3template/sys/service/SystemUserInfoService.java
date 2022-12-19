@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.dto.SystemUserInfoForm;
+import com.gin.springboot3template.sys.dto.form.SystemUserInfoForm;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;

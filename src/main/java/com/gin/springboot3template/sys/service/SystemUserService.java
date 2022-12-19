@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.dto.form.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
 
 /**

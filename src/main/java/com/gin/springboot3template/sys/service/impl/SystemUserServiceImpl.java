@@ -2,7 +2,7 @@ package com.gin.springboot3template.sys.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gin.springboot3template.sys.dao.SystemUserDao;
-import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.dto.form.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;

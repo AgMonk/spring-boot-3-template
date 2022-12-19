@@ -3,9 +3,7 @@ package com.gin.springboot3template.sys.controller;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.bo.SystemUserBo;
-import com.gin.springboot3template.sys.dto.RegForm;
-import com.gin.springboot3template.sys.dto.RelationUserRoleForm;
-import com.gin.springboot3template.sys.dto.SystemUserInfoForm;
+import com.gin.springboot3template.sys.dto.form.*;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
@@ -14,11 +12,9 @@ import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.*;
 import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
-import com.gin.springboot3template.sys.validation.Password;
 import com.gin.springboot3template.sys.vo.SystemUserInfoVo;
 import com.gin.springboot3template.sys.vo.SystemUserVo;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gin.springboot3template.sys.bo.Constant.*;
+import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_NOT_CONFIG_ADMIN;
 
 /**
  * 用户接口
@@ -89,7 +85,9 @@ public class SystemUserAdminController {
     @PostMapping("resetPassword")
     @Operation(summary = "重置用户的密码", description = MESSAGE_NOT_CONFIG_ADMIN + "<br/>返回新密码")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<String> reset(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request, @RequestParam(required = false) @Parameter(description = "新密码,长度范围为 [" + PASSWORD_MIN_LENGTH + "," + PASSWORD_MAX_LENGTH + "];不传将随机生成") @Password(nullable = true) String newPass) {
+    public Res<String> reset(@RequestBody @Validated ResetPasswordForm form, HttpServletRequest request) {
+        final Long userId = form.getUserId();
+        final String newPass = form.getNewPass();
         rolePermissionService.forbiddenConfigAdminUser(userId);
         String pwd = ObjectUtils.isEmpty(newPass) ? UUID.randomUUID().toString() : newPass;
         systemUserService.changePwd(userId, pwd);
@@ -99,29 +97,31 @@ public class SystemUserAdminController {
     @PostMapping("roleAdd")
     @Operation(summary = "为指定用户添加角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<RelationUserRole>> roleAdd(HttpServletRequest request, @EntityId(service = SystemUserServiceImpl.class) @RequestParam Long userId, @RequestBody @Validated Collection<RelationUserRoleForm> params) {
-        rolePermissionService.forbiddenConfigAdminUser(userId);
-        systemRoleService.validateRoleId(params.stream().map(RelationUserRoleForm::getRoleId).toList());
-        final List<RelationUserRole> roleList = relationUserRoleService.add(userId, params);
+    public Res<List<RelationUserRole>> roleAdd(@RequestBody @Validated UserRoleForm form, HttpServletRequest request) {
+        rolePermissionService.forbiddenConfigAdminUser(form.getUserId());
+        systemRoleService.validateRoleId(form.getRoles().stream().map(RelationUserRoleForm::getRoleId).toList());
+        final List<RelationUserRole> roleList = relationUserRoleService.add(form.getUserId(), form.getRoles());
         return Res.of(roleList);
     }
 
     @PostMapping("roleConfig")
-    @Operation(summary = "为指定用户配置角色", description = MESSAGE_NOT_CONFIG_ADMIN)
+    @Operation(summary = "为指定用户配置角色", description = "如果给出的角色尚未持有,添加持有;如果已持有,更新过期时间;删除未给出的角色持有<br/>" + MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<RelationUserRole>> roleConfig(HttpServletRequest request, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, @RequestBody @Validated Collection<RelationUserRoleForm> params) {
+    public Res<List<RelationUserRole>> roleConfig(@RequestBody @Validated UserRoleForm form, HttpServletRequest request) {
+        final Long userId = form.getUserId();
+        final List<RelationUserRoleForm> roles = form.getRoles();
         rolePermissionService.forbiddenConfigAdminUser(userId);
-        systemRoleService.validateRoleId(params.stream().map(RelationUserRoleForm::getRoleId).toList());
-        final List<RelationUserRole> roleList = relationUserRoleService.config(userId, params);
+        systemRoleService.validateRoleId(roles.stream().map(RelationUserRoleForm::getRoleId).toList());
+        final List<RelationUserRole> roleList = relationUserRoleService.config(userId, roles);
         return Res.of(roleList);
     }
 
     @PostMapping("roleDel")
     @Operation(summary = "为指定用户删除角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<Void> roleDel(HttpServletRequest request, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, @RequestBody @Validated List<Long> roleId) {
-        rolePermissionService.forbiddenConfigAdminUser(userId);
-        relationUserRoleService.del(userId, roleId);
+    public Res<Void> roleDel(@RequestBody @Validated UserRoleDelForm form, HttpServletRequest request) {
+        rolePermissionService.forbiddenConfigAdminUser(form.getUserId());
+        relationUserRoleService.del(form.getUserId(), form.getRoleId());
         return Res.of(null);
     }
 
@@ -149,8 +149,6 @@ public class SystemUserAdminController {
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<Object> userInfoUpdate(HttpServletRequest request, @RequestBody @Validated SystemUserInfoForm param, @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-
-
         systemUserInfoService.saveOrUpdate(userId, param);
         return Res.of(null, "修改成功");
     }

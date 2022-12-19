@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.dto;
+package com.gin.springboot3template.sys.dto.form;
 
 import com.gin.springboot3template.sys.entity.SystemRole;
 import io.swagger.v3.oas.annotations.media.Schema;
