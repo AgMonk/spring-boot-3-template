@@ -6,11 +6,12 @@ import com.gin.springboot3template.sys.config.SystemConfig;
 import com.gin.springboot3template.sys.dto.LoginForm;
 import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
-import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
+import com.gin.springboot3template.sys.service.SystemUserInfoService;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,8 +46,8 @@ public class SystemUserController {
      * 接口路径前缀
      */
     public static final String API_PREFIX = "/sys/user";
-    private final MyUserDetailsServiceImpl myUserDetailsService;
     private final SystemUserService systemUserService;
+    private final SystemUserInfoService systemUserInfoService;
     private final SystemConfig systemConfig;
 
     @PostMapping("changePwd")
@@ -64,8 +65,14 @@ public class SystemUserController {
 
     @GetMapping("findUserInfo")
     @Operation(summary = "查询自己的个人信息")
-    public void findUserInfo() {
-        //todo
+    public Res<SystemUserInfo.Vo> findUserInfo() {
+        final Long userId = MySecurityUtils.currentUserDetails().getId();
+        final SystemUserInfo userInfo = systemUserInfoService.getByUserId(userId);
+        if (userInfo == null) {
+            throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
+        }
+        final SystemUserInfo.Vo vo = new SystemUserInfo.Vo(userInfo);
+        return Res.of(vo);
     }
 
     @PostMapping("login")
