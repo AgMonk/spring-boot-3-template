@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BaseBo;
 import com.gin.springboot3template.sys.base.BasePo;
+import com.gin.springboot3template.sys.base.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 
@@ -49,14 +49,25 @@ public class SystemUser extends BasePo {
     @Comment("是否可用")
     Boolean enabled;
 
-    public User.UserBuilder createUser() {
-        return User.builder()
-                .username(username)
-                .password(password)
-                .accountExpired(!accountNonExpired)
-                .accountLocked(!accountNonLocked)
-                .credentialsExpired(!credentialsNonExpired)
-                .disabled(!enabled);
+
+    @Getter
+    @Setter
+    @Schema(name = "用户账号信息")
+    public static class Vo extends BaseVo {
+        @Schema(description = "用户名")
+        private String username;
+        @Schema(description = "账号未过期")
+        private boolean accountNonExpired;
+        @Schema(description = "账号未锁定")
+        private boolean accountNonLocked;
+        @Schema(description = "密码未过期")
+        private boolean credentialsNonExpired;
+        @Schema(description = "是否可用")
+        private boolean enabled;
+
+        public Vo(SystemUser systemUser) {
+            BeanUtils.copyProperties(systemUser, this);
+        }
     }
 
     @Getter

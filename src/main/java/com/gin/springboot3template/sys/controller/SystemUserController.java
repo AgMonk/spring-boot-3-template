@@ -5,6 +5,7 @@ import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.config.SystemConfig;
 import com.gin.springboot3template.sys.dto.LoginForm;
 import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
@@ -82,12 +83,11 @@ public class SystemUserController {
 
     @PostMapping("reg")
     @Operation(summary = "注册用户")
-    public Res<Void> reg(@RequestBody @Validated RegForm regForm) {
+    public Res<SystemUser.Vo> reg(@RequestBody @Validated RegForm regForm) {
         if (!systemConfig.isNewUser()) {
             throw BusinessException.of(HttpStatus.FORBIDDEN, "注册功能已关闭");
         }
-        systemUserService.reg(regForm);
-        return Res.of(null, "注册成功");
+        return Res.of(new SystemUser.Vo(systemUserService.reg(regForm)), "注册成功");
     }
 
     @PostMapping("token")

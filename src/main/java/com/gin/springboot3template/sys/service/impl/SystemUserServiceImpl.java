@@ -47,7 +47,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserDao, SystemUser
     }
 
     @Override
-    public void reg(RegForm regForm) {
+    public SystemUser reg(RegForm regForm) {
         if (getByUsername(regForm.getUsername()) != null) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, "用户名已存在");
         }
@@ -62,5 +62,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserDao, SystemUser
         BeanUtils.copyProperties(regForm, info);
         info.setUserId(user.getId());
         systemUserInfoService.save(info);
+
+        return user;
     }
 }

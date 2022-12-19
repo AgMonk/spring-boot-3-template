@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.dto.RegForm;
+import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
 import com.gin.springboot3template.sys.service.SystemUserService;
@@ -45,9 +46,8 @@ public class SystemUserAdminController {
 
     @PostMapping("createUser")
     @Operation(summary = "创建用户")
-    public Res<Void> createUser(@RequestBody RegForm regForm) {
-        systemUserService.reg(regForm);
-        return Res.of(null, "创建成功");
+    public Res<SystemUser.Vo> createUser(@RequestBody RegForm regForm) {
+        return Res.of(new SystemUser.Vo(systemUserService.reg(regForm)), "创建成功");
     }
 
     @PostMapping("delRole")

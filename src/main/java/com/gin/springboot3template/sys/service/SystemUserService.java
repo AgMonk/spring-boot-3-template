@@ -28,8 +28,9 @@ public interface SystemUserService extends MyService<SystemUser> {
     /**
      * 注册
      * @param regForm 注册表单
+     * @return 用户
      */
-    void reg(RegForm regForm);
+    SystemUser reg(RegForm regForm);
 
     /**
      * 根据用户名查询用户信息
