@@ -54,15 +54,19 @@ public class RolePermissionService implements AuthorityProvider {
         if (CollectionUtils.isEmpty(userRoles)) {
             return new HashSet<>();
         }
-        userRoles.forEach(role -> {
-            //添加角色
-            data.add(DEFAULT_ROLE_PREFIX + role.getName());
-            //添加权限
-            final List<SystemPermission> permissions = role.getPermissions();
-            if (!CollectionUtils.isEmpty(permissions)) {
-                permissions.stream().map(SystemPermission::getPath).forEach(data::add);
-            }
-        });
+        final long now = System.currentTimeMillis() / 1000;
+        userRoles.stream()
+                //过滤掉过期的角色
+                .filter(role -> now <= role.getTimeExpire() || role.getTimeExpire() == 0)
+                .forEach(role -> {
+                    //添加角色
+                    data.add(DEFAULT_ROLE_PREFIX + role.getName());
+                    //添加权限
+                    final List<SystemPermission> permissions = role.getPermissions();
+                    if (!CollectionUtils.isEmpty(permissions)) {
+                        permissions.stream().map(SystemPermission::getPath).forEach(data::add);
+                    }
+                });
         return data.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 
