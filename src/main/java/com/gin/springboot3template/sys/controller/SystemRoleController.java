@@ -4,12 +4,16 @@ import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.dto.form.SystemRoleForm;
 import com.gin.springboot3template.sys.dto.param.SystemRolePageParam;
+import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
+import com.gin.springboot3template.sys.service.impl.SystemRoleServiceImpl;
+import com.gin.springboot3template.sys.validation.EntityId;
 import com.gin.springboot3template.sys.vo.SystemRoleVo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +45,7 @@ public class SystemRoleController {
     public static final String API_PREFIX = "/sys/role";
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
-    /* todo 添加角色 修改角色 删除角色  查询所有角色 通过关键字检索角色*/
+    /* todo 添加角色  删除角色  查询所有角色 通过关键字检索角色*/
 
     @GetMapping("add")
     @Operation(summary = "添加角色", description = "返回添加完成的角色")
@@ -57,4 +62,14 @@ public class SystemRoleController {
         return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
     }
 
+    @GetMapping("update")
+    @Operation(summary = "修改角色", description = "返回修改完成的角色")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<SystemRoleVo> update(@RequestBody @Validated SystemRoleForm param,
+                                    @RequestParam @EntityId(service = SystemRoleServiceImpl.class) @Parameter(description = "角色id") Long roleId,
+                                    HttpServletRequest request) {
+        final SystemRole systemRole = systemRoleService.updateByIdParam(roleId, param);
+        final SystemRoleVo vo = new SystemRoleVo(systemRole);
+        return Res.of(vo);
+    }
 }
