@@ -17,5 +17,6 @@ import java.util.List;
 @Setter
 public class UserRoleForm extends UserIdForm {
     @Schema(description = "角色信息")
-    @NotEmpty List<RelationUserRoleForm> roles;
+    @NotEmpty
+    List<RelationUserRoleForm> roles;
 }   

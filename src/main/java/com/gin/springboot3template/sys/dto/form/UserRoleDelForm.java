@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.dto.form;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 public class UserRoleDelForm extends UserIdForm {
-
     @Schema(description = "角色id")
+    @NotEmpty
     List<Long> roleId;
 }   
