@@ -3,16 +3,22 @@ package com.gin.springboot3template.sys.controller;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.dto.RegForm;
 import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.service.MyUserDetailsServiceImpl;
+import com.gin.springboot3template.sys.service.SystemUserInfoService;
 import com.gin.springboot3template.sys.service.SystemUserService;
+import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
+import com.gin.springboot3template.sys.validation.EntityId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户接口
@@ -30,6 +36,7 @@ public class SystemUserAdminController {
      */
     public static final String API_PREFIX = SystemUserController.API_PREFIX + "/admin";
     private final SystemUserService systemUserService;
+    private final SystemUserInfoService systemUserInfoService;
     private final MyUserDetailsServiceImpl myUserDetailsService;
 
     @PostMapping("addRole")
@@ -88,7 +95,9 @@ public class SystemUserAdminController {
 
     @PostMapping("updateUserInfo")
     @Operation(summary = "修改指定用户的个人信息")
-    public void updateUserInfo() {
-        //todo
+    public Res<Object> updateUserInfo(@RequestBody @Validated SystemUserInfo.Param param,
+                                      @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId) {
+        systemUserInfoService.saveOrUpdate(userId, param);
+        return Res.of(null, "修改成功");
     }
 }

@@ -105,8 +105,10 @@ public class SystemUserController {
 
     @PostMapping("updateUserInfo")
     @Operation(summary = "修改自己的个人信息")
-    public void updateUserInfo() {
-        //todo
+    public Res<Void> updateUserInfo(@RequestBody @Validated SystemUserInfo.Param param) {
+        final Long userId = MySecurityUtils.currentUserDetails().getId();
+        systemUserInfoService.saveOrUpdate(userId, param);
+        return Res.of(null, "修改成功");
     }
 
 }
