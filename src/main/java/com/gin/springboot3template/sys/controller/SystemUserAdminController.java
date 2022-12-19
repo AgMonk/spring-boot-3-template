@@ -46,25 +46,29 @@ public class SystemUserAdminController {
 
     @PostMapping("addRole")
     @Operation(summary = "为指定用户添加角色")
-    public void addRole() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void addRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
 //todo
     }
 
     @PostMapping("configRole")
     @Operation(summary = "为指定用户配置角色")
-    public void configRole() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void configRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
 //todo
     }
 
     @PostMapping("createUser")
     @Operation(summary = "创建用户")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemUser.Vo> createUser(@RequestBody RegForm regForm) {
         return Res.of(new SystemUser.Vo(systemUserService.reg(regForm)), "创建成功");
     }
 
     @PostMapping("delRole")
     @Operation(summary = "为指定用户删除角色")
-    public void delRole() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void delRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
 //todo
     }
 
@@ -82,30 +86,35 @@ public class SystemUserAdminController {
 
     @GetMapping("listRole")
     @Operation(summary = "查询用户持有的角色")
-    public void listRole() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void listRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
 //todo
     }
 
     @PostMapping("lock")
     @Operation(summary = "锁定/解锁指定用户", description = "锁定用户不能登陆")
-    public void lock() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void lock(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
         //todo
     }
 
     @GetMapping("page")
     @Operation(summary = "分页查询用户账号信息")
-    public void page() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void page(HttpServletRequest request) {
         //todo
     }
 
     @PostMapping("resetPassword")
     @Operation(summary = "重置用户的密码")
-    public void reset() {
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public void reset(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
 //todo
     }
 
     @PostMapping("updateUserInfo")
     @Operation(summary = "修改指定用户的个人信息")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<Object> updateUserInfo(@RequestBody @Validated SystemUserInfo.Param param,
                                       @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId) {
         systemUserInfoService.saveOrUpdate(userId, param);
