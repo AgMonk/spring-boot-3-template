@@ -13,6 +13,7 @@ import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
 import com.gin.springboot3template.sys.service.SystemUserInfoService;
 import com.gin.springboot3template.sys.service.SystemUserService;
+import com.gin.springboot3template.sys.validation.Password;
 import com.gin.springboot3template.sys.vo.SystemUserInfoVo;
 import com.gin.springboot3template.sys.vo.SystemUserVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+
+import static com.gin.springboot3template.sys.bo.Constant.PASSWORD_MAX_LENGTH;
+import static com.gin.springboot3template.sys.bo.Constant.PASSWORD_MIN_LENGTH;
 
 /**
  * 用户接口
@@ -57,10 +60,9 @@ public class SystemUserController {
     public void changePwd(HttpServletRequest request
             , HttpServletResponse response
             , @RequestParam @Parameter(description = "旧密码") String oldPass
-            , @RequestParam @Parameter(description = "新密码,长度范围为 [6,20]") @Length(min = 6, max = 20) String newPass
+            , @RequestParam @Parameter(description = "新密码,长度范围为 [" + PASSWORD_MIN_LENGTH + "," + PASSWORD_MAX_LENGTH + "]") @Password String newPass
     ) throws ServletException, IOException {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
-
         systemUserService.changePwd(userId, oldPass, newPass);
 //        登出
         request.getRequestDispatcher(Constant.LOGOUT_URI).forward(request, response);

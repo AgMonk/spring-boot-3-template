@@ -46,6 +46,14 @@ public class Constant {
     public static final String MESSAGE_FORBIDDEN_CONFIG_ADMIN = "不能分配/取消分配 admin 角色";
     public static final String MESSAGE_NOT_CONFIG_ADMIN = "不能对持有 admin 角色 的用户进行操作";
     /**
+     * 密码最大位数
+     */
+    public static final int PASSWORD_MAX_LENGTH = 20;
+    /**
+     * 密码最小位数
+     */
+    public static final int PASSWORD_MIN_LENGTH = 6;
+    /**
      * preAuthority注解的内容,含义为:需要访问当前接口uri的权限,或者是admin角色
      */
     public static final String PRE_AUTHORITY_URI_OR_ADMIN = "hasAuthority(#request.requestURI) or hasRole('admin')";
