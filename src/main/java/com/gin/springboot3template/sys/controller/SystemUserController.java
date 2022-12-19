@@ -55,7 +55,8 @@ public class SystemUserController {
     public void changePwd(HttpServletRequest request
             , HttpServletResponse response
             , @RequestParam @Parameter(description = "旧密码") String oldPass
-            , @RequestParam @Parameter(description = "新密码,长度范围为 [6,20]") @Length(min = 6, max = 20) String newPass) throws ServletException, IOException {
+            , @RequestParam @Parameter(description = "新密码,长度范围为 [6,20]") @Length(min = 6, max = 20) String newPass
+    ) throws ServletException, IOException {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
 
         systemUserService.changePwd(userId, oldPass, newPass);

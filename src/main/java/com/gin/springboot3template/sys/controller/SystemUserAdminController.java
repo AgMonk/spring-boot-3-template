@@ -12,12 +12,15 @@ import com.gin.springboot3template.sys.service.*;
 import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_NOT_CONFIG_ADMIN;
 
@@ -78,12 +82,15 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("resetPassword")
-    @Operation(summary = "重置用户的密码", description = MESSAGE_NOT_CONFIG_ADMIN)
+    @Operation(summary = "重置用户的密码", description = MESSAGE_NOT_CONFIG_ADMIN + "<br/>返回新密码")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void reset(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+    public Res<String> reset(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request
+            , @RequestParam(required = false) @Parameter(description = "新密码,长度范围为 [6,20] ; 如不传将随机生成") @Length(min = 6, max = 20) String newPass
+    ) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-
-        //todo
+        String pwd = ObjectUtils.isEmpty(newPass) ? UUID.randomUUID().toString() : newPass;
+        systemUserService.changePwd(userId, pwd);
+        return Res.of(pwd, "修改成功");
     }
 
     @PostMapping("roleAdd")
