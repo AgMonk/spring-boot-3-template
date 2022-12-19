@@ -66,11 +66,14 @@ public class SystemUserAdminController {
     @PostMapping("configRole")
     @Operation(summary = "为指定用户配置角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void configRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
+    public Res<List<RelationUserRole>> configRole(HttpServletRequest request
+            , @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId
+            , @RequestBody @Validated Collection<RelationUserRole.Param> params
+    ) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-        //todo 不能对 admin 角色进行操作
-
-        //todo
+        systemRoleService.validateRoleId(params.stream().map(RelationUserRole.Param::getRoleId).toList());
+        final List<RelationUserRole> roleList = relationUserRoleService.config(userId, params);
+        return Res.of(roleList);
     }
 
     @PostMapping("createUser")

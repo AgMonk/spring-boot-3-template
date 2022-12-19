@@ -36,7 +36,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @param userId 用户id
      * @param params 参数
      */
-    default void config(long userId, Collection<RelationUserRole.Param> params) {
+    default List<RelationUserRole> config(long userId, Collection<RelationUserRole.Param> params) {
         // 查询指定用户持有的角色id
         //已有数据 (含有id)
         final List<RelationUserRole> oldData = listByUserId(Collections.singleton(userId));
@@ -68,6 +68,12 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
             }).toList();
             updateBatchById(data2Update);
         }
+
+        final List<RelationUserRole> res = new ArrayList<>();
+        res.addAll(data2Add);
+        res.addAll(newData);
+        res.sort((o1, o2) -> Math.toIntExact(o1.getId() - o2.getId()));
+        return res;
     }
 
     /**
