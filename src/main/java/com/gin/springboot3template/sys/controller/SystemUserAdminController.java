@@ -4,6 +4,7 @@ import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.bo.SystemUserBo;
 import com.gin.springboot3template.sys.dto.form.*;
+import com.gin.springboot3template.sys.dto.param.SystemUserPageParam;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
@@ -78,7 +80,7 @@ public class SystemUserAdminController {
     @GetMapping("page")
     @Operation(summary = "分页查询用户账号信息")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void page(HttpServletRequest request) {
+    public void page(@ParameterObject @Validated SystemUserPageParam pageParam, HttpServletRequest request) {
         //todo
     }
 

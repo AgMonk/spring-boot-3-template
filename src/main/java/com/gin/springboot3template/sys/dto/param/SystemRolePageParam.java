@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.dto;
+package com.gin.springboot3template.sys.dto.param;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePageParam;
@@ -25,6 +25,7 @@ public class SystemRolePageParam extends BasePageParam {
                 .like("name_zh", key).or()
                 .like("description", key).or()
                 .like("remark", key).or()
+                .orderByDesc("id")
         ;
     }
 }
