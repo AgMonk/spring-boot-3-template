@@ -86,12 +86,13 @@ public class SystemUserAdminController {
     @PostMapping("delRole")
     @Operation(summary = "为指定用户删除角色", description = MESSAGE_NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public void delRole(@RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId, HttpServletRequest request) {
-        //todo
+    public Res<Void> delRole(HttpServletRequest request
+            , @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId
+            , @RequestBody @Validated List<Long> roleId
+    ) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-        //todo 不能对 admin 角色进行操作
-
-
+        relationUserRoleService.del(userId, roleId);
+        return Res.of(null);
     }
 
     @GetMapping("findUserInfo")
