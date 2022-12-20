@@ -90,8 +90,6 @@ public class SystemRoleController {
         return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
     }
 
-    // todo 为角色: 移除权限 / 配置权限 /
-
     @PostMapping("permissionAdd")
     @Operation(summary = "为角色添加权限", description = "返回添加的角色权限")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
@@ -104,6 +102,21 @@ public class SystemRoleController {
         systemPermissionService.validatePermId(permIds);
         //添加权限
         final List<RelationRolePermission> res = relationRolePermissionService.add(form.getRoleId(), permIds);
+        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
+    }
+
+    @PostMapping("permissionConfig")
+    @Operation(summary = "为角色配置权限", description = "返回配置的角色权限")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<SystemRolePermissionVo> permissionConfig(
+            @RequestBody @Validated SystemRolePermissionForm form,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        final List<Long> permIds = form.getPermIds();
+        //校验权限id
+        systemPermissionService.validatePermId(permIds);
+        //移除权限
+        final List<RelationRolePermission> res = relationRolePermissionService.config(form.getRoleId(), permIds);
         return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
     }
 

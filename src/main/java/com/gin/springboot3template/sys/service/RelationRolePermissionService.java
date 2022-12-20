@@ -51,8 +51,9 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * 为指定角色配置权限
      * @param roleId  角色id
      * @param permIds 权限id
+     * @return 新数据
      */
-    default void config(long roleId, Collection<Long> permIds) {
+    default List<RelationRolePermission> config(long roleId, Collection<Long> permIds) {
         //已有数据 (含有id)
         final List<RelationRolePermission> oldData = listByRoleId(Collections.singleton(roleId));
         //新数据 (不含id)
@@ -70,6 +71,8 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
         if (data2Add.size() > 0) {
             saveBatch(data2Add);
         }
+
+        return newData;
 
     }
 
