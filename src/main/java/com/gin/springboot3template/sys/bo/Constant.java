@@ -22,11 +22,11 @@ public class Constant {
         /**
          * 预设角色 角色管理员
          */
-        public static final String ROLE_ADMIN = "roleAdmin";
+        public static final String ROLE_MANAGER = "roleManager";
         /**
          * 预设角色集合
          */
-        public static final List<String> DEFAULT_ROLES = List.of(ADMIN, ROLE_ADMIN);
+        public static final List<String> DEFAULT_ROLES = List.of(ADMIN, ROLE_MANAGER);
     }
 
     /**

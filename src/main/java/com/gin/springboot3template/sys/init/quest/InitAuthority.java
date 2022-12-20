@@ -51,6 +51,7 @@ public class InitAuthority implements ApplicationRunner {
      */
     private List<SystemPermission> fullPermission;
     private SystemRole adminRole;
+    private SystemRole roleManager;
 
     /**
      * 返回持有4种注解的元素
@@ -171,5 +172,22 @@ public class InitAuthority implements ApplicationRunner {
         } else {
             this.adminRole = admin;
         }
+
+
+        //检查 角色管理员 角色是否存在 不存在则创建 存在则赋值
+        final SystemRole roleManager = systemRoleService.getByName(Constant.Role.ROLE_MANAGER);
+        if (roleManager == null) {
+            log.info("角色管理员角色不存在,执行创建");
+            final SystemRole role = new SystemRole();
+            role.setName(Constant.Role.ROLE_MANAGER);
+            role.setNameZh("角色管理员");
+            role.setRemark("预设角色管理员,不允许修改其权限");
+            role.setDescription("预设角色管理员,不允许修改其权限");
+            systemRoleService.save(role);
+            this.roleManager = role;
+        } else {
+            this.roleManager = roleManager;
+        }
+
     }
 }
