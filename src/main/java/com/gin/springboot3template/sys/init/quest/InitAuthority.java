@@ -2,10 +2,13 @@ package com.gin.springboot3template.sys.init.quest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
+import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
+import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
 import com.gin.springboot3template.sys.service.SystemPermissionService;
+import com.gin.springboot3template.sys.service.SystemRoleService;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,11 +44,13 @@ import java.util.stream.Stream;
 public class InitAuthority implements ApplicationRunner {
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
+    private final SystemRoleService systemRoleService;
 
     /**
      * 所有权限
      */
     private List<SystemPermission> fullPermission;
+    private SystemRole adminRole;
 
     /**
      * 返回持有4种注解的元素
@@ -149,9 +154,22 @@ public class InitAuthority implements ApplicationRunner {
     }
 
     /**
-     * 初始化角色,创建 角色 超管(admin) 角色管理员(roleAdmin) 角色分发员(roleDistributor)
+     * 初始化角色,创建 角色 超管(admin) 角色管理员(roleAdmin)
      */
     private void initRoles() {
-        // todo 自动创建 admin 角色
+        //检查 admin 角色是否存在 不存在则创建 存在则赋值
+        final SystemRole admin = systemRoleService.getByName(Constant.Role.ADMIN);
+        if (admin == null) {
+            log.info("超级管理员角色不存在,执行创建");
+            final SystemRole role = new SystemRole();
+            role.setName(Constant.Role.ADMIN);
+            role.setNameZh("超级管理员");
+            role.setRemark("预设超级管理员,不允许修改");
+            role.setDescription("预设超级管理员,不允许修改");
+            systemRoleService.save(role);
+            this.adminRole = role;
+        } else {
+            this.adminRole = admin;
+        }
     }
 }

@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="本地启动" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+        <module name="spring-boot-3-template"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="com.gin.springboot3template.SpringBoot3TemplateApplication"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>
