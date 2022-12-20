@@ -77,11 +77,14 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * 为指定角色删除权限
      * @param roleId  角色id
      * @param permIds 权限id
+     * @return 移除的权限
      */
-    default void del(long roleId, Collection<Long> permIds) {
+    default List<RelationRolePermission> del(long roleId, Collection<Long> permIds) {
         final QueryWrapper<RelationRolePermission> qw = new QueryWrapper<>();
         qw.eq("role_id", roleId).in("permission_id", permIds);
+        final List<RelationRolePermission> res = list(qw);
         remove(qw);
+        return res;
     }
 
     /**

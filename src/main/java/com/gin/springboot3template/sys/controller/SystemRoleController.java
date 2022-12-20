@@ -104,8 +104,22 @@ public class SystemRoleController {
         systemPermissionService.validatePermId(permIds);
         //添加权限
         final List<RelationRolePermission> res = relationRolePermissionService.add(form.getRoleId(), permIds);
-        final SystemRolePermissionVo vo = SystemRolePermissionVo.of(form.getRoleId(), res);
-        return Res.of(vo);
+        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
+    }
+
+    @PostMapping("permissionDel")
+    @Operation(summary = "为角色移除权限", description = "返回移除的角色权限")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<SystemRolePermissionVo> permissionDel(
+            @RequestBody @Validated SystemRolePermissionForm form,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        final List<Long> permIds = form.getPermIds();
+        //校验权限id
+        systemPermissionService.validatePermId(permIds);
+        //移除权限
+        final List<RelationRolePermission> res = relationRolePermissionService.del(form.getRoleId(), permIds);
+        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
     }
 
     @GetMapping("permissionList")
