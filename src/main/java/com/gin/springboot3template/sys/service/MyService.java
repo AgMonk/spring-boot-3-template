@@ -26,9 +26,18 @@ public interface MyService<T> extends IService<T> {
     default List<Long> findNotExistsId(Collection<Long> ids) {
         final List<T> entities = listByIds(ids);
         final List<Map<String, Object>> maps = entities.stream().map(JacksonUtils::obj2Map).toList();
-        final List<Long> idExists = maps.stream().map(i -> Long.parseLong(String.valueOf(i.get("id")))).toList();
+        final List<Long> idExists = maps.stream().map(i -> Long.parseLong(String.valueOf(i.get(getPrimaryKey())))).toList();
         return ids.stream().filter(i -> !idExists.contains(i)).toList();
     }
+
+    /**
+     * 返回本实体的主键字段名
+     * @return 本实体的主键字段名
+     */
+    default String getPrimaryKey() {
+        return "id";
+    }
+
 
     /**
      * 根据参数执行分页查询
