@@ -14,11 +14,12 @@ system:
 
 logging:
   level:
-  #本模板的日志打印级别
+    #本模板的日志打印级别
     com.gin: debug
 
 spring:
   datasource:
+    #数据库连接: 地址,端口,数据库名
     url: jdbc:mysql://localhost:3306/spring-boot-3-template?serverTimezone=GMT%2B8&characterEncoding=utf-8&allowMultiQueries=true
     username: 数据库用户名
     password: 数据库密码
