@@ -45,7 +45,7 @@ public class SystemRoleController {
     public static final String API_PREFIX = "/sys/role";
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
-    /* todo 添加角色  删除角色  查询所有角色 通过关键字检索角色*/
+    /* todo   查询所有角色*/
 
     @GetMapping("add")
     @Operation(summary = "添加角色", description = "返回添加完成的角色")
@@ -53,6 +53,16 @@ public class SystemRoleController {
     public Res<List<SystemRoleVo>> add(@RequestBody @Validated List<SystemRoleForm> param, HttpServletRequest request) {
         final List<SystemRoleVo> data = systemRoleService.addByParam(param).stream().map(SystemRoleVo::new).collect(Collectors.toList());
         return Res.of(data);
+    }
+
+    @GetMapping("del")
+    @Operation(summary = "删除角色", description = "注意:将连带删除所有对该角色的持有")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<List<SystemRoleVo>> del(@RequestBody @Validated @Parameter(description = "角色id") List<Long> roleId,
+                                       HttpServletRequest request) {
+        systemRoleService.validateRoleId(roleId);
+        final List<SystemRoleVo> res = rolePermissionService.roleDel(roleId).stream().map(SystemRoleVo::new).toList();
+        return Res.of(res, "删除成功");
     }
 
     @GetMapping("page")
