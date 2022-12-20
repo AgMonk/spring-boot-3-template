@@ -8,6 +8,7 @@ import com.gin.springboot3template.sys.dto.param.SystemRolePageParam;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
+import com.gin.springboot3template.sys.service.RelationRolePermissionService;
 import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
 import com.gin.springboot3template.sys.service.impl.SystemRoleServiceImpl;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
  */
 @MyRestController(SystemRoleController.API_PREFIX)
 @RequiredArgsConstructor
-@Tag(name = "角色接口")
+@Tag(name = "角色管理接口")
 @Slf4j
 public class SystemRoleController {
     /**
@@ -48,6 +49,7 @@ public class SystemRoleController {
     public static final String API_PREFIX = "/sys/role";
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
+    private final RelationRolePermissionService relationRolePermissionService;
 
     @PostMapping("add")
     @Operation(summary = "添加角色", description = "返回添加完成的角色")
@@ -92,4 +94,6 @@ public class SystemRoleController {
         final SystemRoleVo vo = new SystemRoleVo(systemRole);
         return Res.of(vo);
     }
+
+    // todo 为角色: 添加权限 / 移除权限 / 配置权限
 }

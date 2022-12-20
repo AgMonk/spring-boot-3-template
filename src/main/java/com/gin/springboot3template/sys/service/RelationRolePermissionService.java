@@ -19,7 +19,12 @@ import java.util.stream.Collectors;
 
 @Transactional(rollbackFor = Exception.class)
 public interface RelationRolePermissionService extends MyService<RelationRolePermission> {
-
+    /**
+     * 将角色id 和权限id 组装成 角色权限列表
+     * @param roleId  角色id
+     * @param permIds 权限id
+     * @return 角色权限列表
+     */
     @NotNull
     private static List<RelationRolePermission> build(long roleId, Collection<Long> permIds) {
         return permIds.stream().map(pId -> {
