@@ -14,7 +14,7 @@ import lombok.Setter;
 @Schema(description = "角色分页查询参数")
 public class SystemRolePageParam extends BasePageParam {
     @Schema(description = "关键字(名称,中文名称,描述,备注)")
-    Integer key;
+    String key;
 
     @Override
     public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
