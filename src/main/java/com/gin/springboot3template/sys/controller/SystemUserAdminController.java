@@ -84,7 +84,7 @@ public class SystemUserAdminController {
     @Operation(summary = "分页查询用户账号信息")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public ResPage<SystemUserVo> page(
-            @ParameterObject @Validated SystemUserPageParam pageParam,
+            @ParameterObject SystemUserPageParam pageParam,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
         return systemUserService.pageByParam(pageParam, SystemUserVo::new);

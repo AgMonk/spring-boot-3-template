@@ -136,7 +136,7 @@ public class SystemRoleController {
     @Operation(summary = "分页查询角色")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
     public ResPage<SystemRoleVo> rolePage(
-            @ParameterObject @Validated SystemRolePageParam pageParam,
+            @ParameterObject SystemRolePageParam pageParam,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
         return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
