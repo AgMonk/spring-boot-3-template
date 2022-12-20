@@ -3,6 +3,7 @@ package com.gin.springboot3template.sys.vo;
 import com.gin.springboot3template.sys.base.BaseVo;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "用户个人信息")
 public class SystemUserInfoVo extends BaseVo {
     @Schema(description = "用户id")

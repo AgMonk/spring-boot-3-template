@@ -5,6 +5,7 @@ import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.dto.form.SystemRoleDelForm;
 import com.gin.springboot3template.sys.dto.form.SystemRoleForm;
 import com.gin.springboot3template.sys.dto.param.SystemRolePageParam;
+import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,6 +85,20 @@ public class SystemRoleController {
         return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
     }
 
+    // todo 为角色: 添加权限 / 移除权限 / 配置权限 /
+
+    
+    @GetMapping("permissionList")
+    @Operation(summary = "查询角色持有的权限")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<List<SystemPermission>> permissionList(
+            @RequestParam @EntityId(service = SystemRoleServiceImpl.class) @Parameter(description = "角色id") Long roleId,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        final HashMap<Long, List<SystemPermission>> map = rolePermissionService.findRolePermissionMap(Collections.singleton(roleId));
+        return Res.of(map.get(roleId));
+    }
+
     @PostMapping("update")
     @Operation(summary = "修改角色", description = "返回修改完成的角色")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
@@ -94,6 +111,4 @@ public class SystemRoleController {
         final SystemRoleVo vo = new SystemRoleVo(systemRole);
         return Res.of(vo);
     }
-
-    // todo 为角色: 添加权限 / 移除权限 / 配置权限
 }

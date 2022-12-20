@@ -42,6 +42,37 @@ public class RolePermissionService implements AuthorityProvider {
     private final RelationUserRoleService relationUserRoleService;
 
     /**
+     * 根据角色id查询其持有的权限
+     * @param roleIds 角色id
+     * @return 角色权限映射
+     */
+    public HashMap<Long, List<SystemPermission>> findRolePermissionMap(Collection<Long> roleIds) {
+        // 根据用户id查询其持有的权限
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return new HashMap<>(0);
+        }
+        final List<RelationRolePermission> rolePermissions = relationRolePermissionService.listByRoleId(roleIds);
+        if (CollectionUtils.isEmpty(rolePermissions)) {
+            return new HashMap<>(0);
+        }
+        // 权限id去重
+        final List<Long> permissionId = rolePermissions.stream().map(RelationRolePermission::getPermissionId).distinct().sorted().toList();
+        // 权限列表
+        final List<SystemPermission> permissions = systemPermissionService.listByIds(permissionId);
+
+        // 角色id 到 权限列表的映射
+        final Map<Long, List<RelationRolePermission>> rolePermissionMap = rolePermissions.stream().collect(Collectors.groupingBy(
+                RelationRolePermission::getRoleId));
+        // 返回对象
+        final HashMap<Long, List<SystemPermission>> res = new HashMap<>(rolePermissionMap.size());
+        rolePermissionMap.forEach((id, perm) -> {
+            final List<Long> permId = perm.stream().map(RelationRolePermission::getPermissionId).toList();
+            res.put(id, permissions.stream().filter(i -> permId.contains(i.getId())).toList());
+        });
+        return res;
+    }
+
+    /**
      * 不能对 持有 admin 角色 的用户操作
      * @param userId 用户id
      */
@@ -52,7 +83,6 @@ public class RolePermissionService implements AuthorityProvider {
             throw BusinessException.of(HttpStatus.FORBIDDEN, MESSAGE_NOT_CONFIG_ADMIN);
         }
     }
-
 
     /**
      * 提供权限
@@ -87,7 +117,6 @@ public class RolePermissionService implements AuthorityProvider {
         return data.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 
-
     /**
      * 查询指定用户的角色及其权限
      * @param userId 用户id
@@ -116,26 +145,11 @@ public class RolePermissionService implements AuthorityProvider {
         //补充角色三个字段信息
         userRoles.forEach(i -> i.with(roleHashMap.get(i.getRoleId())));
 
-        // 角色持有的权限信息
-        final List<RelationRolePermission> rolePermissions = relationRolePermissionService.listByRoleId(roleId);
-        // 如果没有权限 直接返回
-        if (rolePermissions.size() == 0) {
-            return userData;
-        }
-        // 权限id去重
-        final List<Long> permissionId = rolePermissions.stream().map(RelationRolePermission::getPermissionId).distinct().sorted().toList();
-        // 权限列表
-        final List<SystemPermission> permissions = systemPermissionService.listByIds(permissionId);
+        final HashMap<Long, List<SystemPermission>> rolePermissionMap = findRolePermissionMap(roleId);
         //为每个角色补充权限信息
-        userRoles.forEach(role -> {
-            // 该角色持有的权限id
-            final List<Long> permId = rolePermissions.stream().filter(i -> i.getRoleId().equals(role.getRoleId())).map(RelationRolePermission::getPermissionId).toList();
-            // 放入权限
-            role.setPermissions(permissions.stream().filter(i -> permId.contains(i.getId())).collect(Collectors.toList()));
-        });
+        userRoles.forEach(role -> role.setPermissions(rolePermissionMap.get(role.getId())));
         return userData;
     }
-
 
     /**
      * 删除角色(连带删除所有对该角色的持有)
