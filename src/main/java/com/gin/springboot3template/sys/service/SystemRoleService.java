@@ -1,7 +1,6 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.dto.form.SystemRoleForm;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.exception.BusinessException;
@@ -86,10 +85,11 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param roleId 角色ID
      */
     default void validateRoleId(Collection<Long> roleId) {
-        final List<Long> idExists = listByIds(roleId).stream().map(BasePo::getId).toList();
-        final List<Long> idNotExists = roleId.stream().filter(i -> !idExists.contains(i)).toList();
+        final List<Long> idNotExists = findNotExistsId(roleId);
         if (idNotExists.size() > 0) {
-            throw BusinessException.of(HttpStatus.BAD_REQUEST, "参数错误,如下角色ID不存在", idNotExists.stream().map(String::valueOf).collect(Collectors.toList()));
+            throw BusinessException.of(HttpStatus.BAD_REQUEST,
+                                       "参数错误,如下角色ID不存在",
+                                       idNotExists.stream().map(String::valueOf).collect(Collectors.toList()));
         }
     }
 }

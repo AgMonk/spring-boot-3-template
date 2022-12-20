@@ -4,16 +4,20 @@ import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.dto.form.SystemRoleDelForm;
 import com.gin.springboot3template.sys.dto.form.SystemRoleForm;
+import com.gin.springboot3template.sys.dto.form.SystemRolePermissionForm;
 import com.gin.springboot3template.sys.dto.param.SystemRolePageParam;
+import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
 import com.gin.springboot3template.sys.service.RolePermissionService;
+import com.gin.springboot3template.sys.service.SystemPermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
 import com.gin.springboot3template.sys.service.impl.SystemRoleServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
+import com.gin.springboot3template.sys.vo.SystemRolePermissionVo;
 import com.gin.springboot3template.sys.vo.SystemRoleVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -53,6 +57,7 @@ public class SystemRoleController {
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
+    private final SystemPermissionService systemPermissionService;
 
     @PostMapping("add")
     @Operation(summary = "添加角色", description = "返回添加完成的角色")
@@ -85,9 +90,24 @@ public class SystemRoleController {
         return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
     }
 
-    // todo 为角色: 添加权限 / 移除权限 / 配置权限 /
+    // todo 为角色: 移除权限 / 配置权限 /
 
-    
+    @PostMapping("permissionAdd")
+    @Operation(summary = "为角色添加权限", description = "返回添加的角色权限")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<SystemRolePermissionVo> permissionAdd(
+            @RequestBody @Validated SystemRolePermissionForm form,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        final List<Long> permIds = form.getPermIds();
+        //校验权限id
+        systemPermissionService.validatePermId(permIds);
+        //添加权限
+        final List<RelationRolePermission> res = relationRolePermissionService.add(form.getRoleId(), permIds);
+        final SystemRolePermissionVo vo = SystemRolePermissionVo.of(form.getRoleId(), res);
+        return Res.of(vo);
+    }
+
     @GetMapping("permissionList")
     @Operation(summary = "查询角色持有的权限")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)

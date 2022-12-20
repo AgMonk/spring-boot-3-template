@@ -5,7 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.response.ResPage;
+import com.gin.springboot3template.sys.utils.JacksonUtils;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -15,12 +19,15 @@ import java.util.function.Function;
  */
 public interface MyService<T> extends IService<T> {
     /**
-     * 根据参数执行分页查询
-     * @param param 参数
-     * @return 分页数据
+     * 返回不存在的主键id
+     * @param ids id
+     * @return 不存在的id
      */
-    default Page<T> pageByParam(BasePageParam param) {
-        return pageByParam(param, new QueryWrapper<>());
+    default List<Long> findNotExistsId(Collection<Long> ids) {
+        final List<T> entities = listByIds(ids);
+        final List<Map<String, Object>> maps = entities.stream().map(JacksonUtils::obj2Map).toList();
+        final List<Long> idExists = maps.stream().map(i -> Long.parseLong(String.valueOf(i.get("id")))).toList();
+        return ids.stream().filter(i -> !idExists.contains(i)).toList();
     }
 
     /**
@@ -58,5 +65,13 @@ public interface MyService<T> extends IService<T> {
         return ResPage.of(pageByParam(param, qw), func);
     }
 
+    /**
+     * 根据参数执行分页查询
+     * @param param 参数
+     * @return 分页数据
+     */
+    default Page<T> pageByParam(BasePageParam param) {
+        return pageByParam(param, new QueryWrapper<>());
+    }
 
 }

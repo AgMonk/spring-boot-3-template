@@ -3,9 +3,12 @@ package com.gin.springboot3template.sys.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.entity.SystemPermission;
+import com.gin.springboot3template.sys.exception.BusinessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Transactional(rollbackFor = Exception.class)
 public interface SystemPermissionService extends MyService<SystemPermission> {
-    org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SystemPermissionService.class);
+    org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SystemPermissionService.class);
 
     /**
      * 根据路径查询权限
@@ -46,7 +49,7 @@ public interface SystemPermissionService extends MyService<SystemPermission> {
             removeBatchByIds(data2Del.stream().map(BasePo::getId).collect(Collectors.toList()));
             oldData.removeAll(data2Del);
             for (SystemPermission perm : data2Del) {
-                log.info("移除权限: {}", perm.getPath());
+                LOG.info("移除权限: {}", perm.getPath());
             }
         }
 
@@ -57,20 +60,19 @@ public interface SystemPermissionService extends MyService<SystemPermission> {
             returnData.addAll(data2Add);
             newData.removeAll(data2Add);
             for (SystemPermission perm : data2Add) {
-                log.info("添加权限: {}", perm.getPath());
+                LOG.info("添加权限: {}", perm.getPath());
             }
         }
 
         //过滤出已经存在的，进行修改
         if (newData.size() > 0) {
-            final long now = System.currentTimeMillis() / 1000;
             final List<SystemPermission> data2Update = newData.stream()
                     .peek(nd -> nd.setId(oldData.stream().filter(od -> od.equals(nd)).toList().get(0).getId()))
                     .toList();
             updateBatchById(data2Update);
             returnData.addAll(data2Update);
             for (SystemPermission perm : data2Update) {
-                log.info("更新权限: {}", perm.getPath());
+                LOG.info("更新权限: {}", perm.getPath());
             }
         }
 
@@ -79,4 +81,17 @@ public interface SystemPermissionService extends MyService<SystemPermission> {
 
     }
 
+
+    /**
+     * 校验权限ID存在
+     * @param permId 权限ID
+     */
+    default void validatePermId(Collection<Long> permId) {
+        final List<Long> idNotExists = findNotExistsId(permId);
+        if (idNotExists.size() > 0) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST,
+                                       "参数错误,如下权限ID不存在",
+                                       idNotExists.stream().map(String::valueOf).collect(Collectors.toList()));
+        }
+    }
 }

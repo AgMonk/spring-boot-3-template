@@ -24,7 +24,7 @@ import java.util.List;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
-public class RolePermissionForm {
+public class SystemRolePermissionForm {
     @Schema(description = "角色id")
     @NotNull
     @EntityId(service = SystemRoleServiceImpl.class)
