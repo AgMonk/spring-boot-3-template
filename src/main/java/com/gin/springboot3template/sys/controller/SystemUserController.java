@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 
-import static com.gin.springboot3template.sys.bo.Constant.PASSWORD_MAX_LENGTH;
-import static com.gin.springboot3template.sys.bo.Constant.PASSWORD_MIN_LENGTH;
+import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MAX_LENGTH;
+import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MIN_LENGTH;
 
 /**
  * 用户接口
@@ -66,7 +66,7 @@ public class SystemUserController {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
         systemUserService.changePwd(userId, oldPass, newPass);
 //        登出
-        request.getRequestDispatcher(Constant.LOGOUT_URI).forward(request, response);
+        request.getRequestDispatcher(Constant.Security.LOGOUT_URI).forward(request, response);
     }
 
     @GetMapping("findUserInfo")

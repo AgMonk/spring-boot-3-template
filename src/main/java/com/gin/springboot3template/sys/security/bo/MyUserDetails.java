@@ -73,7 +73,7 @@ public class MyUserDetails extends BaseBo implements UserDetails {
     }
 
     public void addRole(String role) {
-        addPermission(Constant.DEFAULT_ROLE_PREFIX + role);
+        addPermission(Constant.Security.DEFAULT_ROLE_PREFIX + role);
     }
 
     /**
@@ -90,7 +90,7 @@ public class MyUserDetails extends BaseBo implements UserDetails {
     }
 
     public boolean hasRole(String role) {
-        return hasAuthority(Constant.DEFAULT_ROLE_PREFIX + role);
+        return hasAuthority(Constant.Security.DEFAULT_ROLE_PREFIX + role);
     }
 
     public MyUserDetails with(Object userDetails) {

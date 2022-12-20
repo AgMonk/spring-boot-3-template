@@ -96,10 +96,11 @@ public class MySecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   MyLoginFilter loginFilter,
-                                                   MyAuthenticationHandler authenticationHandler,
-                                                   MyRememberMeServices rememberMeServices
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            MyLoginFilter loginFilter,
+            MyAuthenticationHandler authenticationHandler,
+            MyRememberMeServices rememberMeServices
     ) throws Exception {
         //路径配置
         http.authorizeHttpRequests()
@@ -114,7 +115,7 @@ public class MySecurityConfig {
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
         //登出
-        http.logout().logoutUrl(Constant.LOGOUT_URI).logoutSuccessHandler(authenticationHandler);
+        http.logout().logoutUrl(Constant.Security.LOGOUT_URI).logoutSuccessHandler(authenticationHandler);
 
         //禁用 csrf
 //        http.csrf().disable();

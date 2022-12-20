@@ -60,7 +60,7 @@ public class SystemRoleController {
 
     @PostMapping("permissionAdd")
     @Operation(summary = "为角色添加权限", description = "返回添加的角色权限")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemRolePermissionVo> permissionAdd(
             @RequestBody @Validated SystemRolePermissionForm form,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -74,7 +74,7 @@ public class SystemRoleController {
 
     @PostMapping("permissionConfig")
     @Operation(summary = "为角色配置权限", description = "返回配置的角色权限")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemRolePermissionVo> permissionConfig(
             @RequestBody @Validated SystemRolePermissionForm form,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -88,7 +88,7 @@ public class SystemRoleController {
 
     @PostMapping("permissionDel")
     @Operation(summary = "为角色移除权限", description = "返回移除的角色权限")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemRolePermissionVo> permissionDel(
             @RequestBody @Validated SystemRolePermissionForm form,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -102,7 +102,7 @@ public class SystemRoleController {
 
     @GetMapping("permissionList")
     @Operation(summary = "查询角色持有的权限")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<SystemPermission>> permissionList(
             @RequestParam @EntityId(service = SystemRoleServiceImpl.class) @Parameter(description = "角色id") Long roleId,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -111,9 +111,9 @@ public class SystemRoleController {
         return Res.of(map.get(roleId));
     }
 
-    @PostMapping("add")
+    @PostMapping(Constant.Api.ADD)
     @Operation(summary = "添加角色", description = "返回添加完成的角色")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<SystemRoleVo>> roleAdd(
             @RequestBody @Validated @NotEmpty @Parameter(description = "角色列表") List<SystemRoleForm> roles,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -122,9 +122,9 @@ public class SystemRoleController {
         return Res.of(data);
     }
 
-    @PostMapping("del")
+    @PostMapping(Constant.Api.DEL)
     @Operation(summary = "删除角色", description = "注意:将连带删除所有对该角色的持有")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<SystemRoleVo>> roleDel(@RequestBody @Validated SystemRoleDelForm form, @SuppressWarnings("unused") HttpServletRequest request) {
         final List<Long> roleId = form.getRoleId();
         systemRoleService.validateRoleId(roleId);
@@ -132,9 +132,9 @@ public class SystemRoleController {
         return Res.of(res, "删除成功");
     }
 
-    @GetMapping("page")
+    @GetMapping(Constant.Api.PAGE)
     @Operation(summary = "分页查询角色")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public ResPage<SystemRoleVo> rolePage(
             @ParameterObject SystemRolePageParam pageParam,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -142,9 +142,9 @@ public class SystemRoleController {
         return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
     }
 
-    @PostMapping("update")
+    @PostMapping(Constant.Api.UPDATE)
     @Operation(summary = "修改角色", description = "返回修改完成的角色")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemRoleVo> roleUpdate(
             @RequestBody @Validated SystemRoleForm param,
             @RequestParam @EntityId(service = SystemRoleServiceImpl.class) @Parameter(description = "角色id") Long roleId,

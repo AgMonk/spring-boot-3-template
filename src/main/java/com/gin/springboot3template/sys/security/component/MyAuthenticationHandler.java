@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.gin.springboot3template.sys.bo.Constant.VERIFY_CODE_KEY;
+import static com.gin.springboot3template.sys.bo.Constant.Security.VERIFY_CODE_KEY;
 
 
 /**
@@ -90,7 +90,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         }
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, Constant.ACCESS_DENIED)));
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, Constant.Messages.ACCESS_DENIED)));
     }
 
     /**

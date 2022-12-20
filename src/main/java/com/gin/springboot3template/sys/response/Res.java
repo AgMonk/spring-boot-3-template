@@ -36,7 +36,7 @@ public class Res<T> implements Serializable {
     }
 
     public static <T> Res<T> of(T data) {
-        return of(data, data == null ? Constant.MESSAGE_DATA_NOT_FOUND : "ok");
+        return of(data, data == null ? Constant.Messages.DATA_NOT_FOUND : "ok");
     }
 
     public static <T> Res<T> of(T data, String message) {

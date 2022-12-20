@@ -38,7 +38,7 @@ public class ResPage<T> extends Res<List<T>> {
         data.setSize(page.getSize());
         data.setTotal(page.getTotal());
         data.setTotalPage(page.getPages());
-        data.setMessage(CollectionUtils.isEmpty(page.getRecords()) ? Constant.MESSAGE_DATA_NOT_FOUND : "ok");
+        data.setMessage(CollectionUtils.isEmpty(page.getRecords()) ? Constant.Messages.DATA_NOT_FOUND : "ok");
         data.setData(page.getRecords());
         return data;
     }
@@ -49,7 +49,7 @@ public class ResPage<T> extends Res<List<T>> {
         data.setSize(page.getSize());
         data.setTotal(page.getTotal());
         data.setTotalPage(page.getPages());
-        data.setMessage(CollectionUtils.isEmpty(page.getRecords()) ? Constant.MESSAGE_DATA_NOT_FOUND : "ok");
+        data.setMessage(CollectionUtils.isEmpty(page.getRecords()) ? Constant.Messages.DATA_NOT_FOUND : "ok");
         data.setData(page.getRecords().stream().map(func).toList());
         return data;
     }

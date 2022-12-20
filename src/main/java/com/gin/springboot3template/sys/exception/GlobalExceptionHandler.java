@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
         log.warn(e.getLocalizedMessage());
         final SystemPermission permission = systemPermissionService.getByPath(request.getRequestURI());
         final String message = permission == null ? null : new ExpressionExceptionParser(permission.getPreAuthorize(), request).explain();
-        return new ResponseEntity<>(Res.of(message, Constant.ACCESS_DENIED), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(Res.of(message, Constant.Messages.ACCESS_DENIED), HttpStatus.FORBIDDEN);
     }
 
     /**

@@ -61,7 +61,8 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
     public TypeNameAuthorityEvaluator getTypeNameAuthorityEvaluator(String targetType) {
         if (this.nameMap == null) {
             HashMap<String, TypeNameAuthorityEvaluator> map = new HashMap<>(1);
-            final Collection<TypeNameAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(TypeNameAuthorityEvaluator.class).values();
+            final Collection<TypeNameAuthorityEvaluator> authorityEvaluators = SpringContextUtils.getContext().getBeansOfType(
+                    TypeNameAuthorityEvaluator.class).values();
             for (TypeNameAuthorityEvaluator authorityEvaluator : authorityEvaluators) {
                 final List<String> targetTypes = authorityEvaluator.getTargetTypes();
                 for (String type : targetTypes) {
@@ -93,7 +94,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         }
         final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
         //如果持有 admin 角色 ，直接放行
-        if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
+        if (myUserDetails.hasRole(Constant.Role.ADMIN)) {
             return true;
         }
         //从 nameMap 中选择  权限评估器
@@ -120,7 +121,7 @@ public class PermissionEvaluatorProxyService implements PermissionEvaluator {
         }
         final MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
         //如果持有 admin 角色 ，直接放行
-        if (myUserDetails.hasRole(Constant.ROLE_ADMIN)) {
+        if (myUserDetails.hasRole(Constant.Role.ADMIN)) {
             return true;
         }
         //从 classMap 中选择  权限评估器

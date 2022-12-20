@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.gin.springboot3template.sys.bo.Constant.PASSWORD_MAX_LENGTH;
-import static com.gin.springboot3template.sys.bo.Constant.PASSWORD_MIN_LENGTH;
+import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MAX_LENGTH;
+import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MIN_LENGTH;
 
 /**
  * 重置密码表单

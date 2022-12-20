@@ -29,8 +29,11 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
             changeMessage(context, prefix + "密码不允许为空");
             return false;
         }
-        if (s.length() < Constant.PASSWORD_MIN_LENGTH || s.length() > Constant.PASSWORD_MAX_LENGTH) {
-            changeMessage(context, prefix + String.format("密码长度应介于 [%d,%d]", Constant.PASSWORD_MIN_LENGTH, Constant.PASSWORD_MAX_LENGTH));
+        if (s.length() < Constant.Security.PASSWORD_MIN_LENGTH || s.length() > Constant.Security.PASSWORD_MAX_LENGTH) {
+            changeMessage(context,
+                          prefix + String.format("密码长度应介于 [%d,%d]",
+                                                 Constant.Security.PASSWORD_MIN_LENGTH,
+                                                 Constant.Security.PASSWORD_MAX_LENGTH));
             return false;
         }
 

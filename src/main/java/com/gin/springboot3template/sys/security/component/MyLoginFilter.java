@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static com.gin.springboot3template.sys.bo.Constant.APPLICATION_JSON_CHARSET_UTF_8;
-import static com.gin.springboot3template.sys.bo.Constant.VERIFY_CODE_KEY;
+import static com.gin.springboot3template.sys.bo.Constant.Security.VERIFY_CODE_KEY;
 
 /**
  * 登陆过滤
@@ -72,7 +72,7 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
                 username = map.get(getUsernameParameter());
                 password = map.get(getPasswordParameter());
                 verifyCode = map.get(VERIFY_CODE_KEY);
-                rememberMe = map.get(Constant.REMEMBER_ME_KEY);
+                rememberMe = map.get(Constant.Security.REMEMBER_ME_KEY);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -80,7 +80,7 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
             username = obtainUsername(request);
             password = obtainPassword(request);
             verifyCode = request.getParameter(VERIFY_CODE_KEY);
-            rememberMe = request.getParameter(Constant.REMEMBER_ME_KEY);
+            rememberMe = request.getParameter(Constant.Security.REMEMBER_ME_KEY);
         }
         //校验验证码
         final String vc = (String) request.getSession().getAttribute(VERIFY_CODE_KEY);
@@ -94,7 +94,7 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //将 rememberMe 状态存入 attr中
         if (!ObjectUtils.isEmpty(rememberMe)) {
-            request.setAttribute(Constant.REMEMBER_ME_KEY, rememberMe);
+            request.setAttribute(Constant.Security.REMEMBER_ME_KEY, rememberMe);
         }
 
         username = (username != null) ? username.trim() : "";

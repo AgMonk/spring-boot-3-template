@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_FORBIDDEN_CONFIG_ADMIN;
-import static com.gin.springboot3template.sys.bo.Constant.ROLE_ADMIN;
+import static com.gin.springboot3template.sys.bo.Constant.Messages.FORBIDDEN_CONFIG_ADMIN;
+import static com.gin.springboot3template.sys.bo.Constant.Role.ADMIN;
 
 /**
  * @author : ginstone
@@ -38,9 +38,9 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param roleId 角色id
      */
     default void forbiddenConfigAdminRole(Collection<Long> roleId) {
-        final SystemRole systemRole = getByName(ROLE_ADMIN);
+        final SystemRole systemRole = getByName(ADMIN);
         if (roleId.contains(systemRole.getId())) {
-            throw BusinessException.of(HttpStatus.FORBIDDEN, MESSAGE_FORBIDDEN_CONFIG_ADMIN);
+            throw BusinessException.of(HttpStatus.FORBIDDEN, FORBIDDEN_CONFIG_ADMIN);
         }
     }
 

@@ -34,9 +34,9 @@ public class SystemPermissionController {
     public static final String API_PREFIX = "/sys/permission";
     private final SystemPermissionService systemPermissionService;
 
-    @GetMapping("page")
+    @GetMapping(Constant.Api.PAGE)
     @Operation(summary = "分页查询")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<ResPage<SystemPermission>> page(
             @ParameterObject SystemPermissionPageParam param,
             @SuppressWarnings("unused") HttpServletRequest request

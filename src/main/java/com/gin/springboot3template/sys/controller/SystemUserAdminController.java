@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.gin.springboot3template.sys.bo.Constant.MESSAGE_NOT_CONFIG_ADMIN;
+import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_ADMIN;
 
 /**
  * 用户接口
@@ -60,14 +60,14 @@ public class SystemUserAdminController {
 
     @PostMapping("create")
     @Operation(summary = "创建用户")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemUserVo> create(@RequestBody @Validated RegForm regForm) {
         return Res.of(new SystemUserVo(systemUserService.reg(regForm)), "创建成功");
     }
 
     @PostMapping("lock")
-    @Operation(summary = "锁定/解锁指定用户", description = "切换锁定和解锁状态;<br/>锁定用户不能登陆;<br/>" + MESSAGE_NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Operation(summary = "锁定/解锁指定用户", description = "切换锁定和解锁状态;<br/>锁定用户不能登陆;<br/>" + NOT_CONFIG_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<Void> lock(
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -80,9 +80,9 @@ public class SystemUserAdminController {
         return Res.of(null, message);
     }
 
-    @GetMapping("page")
+    @GetMapping(Constant.Api.PAGE)
     @Operation(summary = "分页查询用户账号信息")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public ResPage<SystemUserVo> page(
             @ParameterObject SystemUserPageParam pageParam,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -91,8 +91,8 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("resetPassword")
-    @Operation(summary = "重置用户的密码", description = MESSAGE_NOT_CONFIG_ADMIN + "<br/>返回新密码")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Operation(summary = "重置用户的密码", description = NOT_CONFIG_ADMIN + "<br/>返回新密码")
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<String> reset(@RequestBody @Validated ResetPasswordForm form, @SuppressWarnings("unused") HttpServletRequest request) {
         final Long userId = form.getUserId();
         final String newPass = form.getNewPass();
@@ -103,8 +103,8 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("roleAdd")
-    @Operation(summary = "为指定用户添加角色", description = MESSAGE_NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Operation(summary = "为指定用户添加角色", description = NOT_CONFIG_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<RelationUserRole>> roleAdd(@RequestBody @Validated UserRoleForm form, @SuppressWarnings("unused") HttpServletRequest request) {
         rolePermissionService.forbiddenConfigAdminUser(form.getUserId());
         systemRoleService.validateRoleId(form.getRoles().stream().map(RelationUserRoleForm::getRoleId).toList());
@@ -113,8 +113,8 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("roleConfig")
-    @Operation(summary = "为指定用户配置角色", description = "如果给出的角色尚未持有,添加持有;如果已持有,更新过期时间;删除未给出的角色持有<br/>" + MESSAGE_NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Operation(summary = "为指定用户配置角色", description = "如果给出的角色尚未持有,添加持有;如果已持有,更新过期时间;删除未给出的角色持有<br/>" + NOT_CONFIG_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<RelationUserRole>> roleConfig(@RequestBody @Validated UserRoleForm form, @SuppressWarnings("unused") HttpServletRequest request) {
         final Long userId = form.getUserId();
         final List<RelationUserRoleForm> roles = form.getRoles();
@@ -125,8 +125,8 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("roleDel")
-    @Operation(summary = "为指定用户删除角色", description = MESSAGE_NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Operation(summary = "为指定用户删除角色", description = NOT_CONFIG_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<Void> roleDel(@RequestBody @Validated UserRoleDelForm form, @SuppressWarnings("unused") HttpServletRequest request) {
         rolePermissionService.forbiddenConfigAdminUser(form.getUserId());
         relationUserRoleService.del(form.getUserId(), form.getRoleId());
@@ -135,7 +135,7 @@ public class SystemUserAdminController {
 
     @GetMapping("roleList")
     @Operation(summary = "查询用户持有的角色")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<SystemUserBo>> roleList(
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -145,7 +145,7 @@ public class SystemUserAdminController {
 
     @GetMapping("userInfoFind")
     @Operation(summary = "查询指定用户的个人信息")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemUserInfoVo> userInfoFind(
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -159,8 +159,8 @@ public class SystemUserAdminController {
     }
 
     @PostMapping("userInfoUpdate")
-    @Operation(summary = "修改指定用户的个人信息", description = MESSAGE_NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Operation(summary = "修改指定用户的个人信息", description = NOT_CONFIG_ADMIN)
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<Object> userInfoUpdate(
             @SuppressWarnings("unused") HttpServletRequest request,
             @RequestBody @Validated SystemUserInfoForm param,

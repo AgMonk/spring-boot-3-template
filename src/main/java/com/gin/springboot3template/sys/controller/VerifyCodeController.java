@@ -60,7 +60,7 @@ public class VerifyCodeController {
         //生成验证码
         final String verifyCode = producer.createText();
         //保存到 session 中（或redis中）
-        httpSession.setAttribute(Constant.VERIFY_CODE_KEY, verifyCode);
+        httpSession.setAttribute(Constant.Security.VERIFY_CODE_KEY, verifyCode);
         //生成图片
         return producer.createImage(verifyCode);
     }

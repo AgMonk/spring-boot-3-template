@@ -78,9 +78,9 @@ public class RolePermissionService implements AuthorityProvider {
      */
     public void forbiddenConfigAdminUser(long userId) {
         final List<String> authorities = getAuthorities(userId).stream().map(GrantedAuthority::getAuthority).toList();
-        String roleAdmin = DEFAULT_ROLE_PREFIX + ROLE_ADMIN;
+        String roleAdmin = Security.DEFAULT_ROLE_PREFIX + Role.ADMIN;
         if (authorities.contains(roleAdmin)) {
-            throw BusinessException.of(HttpStatus.FORBIDDEN, MESSAGE_NOT_CONFIG_ADMIN);
+            throw BusinessException.of(HttpStatus.FORBIDDEN, Messages.NOT_CONFIG_ADMIN);
         }
     }
 
@@ -107,7 +107,7 @@ public class RolePermissionService implements AuthorityProvider {
                 .filter(role -> now <= role.getTimeExpire() || role.getTimeExpire() == 0)
                 .forEach(role -> {
                     //添加角色
-                    data.add(DEFAULT_ROLE_PREFIX + role.getName());
+                    data.add(Security.DEFAULT_ROLE_PREFIX + role.getName());
                     //添加权限
                     final List<SystemPermission> permissions = role.getPermissions();
                     if (!CollectionUtils.isEmpty(permissions)) {
@@ -163,7 +163,7 @@ public class RolePermissionService implements AuthorityProvider {
         //删除角色
         final List<SystemRole> systemRoles = systemRoleService.listByIds(roleId);
         // 禁止删除 默认角色
-        if (systemRoles.stream().map(SystemRole::getName).anyMatch(DEFAULT_ROLES::contains)) {
+        if (systemRoles.stream().map(SystemRole::getName).anyMatch(Role.DEFAULT_ROLES::contains)) {
             throw BusinessException.of(HttpStatus.FORBIDDEN, "禁止操作", "禁止删除系统预设角色");
         }
         systemRoleService.removeByIds(roleId);

@@ -1,7 +1,6 @@
 package com.gin.springboot3template.sys.bo;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * 常量
@@ -10,91 +9,91 @@ import java.util.regex.Pattern;
  * @since : 2022/12/16 12:26
  */
 public class Constant {
-    public static final String ACCESS_DENIED = "禁止访问";
-    /**
-     * 添加接口路径
-     */
-    public static final String API_ADD = "add";
-    /**
-     * 删除接口路径
-     */
-    public static final String API_DEL = "del";
-    /**
-     * 通过关键字检索对象接口路径
-     */
-    public static final String API_FILTER = "filter";
-    /**
-     * 查询全部接口路径
-     */
-    public static final String API_LIST_ALL = "listAll";
-    /**
-     * 查询筛选条件接口路径
-     */
-    public static final String API_OPTIONS = "options";
-    /**
-     * 分页查询接口路径
-     */
-    public static final String API_PAGE = "page";
-    /**
-     * 更新接口路径
-     */
-    public static final String API_UPDATE = "update";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json;charset=UTF-8";
-    public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-    public static final String LOGOUT_URI = "/sys/user/logout";
-    public static final String MESSAGE_DATA_NOT_FOUND = "没有找到数据";
-    public static final String MESSAGE_FORBIDDEN_CONFIG_ADMIN = "不能分配/取消分配 admin 角色";
-    public static final String MESSAGE_NOT_CONFIG_ADMIN = "不能对持有 admin 角色 的用户进行操作";
-    /**
-     * 密码最大位数
-     */
-    public static final int PASSWORD_MAX_LENGTH = 20;
-    /**
-     * 密码最小位数
-     */
-    public static final int PASSWORD_MIN_LENGTH = 6;
-    /**
-     * preAuthority注解的内容,含义为:需要访问当前接口uri的权限,或者是admin角色
-     */
-    public static final String PRE_AUTHORITY_URI_OR_ADMIN = "hasAuthority(#request.requestURI) or hasRole('admin')";
-    public static final String REMEMBER_ME_KEY = "rememberMe";
-    /**
-     * 预设角色 超管
-     */
-    public static final String ROLE_ADMIN = "admin";
-    /**
-     * 预设角色 角色管理员
-     */
-    public static final String ROLE_ROLE_ADMIN = "roleAdmin";
-    /**
-     * 预设角色 角色分配员
-     */
-    public static final String ROLE_ROLE_DISTRIBUTOR = "roleDistributor";
-    /**
-     * 预设角色集合
-     */
-    public static final List<String> DEFAULT_ROLES = List.of(ROLE_ADMIN, ROLE_ROLE_ADMIN, ROLE_ROLE_DISTRIBUTOR);
-    public static final String VERIFY_CODE_KEY = "vc";
 
     /**
-     * 权限评估相关
+     * 角色相关
      */
-    public static class Evaluator {
-
-        public static final Pattern HAS_PERMISSION_CLASS_PATTERN = Pattern.compile("^hasPermission\\((.+?),(.+?)\\)$");
-        public static final Pattern HAS_PERMISSION_TYPE_PATTERN = Pattern.compile("^hasPermission\\((.+?),(.+?),(.+?)\\)$");
+    public static class Role {
         /**
-         * 判断根据路径访问的权限
+         * 预设角色 超管
          */
-        public static final String STRING_PATH = "hasPermission(#request.requestURI,'路径','访问')";
-        public static final Pattern STRING_PATTERN = Pattern.compile("^'(.*)'$");
+        public static final String ADMIN = "admin";
         /**
-         * 权限评估期负责类型
+         * 预设角色 角色管理员
          */
-        public static final String TYPE_PATH = "路径";
+        public static final String ROLE_ADMIN = "roleAdmin";
         /**
-         * 权限评估期负责类型
+         * 预设角色集合
          */
-        public static final String TYPE_ROLE = "角色";
+        public static final List<String> DEFAULT_ROLES = List.of(ADMIN, ROLE_ADMIN);
     }
+
+    /**
+     * 安全相关
+     */
+    public static class Security {
+
+        public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
+        public static final String LOGOUT_URI = "/sys/user/logout";
+        /**
+         * 密码最大位数
+         */
+        public static final int PASSWORD_MAX_LENGTH = 20;
+        /**
+         * 密码最小位数
+         */
+        public static final int PASSWORD_MIN_LENGTH = 6;
+        /**
+         * preAuthority注解的内容,含义为:需要访问当前接口uri的权限,或者是admin角色
+         */
+        public static final String PRE_AUTHORITY_URI_OR_ADMIN = "hasAuthority(#request.requestURI) or hasRole('admin')";
+        public static final String REMEMBER_ME_KEY = "rememberMe";
+        public static final String VERIFY_CODE_KEY = "vc";
+    }
+
+    /**
+     * 消息通知类
+     */
+    public static class Messages {
+        public static final String ACCESS_DENIED = "禁止访问";
+        public static final String DATA_NOT_FOUND = "没有找到数据";
+        public static final String FORBIDDEN_CONFIG_ADMIN = "不能分配/取消分配 admin 角色";
+        public static final String NOT_CONFIG_ADMIN = "不能对持有 admin 角色 的用户进行操作";
+    }
+
+    /**
+     * api 路径名
+     */
+    public static class Api {
+        /**
+         * 添加接口路径
+         */
+        public static final String ADD = "add";
+        /**
+         * 删除接口路径
+         */
+        public static final String DEL = "del";
+        /**
+         * 通过关键字检索对象接口路径
+         */
+        public static final String FILTER = "filter";
+        /**
+         * 查询全部接口路径
+         */
+        public static final String LIST_ALL = "listAll";
+        /**
+         * 查询筛选条件接口路径
+         */
+        public static final String OPTIONS = "options";
+        /**
+         * 分页查询接口路径
+         */
+        public static final String PAGE = "page";
+        /**
+         * 更新接口路径
+         */
+        public static final String UPDATE = "update";
+    }
+
 }
