@@ -5,6 +5,14 @@
 spring boot 3
 spring security 6
 
+# 导入
+
+# 库表
+
+导入该表即可，其它库表会自动创建： [persistent_logins.sql](persistent_logins.sql)
+
+# 启动
+
 子项目配置文件只需要提供如下内容即可
 
 ```yml
