@@ -11,8 +11,7 @@
                     <option name="goals">
                         <list>
                             <option value="clean"/>
-                            <option value="package"/>
-                            <option value="install"/>
+                            <option value="deploy"/>
                         </list>
                     </option>
                     <option name="pomFileName"/>

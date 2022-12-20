@@ -11,7 +11,7 @@
     </parent>
     <groupId>com.gin</groupId>
     <artifactId>spring-boot-3-template</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>spring-boot-3-template</name>
     <description>spring-boot-3-template</description>
@@ -157,6 +157,15 @@
     <!--            </plugin>-->
     <!--        </plugins>-->
     <!--    </build>-->
+
+    <!--    发布到本地路径 -->
+    <distributionManagement>
+        <repository>
+            <id>local-repo-release</id>
+            <name>GitHub Release</name>
+            <url>file://${project.basedir}/maven-repo</url>
+        </repository>
+    </distributionManagement>
 
 
     <build>
