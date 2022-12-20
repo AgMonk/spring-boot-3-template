@@ -6,7 +6,6 @@ import com.gin.springboot3template.sys.dto.form.SystemRoleDelForm;
 import com.gin.springboot3template.sys.dto.form.SystemRoleForm;
 import com.gin.springboot3template.sys.dto.form.SystemRolePermissionForm;
 import com.gin.springboot3template.sys.dto.param.SystemRolePageParam;
-import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.response.Res;
@@ -59,37 +58,6 @@ public class SystemRoleController {
     private final RelationRolePermissionService relationRolePermissionService;
     private final SystemPermissionService systemPermissionService;
 
-    @PostMapping("add")
-    @Operation(summary = "添加角色", description = "返回添加完成的角色")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SystemRoleVo>> add(
-            @RequestBody @Validated @NotEmpty @Parameter(description = "角色列表") List<SystemRoleForm> roles,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        final List<SystemRoleVo> data = systemRoleService.addByParam(roles).stream().map(SystemRoleVo::new).collect(Collectors.toList());
-        return Res.of(data);
-    }
-
-    @PostMapping("del")
-    @Operation(summary = "删除角色", description = "注意:将连带删除所有对该角色的持有")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SystemRoleVo>> del(@RequestBody @Validated SystemRoleDelForm form, @SuppressWarnings("unused") HttpServletRequest request) {
-        final List<Long> roleId = form.getRoleId();
-        systemRoleService.validateRoleId(roleId);
-        final List<SystemRoleVo> res = rolePermissionService.roleDel(roleId).stream().map(SystemRoleVo::new).toList();
-        return Res.of(res, "删除成功");
-    }
-
-    @GetMapping("page")
-    @Operation(summary = "分页查询角色")
-    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public ResPage<SystemRoleVo> page(
-            @ParameterObject @Validated SystemRolePageParam pageParam,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
-    }
-
     @PostMapping("permissionAdd")
     @Operation(summary = "为角色添加权限", description = "返回添加的角色权限")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
@@ -101,8 +69,7 @@ public class SystemRoleController {
         //校验权限id
         systemPermissionService.validatePermId(permIds);
         //添加权限
-        final List<RelationRolePermission> res = relationRolePermissionService.add(form.getRoleId(), permIds);
-        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
+        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), relationRolePermissionService.add(form.getRoleId(), permIds)));
     }
 
     @PostMapping("permissionConfig")
@@ -116,8 +83,7 @@ public class SystemRoleController {
         //校验权限id
         systemPermissionService.validatePermId(permIds);
         //移除权限
-        final List<RelationRolePermission> res = relationRolePermissionService.config(form.getRoleId(), permIds);
-        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
+        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), relationRolePermissionService.config(form.getRoleId(), permIds)));
     }
 
     @PostMapping("permissionDel")
@@ -131,8 +97,7 @@ public class SystemRoleController {
         //校验权限id
         systemPermissionService.validatePermId(permIds);
         //移除权限
-        final List<RelationRolePermission> res = relationRolePermissionService.del(form.getRoleId(), permIds);
-        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), res));
+        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), relationRolePermissionService.del(form.getRoleId(), permIds)));
     }
 
     @GetMapping("permissionList")
@@ -146,10 +111,41 @@ public class SystemRoleController {
         return Res.of(map.get(roleId));
     }
 
+    @PostMapping("add")
+    @Operation(summary = "添加角色", description = "返回添加完成的角色")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<List<SystemRoleVo>> roleAdd(
+            @RequestBody @Validated @NotEmpty @Parameter(description = "角色列表") List<SystemRoleForm> roles,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        final List<SystemRoleVo> data = systemRoleService.addByParam(roles).stream().map(SystemRoleVo::new).collect(Collectors.toList());
+        return Res.of(data);
+    }
+
+    @PostMapping("del")
+    @Operation(summary = "删除角色", description = "注意:将连带删除所有对该角色的持有")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<List<SystemRoleVo>> roleDel(@RequestBody @Validated SystemRoleDelForm form, @SuppressWarnings("unused") HttpServletRequest request) {
+        final List<Long> roleId = form.getRoleId();
+        systemRoleService.validateRoleId(roleId);
+        final List<SystemRoleVo> res = rolePermissionService.roleDel(roleId).stream().map(SystemRoleVo::new).toList();
+        return Res.of(res, "删除成功");
+    }
+
+    @GetMapping("page")
+    @Operation(summary = "分页查询角色")
+    @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
+    public ResPage<SystemRoleVo> rolePage(
+            @ParameterObject @Validated SystemRolePageParam pageParam,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        return systemRoleService.pageByParam(pageParam, SystemRoleVo::new);
+    }
+
     @PostMapping("update")
     @Operation(summary = "修改角色", description = "返回修改完成的角色")
     @PreAuthorize(Constant.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemRoleVo> update(
+    public Res<SystemRoleVo> roleUpdate(
             @RequestBody @Validated SystemRoleForm param,
             @RequestParam @EntityId(service = SystemRoleServiceImpl.class) @Parameter(description = "角色id") Long roleId,
             @SuppressWarnings("unused") HttpServletRequest request

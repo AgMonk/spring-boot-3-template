@@ -2,7 +2,6 @@ package com.gin.springboot3template.sys.init.quest;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
-import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
@@ -144,7 +143,8 @@ public class InitAuthority implements ApplicationRunner {
         if (this.fullPermission.size() > 0) {
             log.info("移除角色对已移除权限的持有");
             final QueryWrapper<RelationRolePermission> qw = new QueryWrapper<>();
-            qw.notIn("permission_id", this.fullPermission.stream().map(BasePo::getId).toList());
+//            qw.notIn("permission_id", this.fullPermission.stream().map(BasePo::getId).toList());
+            qw.notInSql("permission_id", String.format("select id from %s", SystemPermission.TABLE_NAME));
             relationRolePermissionService.remove(qw);
         }
     }
