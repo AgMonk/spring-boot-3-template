@@ -18,6 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ExpressionExceptionParser {
     String preAuthorize;
+    @SuppressWarnings("unused")
     HttpServletRequest request;
 
     public String explain() {

@@ -57,10 +57,11 @@ public class SystemUserController {
 
     @PostMapping("changePwd")
     @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
-    public void changePwd(HttpServletRequest request
-            , HttpServletResponse response
-            , @RequestParam @Parameter(description = "旧密码") String oldPass
-            , @RequestParam @Parameter(description = "新密码,长度范围为 [" + PASSWORD_MIN_LENGTH + "," + PASSWORD_MAX_LENGTH + "]") @Password String newPass
+    public void changePwd(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam @Parameter(description = "旧密码") String oldPass,
+            @RequestParam @Parameter(description = "新密码,长度范围为 [" + PASSWORD_MIN_LENGTH + "," + PASSWORD_MAX_LENGTH + "]") @Password String newPass
     ) throws ServletException, IOException {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
         systemUserService.changePwd(userId, oldPass, newPass);
@@ -82,7 +83,7 @@ public class SystemUserController {
 
     @PostMapping("login")
     @Operation(summary = "登陆", description = "假登陆接口 ,用于生成 doc;<br/>需要先获取验证码,参数可以传body也可以传form")
-    public Res<MyUserDetailsVo> login(@RequestBody @Validated LoginForm loginForm) {
+    public Res<MyUserDetailsVo> login(@RequestBody @Validated @SuppressWarnings("unused") LoginForm loginForm) {
         System.out.println("login...");
         return null;
     }

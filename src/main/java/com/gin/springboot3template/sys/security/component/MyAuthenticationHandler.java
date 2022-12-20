@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -47,14 +46,17 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
 
     /**
      * 认证失败处理
-     * @param request       that resulted in an <code>AuthenticationException</code>
-     * @param response      so that the user agent can begin authentication
-     * @param authException that caused the invocation
-     * @throws IOException      异常
-     * @throws ServletException 异常
+     * @param request  that resulted in an <code>AuthenticationException</code>
+     * @param response so that the user agent can begin authentication
+     * @param e        that caused the invocation
+     * @throws IOException 异常
      */
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+    public void commence(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException e
+    ) throws IOException {
         String detailMessage = e.getClass().getSimpleName() + " " + e.getLocalizedMessage();
         if (e instanceof InsufficientAuthenticationException) {
             detailMessage = "请登陆后再访问";
@@ -71,7 +73,11 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      * @param accessDeniedException that caused the invocation
      */
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response,
+            AccessDeniedException accessDeniedException
+    ) throws IOException {
         String detailMessage = null;
         if (accessDeniedException instanceof MissingCsrfTokenException) {
             detailMessage = "缺少CSRF TOKEN,请从表单或HEADER传入";
@@ -91,7 +97,11 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      * 认证失败时的处理
      */
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException exception
+    ) throws IOException {
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(exception.getLocalizedMessage(), "登陆失败")));
@@ -101,7 +111,11 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      * 认证成功时的处理
      */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) throws IOException {
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "登陆成功")));
@@ -111,11 +125,10 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
 
     /**
      * 会话过期处理
-     * @throws IOException      异常
-     * @throws ServletException 异常
+     * @throws IOException 异常
      */
     @Override
-    public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
+    public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException {
         String message = "该账号已从其他设备登陆,如果不是您自己的操作请及时修改密码";
         final HttpServletResponse response = event.getResponse();
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
@@ -128,11 +141,14 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
      * @param request        请求
      * @param response       响应
      * @param authentication 认证信息
-     * @throws IOException      异常
-     * @throws ServletException 异常
+     * @throws IOException 异常
      */
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onLogoutSuccess(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) throws IOException {
         response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(null, "登出成功")));

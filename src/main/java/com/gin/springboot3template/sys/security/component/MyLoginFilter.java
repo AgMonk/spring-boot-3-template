@@ -33,9 +33,11 @@ import static com.gin.springboot3template.sys.bo.Constant.VERIFY_CODE_KEY;
 public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MyLoginFilter(AuthenticationManager authenticationManager,
-                         MyAuthenticationHandler authenticationHandler,
-                         MyRememberMeServices rememberMeServices) throws Exception {
+    public MyLoginFilter(
+            AuthenticationManager authenticationManager,
+            MyAuthenticationHandler authenticationHandler,
+            MyRememberMeServices rememberMeServices
+    ) {
         super(authenticationManager);
         setAuthenticationFailureHandler(authenticationHandler);
         setAuthenticationSuccessHandler(authenticationHandler);
@@ -45,13 +47,16 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
         setFilterProcessesUrl("/sys/user/login");
     }
 
-    private static boolean isContentTypeJson(HttpServletRequest request) {
+    private static boolean isContentTypeJson(@SuppressWarnings("unused") HttpServletRequest request) {
         final String contentType = request.getContentType();
         return APPLICATION_JSON_CHARSET_UTF_8.equalsIgnoreCase(contentType) || MimeTypeUtils.APPLICATION_JSON_VALUE.equalsIgnoreCase(contentType);
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(
+            @SuppressWarnings("unused") HttpServletRequest request,
+            HttpServletResponse response
+    ) throws AuthenticationException {
 
         if (!HttpMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());

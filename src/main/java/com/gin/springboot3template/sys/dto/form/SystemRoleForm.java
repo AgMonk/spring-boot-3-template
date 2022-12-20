@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Getter
 @Setter
-@Schema(description = "角色添加/修改表单")
+@Schema(description = "角色表单")
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor

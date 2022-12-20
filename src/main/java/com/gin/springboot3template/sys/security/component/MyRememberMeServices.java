@@ -25,7 +25,7 @@ public class MyRememberMeServices extends PersistentTokenBasedRememberMeServices
     }
 
     @Override
-    protected boolean rememberMeRequested(HttpServletRequest request, String parameter) {
+    protected boolean rememberMeRequested(@SuppressWarnings("unused") HttpServletRequest request, String parameter) {
         final String rememberMe = (String) request.getAttribute(Constant.REMEMBER_ME_KEY);
         if (rememberMe != null) {
             for (String trueValue : TRUE_VALUES) {

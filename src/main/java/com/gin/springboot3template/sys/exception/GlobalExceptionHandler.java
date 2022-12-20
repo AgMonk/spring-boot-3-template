@@ -42,7 +42,8 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<Res<String>> exceptionHandler(AccessDeniedException e, HttpServletRequest request) {
+    public ResponseEntity<Res<String>> exceptionHandler(AccessDeniedException e, @SuppressWarnings("unused") HttpServletRequest request) {
+        log.warn(e.getLocalizedMessage());
         final SystemPermission permission = systemPermissionService.getByPath(request.getRequestURI());
         final String message = permission == null ? null : new ExpressionExceptionParser(permission.getPreAuthorize(), request).explain();
         return new ResponseEntity<>(Res.of(message, Constant.ACCESS_DENIED), HttpStatus.FORBIDDEN);
