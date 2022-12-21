@@ -5,6 +5,7 @@ import com.gin.springboot3template.sys.base.BasePageParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.ObjectUtils;
 
 
 /**
@@ -23,11 +24,13 @@ public class SystemPermissionPageParam extends BasePageParam {
     @Override
     public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
         queryWrapper.orderByDesc("id");
-        queryWrapper
-                .eq("path", key).or()
-                .eq("group_name", key).or()
-                .like("path", key).or()
-                .like("group_name", key).or()
-        ;
+        if (!ObjectUtils.isEmpty(key)) {
+            queryWrapper
+                    .eq("path", key).or()
+                    .eq("group_name", key).or()
+                    .like("path", key).or()
+                    .like("group_name", key).or()
+            ;
+        }
     }
 }
