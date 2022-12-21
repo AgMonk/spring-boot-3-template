@@ -5,7 +5,10 @@ import com.gin.springboot3template.sys.base.BasePageParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 
 /**
@@ -20,10 +23,17 @@ import org.springframework.util.ObjectUtils;
 public class SystemPermissionPageParam extends BasePageParam {
     @Schema(description = "关键字(路径,分组名称)")
     String key;
+    @Schema(description = "排除的id(一般用于排除角色已持有的权限)")
+    List<Long> excludedId;
 
     @Override
     public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
         queryWrapper.orderByDesc("id");
+
+        if (!CollectionUtils.isEmpty(excludedId)) {
+            queryWrapper.notIn("id", excludedId);
+        }
+
         if (!ObjectUtils.isEmpty(key)) {
             queryWrapper
                     .eq("path", key).or()
