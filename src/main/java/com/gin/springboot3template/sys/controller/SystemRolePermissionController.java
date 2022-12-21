@@ -8,6 +8,7 @@ import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
 import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemPermissionService;
+import com.gin.springboot3template.sys.service.SystemRoleService;
 import com.gin.springboot3template.sys.service.impl.SystemRoleServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
 import com.gin.springboot3template.sys.vo.SystemRolePermissionVo;
@@ -48,6 +49,7 @@ public class SystemRolePermissionController {
 
     private final RelationRolePermissionService relationRolePermissionService;
     private final SystemPermissionService systemPermissionService;
+    private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
 
 
@@ -58,6 +60,8 @@ public class SystemRolePermissionController {
             @RequestBody @Validated SystemRolePermissionForm form,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
+        systemRoleService.forbiddenConfigAdminRole(Collections.singleton(form.getRoleId()));
+
         final List<Long> permIds = form.getPermIds();
         //校验权限id
         systemPermissionService.validatePermId(permIds);
@@ -66,12 +70,14 @@ public class SystemRolePermissionController {
     }
 
     @PostMapping(Constant.Api.CONFIG)
-    @Operation(summary = "为角色配置权限", description = "返回配置的角色权限")
+    @Operation(summary = "为角色配置权限", description = "如果给出的权限尚未持有,添加持有;删除未给出的权限持有<br/>返回配置的角色权限")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemRolePermissionVo> permissionConfig(
             @RequestBody @Validated SystemRolePermissionForm form,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
+        systemRoleService.forbiddenConfigAdminRole(Collections.singleton(form.getRoleId()));
+
         final List<Long> permIds = form.getPermIds();
         //校验权限id
         systemPermissionService.validatePermId(permIds);
@@ -86,6 +92,7 @@ public class SystemRolePermissionController {
             @RequestBody @Validated SystemRolePermissionForm form,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
+        systemRoleService.forbiddenConfigAdminRole(Collections.singleton(form.getRoleId()));
         final List<Long> permIds = form.getPermIds();
         //校验权限id
         systemPermissionService.validatePermId(permIds);
