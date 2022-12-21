@@ -45,13 +45,14 @@ import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_AD
  */
 @MyRestController(SystemUserAdminController.API_PREFIX)
 @RequiredArgsConstructor
-@Tag(name = "用户管理接口")
+@Tag(name = SystemUserAdminController.GROUP_NAME)
 @Slf4j
 public class SystemUserAdminController {
     /**
      * 接口路径前缀
      */
     public static final String API_PREFIX = SystemUserController.API_PREFIX + "/admin";
+    public static final String GROUP_NAME = "用户管理接口";
     private final SystemUserService systemUserService;
     private final SystemUserInfoService systemUserInfoService;
     private final RolePermissionService rolePermissionService;

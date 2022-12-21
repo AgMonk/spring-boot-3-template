@@ -6,6 +6,7 @@ import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      * @return 添加好的权限
      */
     default List<RelationRolePermission> add(long roleId, Collection<Long> permIds) {
-        final List<RelationRolePermission> rolePermissions = build(roleId, permIds);
+        final List<RelationRolePermission> rolePermissions = new ArrayList<>(build(roleId, permIds));
         //去重
         rolePermissions.removeAll(listByRoleId(Collections.singleton(roleId)));
         if (rolePermissions.size() > 0) {

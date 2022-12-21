@@ -46,13 +46,14 @@ import java.util.stream.Collectors;
  */
 @MyRestController(SystemRoleController.API_PREFIX)
 @RequiredArgsConstructor
-@Tag(name = "角色管理接口")
+@Tag(name = SystemRoleController.GROUP_NAME)
 @Slf4j
 public class SystemRoleController {
     /**
      * 接口路径前缀
      */
     public static final String API_PREFIX = "/sys/role";
+    public static final String GROUP_NAME = "角色管理接口";
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
     private final RelationRolePermissionService relationRolePermissionService;

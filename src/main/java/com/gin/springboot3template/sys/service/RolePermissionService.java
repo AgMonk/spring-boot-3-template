@@ -48,7 +48,7 @@ public class RolePermissionService implements AuthorityProvider {
      * @param roleId 角色id
      * @param path   路径
      */
-    public void addRolePermissionWithPath(long roleId, Collection<String> path, Collection<String> groupName) {
+    public List<RelationRolePermission> addRolePermissionWithPath(long roleId, Collection<String> path, Collection<String> groupName) {
         final List<SystemPermission> permissions = systemPermissionService.list();
 
         if (CollectionUtils.isEmpty(path) && CollectionUtils.isEmpty(groupName)) {
@@ -72,7 +72,7 @@ public class RolePermissionService implements AuthorityProvider {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, "未找到符合要求的权限");
         }
         //添加权限
-        relationRolePermissionService.add(roleId, idSet);
+        return relationRolePermissionService.add(roleId, idSet);
     }
 
     /**

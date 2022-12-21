@@ -3,10 +3,13 @@ package com.gin.springboot3template.sys.init.quest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.controller.SystemRoleController;
+import com.gin.springboot3template.sys.controller.SystemUserAdminController;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.service.RelationRolePermissionService;
+import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemPermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
@@ -45,6 +48,7 @@ public class InitAuthority implements ApplicationRunner {
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
     private final SystemRoleService systemRoleService;
+    private final RolePermissionService rolePermissionService;
 
     /**
      * 所有权限
@@ -187,6 +191,16 @@ public class InitAuthority implements ApplicationRunner {
             this.roleManager = role;
         } else {
             this.roleManager = roleManager;
+        }
+
+        final Long roleId = this.roleManager.getId();
+
+        //添加权限
+        final List<RelationRolePermission> res = rolePermissionService.addRolePermissionWithPath(roleId,
+                                                                                                 List.of(SystemUserAdminController.API_PREFIX + "/role*"),
+                                                                                                 List.of(SystemRoleController.GROUP_NAME));
+        if (res.size() > 0) {
+            log.info("为角色管理员添加 {} 个权限", res.size());
         }
 
     }
