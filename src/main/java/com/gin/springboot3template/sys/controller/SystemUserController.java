@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.bo.SystemUserBo;
 import com.gin.springboot3template.sys.config.SystemConfig;
 import com.gin.springboot3template.sys.dto.form.LoginForm;
 import com.gin.springboot3template.sys.dto.form.RegForm;
@@ -11,6 +12,7 @@ import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
+import com.gin.springboot3template.sys.service.RolePermissionService;
 import com.gin.springboot3template.sys.service.SystemUserInfoService;
 import com.gin.springboot3template.sys.service.SystemUserService;
 import com.gin.springboot3template.sys.validation.Password;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MAX_LENGTH;
 import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MIN_LENGTH;
@@ -54,6 +57,7 @@ public class SystemUserController {
     private final SystemUserService systemUserService;
     private final SystemUserInfoService systemUserInfoService;
     private final SystemConfig systemConfig;
+    private final RolePermissionService rolePermissionService;
 
     @PostMapping("changePwd")
     @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
@@ -67,18 +71,6 @@ public class SystemUserController {
         systemUserService.changePwd(userId, oldPass, newPass);
 //        登出
         request.getRequestDispatcher(Constant.Security.LOGOUT_URI).forward(request, response);
-    }
-
-    @GetMapping("findUserInfo")
-    @Operation(summary = "查询自己的个人信息")
-    public Res<SystemUserInfoVo> findUserInfo() {
-        final Long userId = MySecurityUtils.currentUserDetails().getId();
-        final SystemUserInfo userInfo = systemUserInfoService.getByUserId(userId);
-        if (userInfo == null) {
-            throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
-        }
-        final SystemUserInfoVo vo = new SystemUserInfoVo(userInfo);
-        return Res.of(vo);
     }
 
     @PostMapping("login")
@@ -104,14 +96,26 @@ public class SystemUserController {
     }
 
     @PostMapping("token")
-    @Operation(summary = "获取用户认证/授权信息", description = "包含用户名,ID,账号状态,权限信息;<br/>可以用来查询登陆状态,以及更新CSRF TOKEN")
-    public Res<MyUserDetailsVo> token() {
-        return Res.of(MyUserDetailsVo.of());
+    @Operation(summary = "查询自己的认证/授权信息", description = "包含用户名,ID,账号状态,权限信息;<br/>可以用来查询登陆状态,以及更新CSRF TOKEN")
+    public Res<SystemUserBo> token() {
+        return Res.of(rolePermissionService.listAuthorityByUserId(Collections.singleton(MyUserDetailsVo.of().getId())).get(0));
     }
 
-    @PostMapping("updateUserInfo")
+    @GetMapping("userInfoFind")
+    @Operation(summary = "查询自己的个人信息")
+    public Res<SystemUserInfoVo> userInfoFind() {
+        final Long userId = MySecurityUtils.currentUserDetails().getId();
+        final SystemUserInfo userInfo = systemUserInfoService.getByUserId(userId);
+        if (userInfo == null) {
+            throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
+        }
+        final SystemUserInfoVo vo = new SystemUserInfoVo(userInfo);
+        return Res.of(vo);
+    }
+
+    @PostMapping("userInfoUpdate")
     @Operation(summary = "修改自己的个人信息")
-    public Res<Void> updateUserInfo(@RequestBody @Validated SystemUserInfoForm param) {
+    public Res<Void> userInfoUpdate(@RequestBody @Validated SystemUserInfoForm param) {
         final Long userId = MySecurityUtils.currentUserDetails().getId();
         systemUserInfoService.saveOrUpdate(userId, param);
         return Res.of(null, "修改成功");

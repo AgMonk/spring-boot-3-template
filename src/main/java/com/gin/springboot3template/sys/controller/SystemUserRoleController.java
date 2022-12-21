@@ -86,7 +86,7 @@ public class SystemUserRoleController {
     }
 
     @GetMapping(Constant.Api.LIST)
-    @Operation(summary = "查询用户持有的角色")
+    @Operation(summary = "查询指定用户的认证/授权信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<SystemUserBo> roleList(
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId,

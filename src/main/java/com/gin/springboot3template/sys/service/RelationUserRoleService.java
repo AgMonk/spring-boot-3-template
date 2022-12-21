@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Transactional(rollbackFor = Exception.class)
 public interface RelationUserRoleService extends MyService<RelationUserRole> {
+    org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(RelationUserRoleService.class);
+
     /**
      * 为指定用户添加角色
      * @param userId 用户id
@@ -31,6 +33,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
         //去重
         userRoles.removeAll(listByUserId(Collections.singleton(userId)));
         if (userRoles.size() > 0) {
+            LOG.info("为账号id = {} 添加 {} 个角色", userId, userRoles.size());
             saveBatch(userRoles);
         }
         return userRoles;

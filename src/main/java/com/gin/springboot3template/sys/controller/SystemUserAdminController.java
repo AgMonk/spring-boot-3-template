@@ -120,7 +120,7 @@ public class SystemUserAdminController {
     @PostMapping("userInfoUpdate")
     @Operation(summary = "修改指定用户的个人信息", description = NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<Object> userInfoUpdate(
+    public Res<Void> userInfoUpdate(
             @SuppressWarnings("unused") HttpServletRequest request,
             @RequestBody @Validated SystemUserInfoForm param,
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId

@@ -185,7 +185,6 @@ public class RolePermissionService implements AuthorityProvider {
     public SystemUser initUser(RegForm regForm, Collection<RelationUserRoleForm> userRole) {
         final SystemUser user = systemUserService.getByUsernameOrReg(regForm);
         if (!CollectionUtils.isEmpty(userRole)) {
-            log.info("为账号id = {} 添加 {} 个角色", user.getId(), userRole.size());
             relationUserRoleService.add(user.getId(), userRole);
         }
         return user;
