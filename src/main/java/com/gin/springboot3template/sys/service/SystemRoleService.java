@@ -56,6 +56,20 @@ public interface SystemRoleService extends MyService<SystemRole> {
     }
 
     /**
+     * 根据角色名查询一个角色,如果不存在则按照给出的参数创建,并返回
+     * @param systemRole 当不存在时的创建参数
+     * @return 角色
+     */
+    default SystemRole getOrCreateByName(SystemRole systemRole) {
+        final SystemRole role = getByName(systemRole.getName());
+        if (role == null) {
+            save(systemRole);
+            return systemRole;
+        }
+        return role;
+    }
+
+    /**
      * 通过名称查询角色
      * @param name 名称
      * @return 角色
