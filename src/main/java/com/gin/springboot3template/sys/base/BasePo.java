@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,16 +21,19 @@ import java.io.Serializable;
 @Getter
 @Setter
 @MappedSuperclass
+@Schema(description = "基础持久化对象")
 public class BasePo implements Serializable {
     @TableId(type = IdType.AUTO)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Comment("ID")
+    @Schema(description = "ID")
     Long id;
 
     @Column(nullable = false)
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @Comment("记录创建时间(UNIX秒)")
+    @Schema(description = "记录创建时间(UNIX秒)")
     Long timeCreate;
 
     public BasePo() {
