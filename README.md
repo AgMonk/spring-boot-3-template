@@ -7,6 +7,25 @@ spring security 6
 
 # 导入
 
+```xml
+
+<project>
+    <repositories>
+        <repository>
+            <id>com.gin</id>
+            <name>spring-boot-3-template</name>
+            <url>https://agmonk.github.io/spring-boot-3-template/maven-repo/</url>
+        </repository>
+    </repositories>
+
+    <dependency>
+        <groupId>com.gin</groupId>
+        <artifactId>spring-boot-3-template</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</project>
+```
+
 # 库表
 
 导入该表即可，其它库表会自动创建： [persistent_logins.sql](persistent_logins.sql)
@@ -37,5 +56,13 @@ spring:
       password: redis密码
       database: 数据库序号
 
+```
+
+启动类上需要添加注解
+
+```java
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.gin"})
+@MapperScan(basePackages = {"com.gin.springboot3template.sys.dao"})
 ```
 
