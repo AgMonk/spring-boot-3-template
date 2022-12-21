@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.bo.RelationUserRoleBo;
 import com.gin.springboot3template.sys.bo.SystemUserBo;
-import com.gin.springboot3template.sys.entity.RelationRolePermission;
-import com.gin.springboot3template.sys.entity.RelationUserRole;
-import com.gin.springboot3template.sys.entity.SystemPermission;
-import com.gin.springboot3template.sys.entity.SystemRole;
+import com.gin.springboot3template.sys.dto.form.RegForm;
+import com.gin.springboot3template.sys.dto.form.RelationUserRoleForm;
+import com.gin.springboot3template.sys.entity.*;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.security.interfaze.AuthorityProvider;
 import lombok.RequiredArgsConstructor;
@@ -174,6 +173,21 @@ public class RolePermissionService implements AuthorityProvider {
         final SystemRole role = systemRoleService.getOrCreateByName(systemRole);
         addRolePermissionWithPath(role.getId(), path, groupName);
         return role;
+    }
+
+    /**
+     * 初始化一个用户
+     * @param regForm  注册表单(如果不存在)
+     * @param userRole 持有的角色
+     * @return 用户
+     */
+    public SystemUser initUser(RegForm regForm, Collection<RelationUserRoleForm> userRole) {
+        final SystemUser user = systemUserService.getByUsernameOrReg(regForm);
+        if (!CollectionUtils.isEmpty(userRole)) {
+            log.info("为账号id = {} 添加 {} 个角色", user.getId(), userRole.size());
+            relationUserRoleService.add(user.getId(), userRole);
+        }
+        return user;
     }
 
     /**

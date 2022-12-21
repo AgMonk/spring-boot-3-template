@@ -9,7 +9,9 @@ import com.gin.springboot3template.sys.controller.SystemRolePermissionController
 import com.gin.springboot3template.sys.controller.SystemUserRoleController;
 import com.gin.springboot3template.sys.dto.form.RegForm;
 import com.gin.springboot3template.sys.dto.form.RelationUserRoleForm;
-import com.gin.springboot3template.sys.entity.*;
+import com.gin.springboot3template.sys.entity.RelationRolePermission;
+import com.gin.springboot3template.sys.entity.SystemPermission;
+import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.service.*;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -104,22 +106,12 @@ public class InitAuthority implements ApplicationRunner {
      * 初始化超管账号
      */
     private void initAdminUser() {
-        SystemUser admin = systemUserService.getByUsername(Constant.User.ADMIN);
         //如果超管账号不存在 则注册
-        if (admin == null) {
-            final RegForm regForm = new RegForm();
-            regForm.setUsername(Constant.User.ADMIN);
-            regForm.setPassword(Constant.User.ADMIN_PASSWORD);
-            regForm.setNickname(Constant.User.ADMIN_NICKNAME);
-            admin = systemUserService.reg(regForm);
-        }
-
-        final Long roleId = this.adminRole.getId();
-        final RelationUserRoleForm userRole = new RelationUserRoleForm(roleId, 0L);
-        final List<RelationUserRole> add = relationUserRoleService.add(admin.getId(), Collections.singleton(userRole));
-        if (add.size() > 0) {
-            log.info("为超管账号添加超管角色");
-        }
+        final RegForm regForm = new RegForm();
+        regForm.setUsername(Constant.User.ADMIN);
+        regForm.setPassword(Constant.User.ADMIN_PASSWORD);
+        regForm.setNickname(Constant.User.ADMIN_NICKNAME);
+        rolePermissionService.initUser(regForm, Collections.singleton(new RelationUserRoleForm(this.adminRole.getId(), 0L)));
     }
 
     /**

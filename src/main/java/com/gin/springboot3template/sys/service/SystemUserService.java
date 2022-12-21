@@ -42,4 +42,14 @@ public interface SystemUserService extends MyService<SystemUser> {
         qw.eq("username", username);
         return getOne(qw);
     }
+
+    /**
+     * 根据用户名查询用户,如果不存在则注册一个
+     * @param regForm 注册表单
+     * @return 用户
+     */
+    default SystemUser getByUsernameOrReg(RegForm regForm) {
+        final SystemUser user = getByUsername(regForm.getUsername());
+        return user != null ? user : reg(regForm);
+    }
 }
