@@ -43,7 +43,11 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
      */
     default List<RelationRolePermission> add(long roleId, Collection<Long> permIds) {
         final List<RelationRolePermission> rolePermissions = build(roleId, permIds);
-        saveBatch(rolePermissions);
+        //去重
+        rolePermissions.removeAll(listByRoleId(Collections.singleton(roleId)));
+        if (rolePermissions.size() > 0) {
+            saveBatch(rolePermissions);
+        }
         return rolePermissions;
     }
 

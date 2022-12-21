@@ -27,8 +27,12 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @return 添加好的角色
      */
     default List<RelationUserRole> add(long userId, Collection<RelationUserRoleForm> params) {
-        final List<RelationUserRole> userRoles = params.stream().map(i -> i.build(userId)).toList();
-        saveBatch(userRoles);
+        final List<RelationUserRole> userRoles = new ArrayList<>(params.stream().map(i -> i.build(userId)).toList());
+        //去重
+        userRoles.removeAll(listByUserId(Collections.singleton(userId)));
+        if (userRoles.size() > 0) {
+            saveBatch(userRoles);
+        }
         return userRoles;
     }
 
