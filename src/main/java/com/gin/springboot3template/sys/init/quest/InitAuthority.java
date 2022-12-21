@@ -182,7 +182,7 @@ public class InitAuthority implements ApplicationRunner {
         roleManager.setRemark("预设角色管理员,不允许修改其权限");
         roleManager.setDescription("预设角色管理员,不允许修改其权限");
         this.roleManager = rolePermissionService.initRole(roleManager,
-                                                          null,
+                                                          List.of("/sys/user/admin/page"),
                                                           List.of(SystemRoleController.GROUP_NAME,
                                                                   SystemRolePermissionController.GROUP_NAME,
                                                                   SystemUserRoleController.GROUP_NAME,
