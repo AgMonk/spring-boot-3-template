@@ -98,6 +98,10 @@ public class Constant {
          * 通过关键字检索对象接口路径
          */
         public static final String FILTER = "filter";
+        /**
+         * 分组查询接口路径
+         */
+        public static final String GROUP = "group";
         public static final String LIST = "list";
         /**
          * 查询全部接口路径
