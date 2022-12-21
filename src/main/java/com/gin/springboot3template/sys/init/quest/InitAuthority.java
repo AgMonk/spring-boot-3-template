@@ -176,48 +176,26 @@ public class InitAuthority implements ApplicationRunner {
      */
     private void initRoles() {
         //检查 admin 角色是否存在 不存在则创建 存在则赋值
-        final SystemRole admin = systemRoleService.getByName(Constant.Role.ADMIN);
-        if (admin == null) {
-            log.info("超级管理员角色不存在,执行创建");
-            final SystemRole role = new SystemRole();
-            role.setName(Constant.Role.ADMIN);
-            role.setNameZh("超级管理员");
-            role.setRemark("预设超级管理员,不允许修改");
-            role.setDescription("预设超级管理员,不允许修改");
-            systemRoleService.save(role);
-            this.adminRole = role;
-        } else {
-            this.adminRole = admin;
-        }
-
+        final SystemRole adminRole = new SystemRole();
+        adminRole.setName(Constant.Role.ADMIN);
+        adminRole.setNameZh("超级管理员");
+        adminRole.setRemark("预设超级管理员,不允许修改");
+        adminRole.setDescription("预设超级管理员,不允许修改");
+        this.adminRole = rolePermissionService.initRole(adminRole);
 
         //检查 角色管理员 角色是否存在 不存在则创建 存在则赋值
-        final SystemRole roleManager = systemRoleService.getByName(Constant.Role.ROLE_MANAGER);
-        if (roleManager == null) {
-            log.info("角色管理员角色不存在,执行创建");
-            final SystemRole role = new SystemRole();
-            role.setName(Constant.Role.ROLE_MANAGER);
-            role.setNameZh("角色管理员");
-            role.setRemark("预设角色管理员,不允许修改其权限");
-            role.setDescription("预设角色管理员,不允许修改其权限");
-            systemRoleService.save(role);
-            this.roleManager = role;
-        } else {
-            this.roleManager = roleManager;
-        }
+        final SystemRole roleManager = new SystemRole();
+        roleManager.setName(Constant.Role.ROLE_MANAGER);
+        roleManager.setNameZh("角色管理员");
+        roleManager.setRemark("预设角色管理员,不允许修改其权限");
+        roleManager.setDescription("预设角色管理员,不允许修改其权限");
+        this.roleManager = rolePermissionService.initRole(roleManager,
+                                                          null,
+                                                          List.of(SystemRoleController.GROUP_NAME,
+                                                                  SystemRolePermissionController.GROUP_NAME,
+                                                                  SystemUserRoleController.GROUP_NAME,
+                                                                  SystemPermissionController.GROUP_NAME));
 
-        final Long roleId = this.roleManager.getId();
-
-        //添加权限
-        final List<RelationRolePermission> res = rolePermissionService
-                .addRolePermissionWithPath(roleId,
-                                           null,
-                                           List.of(SystemRoleController.GROUP_NAME,
-                                                   SystemRolePermissionController.GROUP_NAME,
-                                                   SystemUserRoleController.GROUP_NAME, SystemPermissionController.GROUP_NAME));
-        if (res.size() > 0) {
-            log.info("为角色管理员添加 {} 个权限", res.size());
-        }
 
     }
 }

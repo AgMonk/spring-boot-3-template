@@ -45,15 +45,17 @@ public class RolePermissionService implements AuthorityProvider {
 
     /**
      * 为指定角色按路径添加权限
-     * @param roleId 角色id
-     * @param path   路径
+     * @param roleId    角色id
+     * @param path      路径
+     * @param groupName 分组名称
      */
-    public List<RelationRolePermission> addRolePermissionWithPath(long roleId, Collection<String> path, Collection<String> groupName) {
+    public List<RelationRolePermission> addRolePermissionWithPath(
+            long roleId,
+            Collection<String> path,
+            Collection<String> groupName
+    ) throws BusinessException {
         final List<SystemPermission> permissions = systemPermissionService.list();
 
-        if (CollectionUtils.isEmpty(path) && CollectionUtils.isEmpty(groupName)) {
-            throw BusinessException.of(HttpStatus.BAD_REQUEST, "路径和分组名需至少传入一个");
-        }
         Set<Long> idSet = new HashSet<>();
 
         //按路径添加
@@ -71,6 +73,7 @@ public class RolePermissionService implements AuthorityProvider {
         if (idSet.size() == 0) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, "未找到符合要求的权限");
         }
+        log.info("为角色id = {} 添加 {} 个权限", roleId, idSet.size());
         //添加权限
         return relationRolePermissionService.add(roleId, idSet);
     }
@@ -149,6 +152,28 @@ public class RolePermissionService implements AuthorityProvider {
                     }
                 });
         return data.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+    }
+
+    /**
+     * 初始化一个角色
+     * @param systemRole 角色
+     * @return 添加的权限
+     */
+    public SystemRole initRole(SystemRole systemRole) throws BusinessException {
+        return initRole(systemRole, null, null);
+    }
+
+    /**
+     * 初始化一个角色
+     * @param systemRole 角色
+     * @param path       路径
+     * @param groupName  分组名称
+     * @return 添加的权限
+     */
+    public SystemRole initRole(SystemRole systemRole, Collection<String> path, Collection<String> groupName) throws BusinessException {
+        final SystemRole role = systemRoleService.getOrCreateByName(systemRole);
+        addRolePermissionWithPath(role.getId(), path, groupName);
+        return role;
     }
 
     /**

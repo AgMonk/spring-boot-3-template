@@ -22,6 +22,8 @@ import static com.gin.springboot3template.sys.bo.Constant.Role.ADMIN;
 
 @Transactional(rollbackFor = Exception.class)
 public interface SystemRoleService extends MyService<SystemRole> {
+    org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SystemRoleService.class);
+
     /**
      * 添加角色
      * @param param 参数
@@ -63,6 +65,7 @@ public interface SystemRoleService extends MyService<SystemRole> {
     default SystemRole getOrCreateByName(SystemRole systemRole) {
         final SystemRole role = getByName(systemRole.getName());
         if (role == null) {
+            LOG.info("角色 {} 不存在,执行创建", systemRole.getName());
             save(systemRole);
             return systemRole;
         }
