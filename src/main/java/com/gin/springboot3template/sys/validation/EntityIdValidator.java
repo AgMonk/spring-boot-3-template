@@ -45,10 +45,7 @@ public class EntityIdValidator implements ConstraintValidator<EntityId, Serializ
             constraintValidatorContext.buildConstraintViolationWithTemplate("不允许为空").addConstraintViolation();
             return false;
         }
-        if (service.getById(serializable) == null) {
-//            changeMessage(constraintValidatorContext, String.format("Id: %s ,不存在",this.value));
-            return false;
-        }
-        return true;
+        //            changeMessage(constraintValidatorContext, String.format("Id: %s ,不存在",this.value));
+        return service.getById(serializable) != null;
     }
 }
