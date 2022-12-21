@@ -70,6 +70,7 @@ public class Constant {
          * 添加接口路径
          */
         public static final String ADD = "add";
+        public static final String CONFIG = "config";
         /**
          * 删除接口路径
          */
@@ -78,6 +79,7 @@ public class Constant {
          * 通过关键字检索对象接口路径
          */
         public static final String FILTER = "filter";
+        public static final String LIST = "list";
         /**
          * 查询全部接口路径
          */

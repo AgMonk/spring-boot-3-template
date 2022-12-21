@@ -4,19 +4,14 @@ import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.dto.form.SystemRoleDelForm;
 import com.gin.springboot3template.sys.dto.form.SystemRoleForm;
-import com.gin.springboot3template.sys.dto.form.SystemRolePermissionForm;
 import com.gin.springboot3template.sys.dto.param.SystemRolePageParam;
-import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
-import com.gin.springboot3template.sys.service.RelationRolePermissionService;
 import com.gin.springboot3template.sys.service.RolePermissionService;
-import com.gin.springboot3template.sys.service.SystemPermissionService;
 import com.gin.springboot3template.sys.service.SystemRoleService;
 import com.gin.springboot3template.sys.service.impl.SystemRoleServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
-import com.gin.springboot3template.sys.vo.SystemRolePermissionVo;
 import com.gin.springboot3template.sys.vo.SystemRoleVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,8 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,61 +49,7 @@ public class SystemRoleController {
     public static final String GROUP_NAME = "角色管理接口";
     private final SystemRoleService systemRoleService;
     private final RolePermissionService rolePermissionService;
-    private final RelationRolePermissionService relationRolePermissionService;
-    private final SystemPermissionService systemPermissionService;
 
-    @PostMapping("permissionAdd")
-    @Operation(summary = "为角色添加权限", description = "返回添加的角色权限")
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemRolePermissionVo> permissionAdd(
-            @RequestBody @Validated SystemRolePermissionForm form,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        final List<Long> permIds = form.getPermIds();
-        //校验权限id
-        systemPermissionService.validatePermId(permIds);
-        //添加权限
-        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), relationRolePermissionService.add(form.getRoleId(), permIds)));
-    }
-
-    @PostMapping("permissionConfig")
-    @Operation(summary = "为角色配置权限", description = "返回配置的角色权限")
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemRolePermissionVo> permissionConfig(
-            @RequestBody @Validated SystemRolePermissionForm form,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        final List<Long> permIds = form.getPermIds();
-        //校验权限id
-        systemPermissionService.validatePermId(permIds);
-        //移除权限
-        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), relationRolePermissionService.config(form.getRoleId(), permIds)));
-    }
-
-    @PostMapping("permissionDel")
-    @Operation(summary = "为角色移除权限", description = "返回移除的角色权限")
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemRolePermissionVo> permissionDel(
-            @RequestBody @Validated SystemRolePermissionForm form,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        final List<Long> permIds = form.getPermIds();
-        //校验权限id
-        systemPermissionService.validatePermId(permIds);
-        //移除权限
-        return Res.of(SystemRolePermissionVo.of(form.getRoleId(), relationRolePermissionService.del(form.getRoleId(), permIds)));
-    }
-
-    @GetMapping("permissionList")
-    @Operation(summary = "查询角色持有的权限")
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SystemPermission>> permissionList(
-            @RequestParam @EntityId(service = SystemRoleServiceImpl.class) @Parameter(description = "角色id") Long roleId,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        final HashMap<Long, List<SystemPermission>> map = rolePermissionService.findRolePermissionMap(Collections.singleton(roleId));
-        return Res.of(map.get(roleId));
-    }
 
     @PostMapping(Constant.Api.ADD)
     @Operation(summary = "添加角色", description = "返回添加完成的角色")

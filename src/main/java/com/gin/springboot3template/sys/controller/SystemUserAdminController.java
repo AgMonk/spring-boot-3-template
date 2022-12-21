@@ -2,16 +2,18 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
-import com.gin.springboot3template.sys.bo.SystemUserBo;
-import com.gin.springboot3template.sys.dto.form.*;
+import com.gin.springboot3template.sys.dto.form.RegForm;
+import com.gin.springboot3template.sys.dto.form.ResetPasswordForm;
+import com.gin.springboot3template.sys.dto.form.SystemUserInfoForm;
 import com.gin.springboot3template.sys.dto.param.SystemUserPageParam;
-import com.gin.springboot3template.sys.entity.RelationUserRole;
 import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
-import com.gin.springboot3template.sys.service.*;
+import com.gin.springboot3template.sys.service.RolePermissionService;
+import com.gin.springboot3template.sys.service.SystemUserInfoService;
+import com.gin.springboot3template.sys.service.SystemUserService;
 import com.gin.springboot3template.sys.service.impl.SystemUserServiceImpl;
 import com.gin.springboot3template.sys.validation.EntityId;
 import com.gin.springboot3template.sys.vo.SystemUserInfoVo;
@@ -31,8 +33,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_ADMIN;
@@ -56,8 +56,6 @@ public class SystemUserAdminController {
     private final SystemUserService systemUserService;
     private final SystemUserInfoService systemUserInfoService;
     private final RolePermissionService rolePermissionService;
-    private final RelationUserRoleService relationUserRoleService;
-    private final SystemRoleService systemRoleService;
 
     @PostMapping("create")
     @Operation(summary = "创建用户")
@@ -103,46 +101,6 @@ public class SystemUserAdminController {
         return Res.of(pwd, "修改成功");
     }
 
-    @PostMapping("roleAdd")
-    @Operation(summary = "为指定用户添加角色", description = NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<RelationUserRole>> roleAdd(@RequestBody @Validated UserRoleForm form, @SuppressWarnings("unused") HttpServletRequest request) {
-        rolePermissionService.forbiddenConfigAdminUser(form.getUserId());
-        systemRoleService.validateRoleId(form.getRoles().stream().map(RelationUserRoleForm::getRoleId).toList());
-        final List<RelationUserRole> roleList = relationUserRoleService.add(form.getUserId(), form.getRoles());
-        return Res.of(roleList);
-    }
-
-    @PostMapping("roleConfig")
-    @Operation(summary = "为指定用户配置角色", description = "如果给出的角色尚未持有,添加持有;如果已持有,更新过期时间;删除未给出的角色持有<br/>" + NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<RelationUserRole>> roleConfig(@RequestBody @Validated UserRoleForm form, @SuppressWarnings("unused") HttpServletRequest request) {
-        final Long userId = form.getUserId();
-        final List<RelationUserRoleForm> roles = form.getRoles();
-        rolePermissionService.forbiddenConfigAdminUser(userId);
-        systemRoleService.validateRoleId(roles.stream().map(RelationUserRoleForm::getRoleId).toList());
-        final List<RelationUserRole> roleList = relationUserRoleService.config(userId, roles);
-        return Res.of(roleList);
-    }
-
-    @PostMapping("roleDel")
-    @Operation(summary = "为指定用户删除角色", description = NOT_CONFIG_ADMIN)
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<Void> roleDel(@RequestBody @Validated UserRoleDelForm form, @SuppressWarnings("unused") HttpServletRequest request) {
-        rolePermissionService.forbiddenConfigAdminUser(form.getUserId());
-        relationUserRoleService.del(form.getUserId(), form.getRoleId());
-        return Res.of(null);
-    }
-
-    @GetMapping("roleList")
-    @Operation(summary = "查询用户持有的角色")
-    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SystemUserBo>> roleList(
-            @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        return Res.of(rolePermissionService.listAuthorityByUserId(Collections.singleton(userId)));
-    }
 
     @GetMapping("userInfoFind")
     @Operation(summary = "查询指定用户的个人信息")

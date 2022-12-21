@@ -3,8 +3,10 @@ package com.gin.springboot3template.sys.init.quest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.controller.SystemPermissionController;
 import com.gin.springboot3template.sys.controller.SystemRoleController;
-import com.gin.springboot3template.sys.controller.SystemUserAdminController;
+import com.gin.springboot3template.sys.controller.SystemRolePermissionController;
+import com.gin.springboot3template.sys.controller.SystemUserRoleController;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
 import com.gin.springboot3template.sys.entity.SystemPermission;
 import com.gin.springboot3template.sys.entity.SystemRole;
@@ -196,9 +198,12 @@ public class InitAuthority implements ApplicationRunner {
         final Long roleId = this.roleManager.getId();
 
         //添加权限
-        final List<RelationRolePermission> res = rolePermissionService.addRolePermissionWithPath(roleId,
-                                                                                                 List.of(SystemUserAdminController.API_PREFIX + "/role*"),
-                                                                                                 List.of(SystemRoleController.GROUP_NAME));
+        final List<RelationRolePermission> res = rolePermissionService
+                .addRolePermissionWithPath(roleId,
+                                           null,
+                                           List.of(SystemRoleController.GROUP_NAME,
+                                                   SystemRolePermissionController.GROUP_NAME,
+                                                   SystemUserRoleController.GROUP_NAME, SystemPermissionController.GROUPE_NAME));
         if (res.size() > 0) {
             log.info("为角色管理员添加 {} 个权限", res.size());
         }
