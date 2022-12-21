@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="打包" type="MavenRunConfiguration" factoryName="Maven">
+    <configuration default="false" name="发布" type="MavenRunConfiguration" factoryName="Maven">
         <MavenSettings>
             <option name="myGeneralSettings"/>
             <option name="myRunnerSettings"/>
@@ -11,7 +11,7 @@
                     <option name="goals">
                         <list>
                             <option value="clean"/>
-                            <option value="package"/>
+                            <option value="deploy"/>
                         </list>
                     </option>
                     <option name="pomFileName"/>
