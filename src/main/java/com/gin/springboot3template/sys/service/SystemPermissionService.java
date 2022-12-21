@@ -34,6 +34,17 @@ public interface SystemPermissionService extends MyService<SystemPermission> {
     }
 
     /**
+     * 查询所有分组名称
+     * @return 分组名称
+     */
+    default List<String> listGroupNames() {
+        final QueryWrapper<SystemPermission> qw = new QueryWrapper<>();
+        final String groupName = "group_name";
+        qw.select(groupName).groupBy(groupName);
+        return list(qw).stream().map(SystemPermission::getGroupName).toList();
+    }
+
+    /**
      * 根据包扫描结果更新权限数据
      * @param newData 新数据
      * @return 新的完整数据
@@ -80,7 +91,6 @@ public interface SystemPermissionService extends MyService<SystemPermission> {
         return returnData;
 
     }
-
 
     /**
      * 校验权限ID存在
