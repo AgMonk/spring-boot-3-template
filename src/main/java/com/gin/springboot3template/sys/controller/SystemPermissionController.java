@@ -25,14 +25,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @MyRestController(SystemPermissionController.API_PREFIX)
 @RequiredArgsConstructor
-@Tag(name = SystemPermissionController.GROUPE_NAME)
+@Tag(name = SystemPermissionController.GROUP_NAME)
 @Slf4j
 public class SystemPermissionController {
     /**
      * 接口路径前缀
      */
     public static final String API_PREFIX = "/sys/permission";
-    public static final String GROUPE_NAME = "权限接口";
+    public static final String GROUP_NAME = "权限接口";
     private final SystemPermissionService systemPermissionService;
 
     @GetMapping(Constant.Api.PAGE)

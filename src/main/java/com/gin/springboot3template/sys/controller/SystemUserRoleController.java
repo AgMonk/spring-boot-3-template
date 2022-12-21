@@ -88,10 +88,10 @@ public class SystemUserRoleController {
     @GetMapping(Constant.Api.LIST)
     @Operation(summary = "查询用户持有的角色")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SystemUserBo>> roleList(
+    public Res<SystemUserBo> roleList(
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
-        return Res.of(rolePermissionService.listAuthorityByUserId(Collections.singleton(userId)));
+        return Res.of(rolePermissionService.listAuthorityByUserId(Collections.singleton(userId)).get(0));
     }
 }

@@ -214,7 +214,7 @@ public class InitAuthority implements ApplicationRunner {
                                            null,
                                            List.of(SystemRoleController.GROUP_NAME,
                                                    SystemRolePermissionController.GROUP_NAME,
-                                                   SystemUserRoleController.GROUP_NAME, SystemPermissionController.GROUPE_NAME));
+                                                   SystemUserRoleController.GROUP_NAME, SystemPermissionController.GROUP_NAME));
         if (res.size() > 0) {
             log.info("为角色管理员添加 {} 个权限", res.size());
         }
