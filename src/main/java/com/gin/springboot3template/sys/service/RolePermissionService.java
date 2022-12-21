@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.bo.RelationUserRoleBo;
 import com.gin.springboot3template.sys.bo.SystemUserBo;
 import com.gin.springboot3template.sys.entity.RelationRolePermission;
@@ -16,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -40,6 +42,38 @@ public class RolePermissionService implements AuthorityProvider {
     private final SystemPermissionService systemPermissionService;
     private final RelationRolePermissionService relationRolePermissionService;
     private final RelationUserRoleService relationUserRoleService;
+
+    /**
+     * 为指定角色按路径添加权限
+     * @param roleId 角色id
+     * @param path   路径
+     */
+    public void addRolePermissionWithPath(long roleId, Collection<String> path, Collection<String> groupName) {
+        final List<SystemPermission> permissions = systemPermissionService.list();
+
+        if (CollectionUtils.isEmpty(path) && CollectionUtils.isEmpty(groupName)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "路径和分组名需至少传入一个");
+        }
+        Set<Long> idSet = new HashSet<>();
+
+        //按路径添加
+        if (!CollectionUtils.isEmpty(path)) {
+            final AntPathMatcher antPathMatcher = new AntPathMatcher();
+            for (String pattern : path) {
+                idSet.addAll(permissions.stream().filter(perm -> antPathMatcher.match(pattern, perm.getPath())).map(BasePo::getId).toList());
+            }
+        }
+        //按分组名添加
+        if (!CollectionUtils.isEmpty(groupName)) {
+            idSet.addAll(permissions.stream().filter(perm -> groupName.contains(perm.getGroupName())).map(BasePo::getId).toList());
+        }
+
+        if (idSet.size() == 0) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "未找到符合要求的权限");
+        }
+        //添加权限
+        relationRolePermissionService.add(roleId, idSet);
+    }
 
     /**
      * 根据角色id查询其持有的权限
