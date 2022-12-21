@@ -4,7 +4,9 @@ import com.gin.springboot3template.sys.entity.RelationUserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @Schema(description = "用户角色表单")
 @Validated
+@NoArgsConstructor
+@AllArgsConstructor
 public class RelationUserRoleForm {
     @Schema(description = "角色id")
     @NotNull
