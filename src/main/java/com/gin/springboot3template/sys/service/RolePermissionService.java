@@ -73,7 +73,6 @@ public class RolePermissionService implements AuthorityProvider {
             log.warn("未找到符合要求的权限 角色id =" + roleId);
             return new ArrayList<>();
         }
-        log.info("为角色id = {} 添加 {} 个权限", roleId, idSet.size());
         //添加权限
         return relationRolePermissionService.add(roleId, idSet);
     }

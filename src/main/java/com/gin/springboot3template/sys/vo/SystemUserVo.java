@@ -15,15 +15,15 @@ import org.springframework.beans.BeanUtils;
 @Schema(description = "用户账号信息")
 public class SystemUserVo extends BaseVo {
     @Schema(description = "用户名")
-    private String username;
+    String username;
     @Schema(description = "账号未过期")
-    private boolean accountNonExpired;
+    Boolean accountNonExpired;
     @Schema(description = "账号未锁定")
-    private boolean accountNonLocked;
+    Boolean accountNonLocked;
     @Schema(description = "密码未过期")
-    private boolean credentialsNonExpired;
+    Boolean credentialsNonExpired;
     @Schema(description = "是否可用")
-    private boolean enabled;
+    Boolean enabled;
 
     public SystemUserVo(SystemUser systemUser) {
         BeanUtils.copyProperties(systemUser, this);

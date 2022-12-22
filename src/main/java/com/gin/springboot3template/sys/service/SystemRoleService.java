@@ -105,7 +105,7 @@ public interface SystemRoleService extends MyService<SystemRole> {
         final List<Long> idNotExists = findNotExistsId(roleId);
         if (idNotExists.size() > 0) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST,
-                                       "参数错误,如下角色ID不存在",
+                                       "参数校验异常,如下角色ID不存在",
                                        idNotExists.stream().map(String::valueOf).collect(Collectors.toList()));
         }
     }

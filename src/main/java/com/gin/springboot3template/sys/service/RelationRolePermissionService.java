@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Transactional(rollbackFor = Exception.class)
 public interface RelationRolePermissionService extends MyService<RelationRolePermission> {
+    org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(RelationUserRoleService.class);
+
     /**
      * 将角色id 和权限id 组装成 角色权限列表
      * @param roleId  角色id
@@ -47,6 +49,7 @@ public interface RelationRolePermissionService extends MyService<RelationRolePer
         //去重
         rolePermissions.removeAll(listByRoleId(Collections.singleton(roleId)));
         if (rolePermissions.size() > 0) {
+            LOG.info("为角色id = {} 添加 {} 个权限", roleId, rolePermissions.size());
             saveBatch(rolePermissions);
         }
         return rolePermissions;

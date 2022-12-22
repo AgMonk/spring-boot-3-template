@@ -23,6 +23,7 @@ spring:
       matching-strategy: ant_path_matcher
   servlet:
     multipart:
+      #上传文件的体积限制
       max-file-size: 1024MB
       max-request-size: 1024MB
   #      active: prod

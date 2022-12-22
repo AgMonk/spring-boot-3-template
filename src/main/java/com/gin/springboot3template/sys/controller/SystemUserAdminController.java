@@ -60,7 +60,10 @@ public class SystemUserAdminController {
     @PostMapping("create")
     @Operation(summary = "创建用户")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<SystemUserVo> create(@RequestBody @Validated RegForm regForm) {
+    public Res<SystemUserVo> create(
+            @RequestBody @Validated RegForm regForm,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
         return Res.of(new SystemUserVo(systemUserService.reg(regForm)), "创建成功");
     }
 
