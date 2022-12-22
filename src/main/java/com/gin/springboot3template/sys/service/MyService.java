@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.response.ResPage;
-import com.gin.springboot3template.sys.utils.JacksonUtils;
+import org.springframework.cglib.beans.BeanMap;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -25,8 +25,14 @@ public interface MyService<T> extends IService<T> {
      */
     default List<Long> findNotExistsId(Collection<Long> ids) {
         final List<T> entities = listByIds(ids);
-        final List<Map<String, Object>> maps = entities.stream().map(JacksonUtils::obj2Map).toList();
-        final List<Long> idExists = maps.stream().map(i -> Long.parseLong(String.valueOf(i.get(getPrimaryKey())))).toList();
+        if (entities.size() == 0) {
+            return new ArrayList<>(ids);
+        }
+        final BeanMap beanMap = BeanMap.create(entities.get(0));
+        final List<Long> idExists = entities.stream().map(entity -> {
+            beanMap.setBean(entity);
+            return Long.parseLong(String.valueOf(beanMap.get(getPrimaryKey())));
+        }).toList();
         return ids.stream().filter(i -> !idExists.contains(i)).toList();
     }
 
