@@ -44,6 +44,13 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private static void writeJson(HttpServletResponse response, HttpStatus httpStatus, Object o) throws IOException {
+        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
+        response.setStatus(httpStatus.value());
+        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(o));
+    }
+
+
     /**
      * 认证失败处理
      * @param request  that resulted in an <code>AuthenticationException</code>
@@ -61,9 +68,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         if (e instanceof InsufficientAuthenticationException) {
             detailMessage = "请登陆后再访问";
         }
-        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, "认证异常")));
+        writeJson(response, HttpStatus.UNAUTHORIZED, Res.of(detailMessage, "认证异常"));
     }
 
     /**
@@ -88,9 +93,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
         } else if (accessDeniedException instanceof AuthorizationServiceException) {
             detailMessage = AuthorizationServiceException.class.getSimpleName() + " " + accessDeniedException.getLocalizedMessage();
         }
-        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
-        response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(detailMessage, Constant.Messages.ACCESS_DENIED)));
+        writeJson(response, HttpStatus.FORBIDDEN, Res.of(detailMessage, Constant.Messages.ACCESS_DENIED));
     }
 
     /**
@@ -102,9 +105,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
             HttpServletResponse response,
             AuthenticationException exception
     ) throws IOException {
-        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(exception.getLocalizedMessage(), "登陆失败")));
+        writeJson(response, HttpStatus.UNAUTHORIZED, Res.of(exception.getLocalizedMessage(), "登陆失败"));
     }
 
     /**
@@ -116,9 +117,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
             HttpServletResponse response,
             Authentication authentication
     ) throws IOException {
-        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
-        response.setStatus(HttpStatus.OK.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(MyUserDetailsVo.of(authentication), "登陆成功")));
+        writeJson(response, HttpStatus.OK, Res.of(MyUserDetailsVo.of(authentication), "登陆成功"));
         //清理使用过的验证码
         request.getSession().removeAttribute(VERIFY_CODE_KEY);
     }
@@ -131,9 +130,7 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
     public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException {
         String message = "该账号已从其他设备登陆,如果不是您自己的操作请及时修改密码";
         final HttpServletResponse response = event.getResponse();
-        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(event.getSessionInformation(), message)));
+        writeJson(response, HttpStatus.UNAUTHORIZED, Res.of(event.getSessionInformation(), message));
     }
 
     /**
@@ -149,8 +146,6 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
             HttpServletResponse response,
             Authentication authentication
     ) throws IOException {
-        response.setContentType(Constant.APPLICATION_JSON_CHARSET_UTF_8);
-        response.setStatus(HttpStatus.OK.value());
-        response.getWriter().println(OBJECT_MAPPER.writeValueAsString(Res.of(null, "登出成功")));
+        writeJson(response, HttpStatus.OK, Res.of(null, "登出成功"));
     }
 }
