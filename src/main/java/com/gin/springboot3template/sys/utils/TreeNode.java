@@ -26,8 +26,7 @@ public interface TreeNode<T> {
         if (CollectionUtils.isEmpty(list)) {
             return data;
         }
-        HashMap<Serializable, T> map = new HashMap<>(list.size());
-        list.forEach(i -> map.put(i.getNodeId(), i));
+        HashMap<Serializable, T> map = MapUtils.coll2Map(list, TreeNode::getNodeId);
         list.forEach(item -> {
             final Serializable parentNodeId = item.getParentNodeId();
             if (ObjectUtils.isEmpty(parentNodeId)) {
