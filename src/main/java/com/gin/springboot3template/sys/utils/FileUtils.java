@@ -43,7 +43,6 @@ public class FileUtils {
             return "";
         }
         return filename.substring(filename.lastIndexOf(DOT) + 1).toLowerCase();
-
     }
 
     /**
@@ -53,7 +52,6 @@ public class FileUtils {
      */
     public static String getFileMainName(String filename) {
         return filename.substring(0, filename.lastIndexOf(DOT) + 1);
-
     }
 
     /**
@@ -204,6 +202,26 @@ public class FileUtils {
      */
     private static void copyFileUsingJava7Files(File source, File dest) throws IOException {
         Files.copy(source.toPath(), dest.toPath());
+    }
+
+    /**
+     * 移除文件名中的非法字符
+     * @param filename 文件名
+     */
+    public static String cleanInvalid(String filename) {
+        return replaceInvalid(filename, "");
+    }
+
+    /**
+     * 替换文件名中的非法字符
+     * @param filename    文件名
+     * @param replacement 替换成的字符
+     */
+    public static String replaceInvalid(String filename, String replacement) {
+        if (filename == null) {
+            return null;
+        }
+        return filename.replaceAll("[?|<>\"*:/\\\\]", replacement);
     }
 
     public enum CopyMethod {
