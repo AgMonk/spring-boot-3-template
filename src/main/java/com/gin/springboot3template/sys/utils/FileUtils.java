@@ -1,9 +1,9 @@
 package com.gin.springboot3template.sys.utils;
 
+import com.gin.springboot3template.sys.exception.file.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * 文件工具类
@@ -21,12 +21,12 @@ public class FileUtils {
      * 递归创建目录
      * @param dir 文件
      */
-    public static void mkdir(File dir) throws IOException {
+    public static void mkdir(File dir) throws DirCreateException, FileExistsException {
         if (dir.exists() && !dir.isDirectory()) {
-            throw new IOException("该文件已存在且不是目录: " + dir.getPath());
+            throw new FileExistsException(dir);
         }
         if (!dir.exists() && !dir.mkdirs()) {
-            throw new IOException("目录创建失败: " + dir.getPath());
+            throw new DirCreateException(dir);
         }
         log.info("创建目录:" + dir.getPath());
     }
@@ -58,10 +58,10 @@ public class FileUtils {
      * 删除一个文件
      * @param file 文件
      */
-    public static void deleteFile(File file) throws IOException {
+    public static void deleteFile(File file) throws FileNotExistsException, FileDeleteException {
         assertExists(file);
         if (!file.delete()) {
-            throw new IOException("文件删除失败: " + file.getPath());
+            throw new FileDeleteException(file);
         }
         log.info("已删除文件:" + file.getPath());
     }
@@ -71,12 +71,12 @@ public class FileUtils {
      * @param src  源文件
      * @param dest 目标文件
      */
-    public static void move(File src, File dest) throws IOException {
+    public static void move(File src, File dest) throws FileMoveException, FileNotExistsException, FileExistsException, DirCreateException {
         assertExists(src);
         assertNotExists(dest);
         mkdir(dest.getParentFile());
         if (!src.renameTo(dest)) {
-            throw new IOException(String.format("移动失败 %s -> %s", src.getPath(), dest.getPath()));
+            throw new FileMoveException(src, dest);
         }
         log.info("已移动文件 {} -> {}", src.getPath(), dest.getPath());
     }
@@ -86,7 +86,7 @@ public class FileUtils {
      * @param src 源文件
      * @param dir 目标目录
      */
-    public static void move2Dir(File src, File dir) throws IOException {
+    public static void move2Dir(File src, File dir) throws FileNotExistsException, DirCreateException, FileMoveException, FileExistsException {
         move(src, new File(dir.getPath() + PATH_DELIMITER + src.getName()));
     }
 
@@ -102,7 +102,7 @@ public class FileUtils {
      * 根据file是目录还是文件调用不同的删除方法
      * @param file 目录或文件
      */
-    public static void delete(File file) throws IOException {
+    public static void delete(File file) throws FileNotExistsException, FileDeleteException {
         assertExists(file);
         if (file.isDirectory()) {
             deleteDir(file);
@@ -115,9 +115,9 @@ public class FileUtils {
      * 断言文件不是null
      * @param file 文件
      */
-    private static void assertNotNull(File file) throws IOException {
+    private static void assertNotNull(File file) {
         if (file == null) {
-            throw new IOException("文件为null");
+            throw new RuntimeException("文件为null");
         }
     }
 
@@ -125,10 +125,10 @@ public class FileUtils {
      * 断言文件存在
      * @param file 文件
      */
-    private static void assertExists(File file) throws IOException {
+    private static void assertExists(File file) throws FileNotExistsException {
         assertNotNull(file);
         if (!file.exists()) {
-            throw new IOException("文件不存在");
+            throw new FileNotExistsException(file);
         }
     }
 
@@ -136,10 +136,10 @@ public class FileUtils {
      * 断言文件不存在
      * @param file 文件
      */
-    private static void assertNotExists(File file) throws IOException {
+    private static void assertNotExists(File file) throws FileExistsException {
         assertNotNull(file);
         if (!file.exists()) {
-            throw new IOException("文件已存在: " + file.getPath());
+            throw new FileExistsException(file);
         }
     }
 
