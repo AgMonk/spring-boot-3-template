@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.util.function.Function;
 
+import static com.gin.springboot3template.sys.utils.JacksonUtils.getMapper;
+
 /**
  * 文件IO工具类
  * @author : ginstone
@@ -17,7 +19,7 @@ import java.util.function.Function;
  * @since : 2022/12/22 16:07
  */
 public class FileIoUtils {
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    private final static ObjectMapper MAPPER = getMapper();
 
     /**
      * 从文件获取 BufferedInputStream
@@ -121,7 +123,7 @@ public class FileIoUtils {
      */
     public static void writeObj(File file, Object obj) throws IOException {
         try (PrintWriter writer = getWriter(file)) {
-            MAPPER.writerWithDefaultPrettyPrinter().writeValue(writer, obj);
+            MAPPER.writeValue(writer, obj);
         }
     }
 
