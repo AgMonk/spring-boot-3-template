@@ -94,18 +94,22 @@ public class FileUtils {
     }
 
     /**
-     * 递归删除一个目录
+     * 递归删除目录下的所有文件
      * @param dir 目录
      */
-    public static void deleteDir(File dir) {
-        //todo
+    public static void deleteDir(File dir) throws IOException {
+        final ArrayList<File> files = listAllFiles(dir);
+        for (int i = files.size() - 1; i >= 0; i--) {
+            final File item = files.get(i);
+            delete(item);
+        }
     }
 
     /**
      * 根据file是目录还是文件调用不同的删除方法
      * @param file 目录或文件
      */
-    public static void delete(File file) throws FileNotExistsException, FileDeleteException {
+    public static void delete(File file) throws IOException {
         assertExists(file);
         if (file.isDirectory()) {
             deleteDir(file);
