@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.function.Function;
 
 /**
@@ -101,10 +100,5 @@ public class FileIoUtils {
 
 
     public static void main(String[] args) throws IOException {
-        final String pathname = "d:/123/123.txt";
-        final File file = new File(pathname);
-        final HashMap<String, String> map = readObj(file,
-                                                    typeFactory -> typeFactory.constructParametricType(HashMap.class, String.class, String.class));
-        System.out.println(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(map));
     }
 }
