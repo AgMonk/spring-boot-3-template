@@ -3,7 +3,9 @@ package com.gin.springboot3template.sys.utils;
 import com.gin.springboot3template.sys.exception.file.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 
 /**
  * 文件工具类
@@ -143,5 +145,69 @@ public class FileUtils {
         }
     }
 
+
+    /**
+     * 复制文件 使用 CHANNEL 方法
+     * @param src  源文件
+     * @param dest 目标文件
+     */
+    public static void copyFile(File src, File dest) throws IOException {
+        copyFile(src, dest, CopyMethod.CHANNEL);
+    }
+
+    /**
+     * 复制文件
+     * @param src        源文件
+     * @param dest       目标文件
+     * @param copyMethod 复制方法 默认为  CHANNEL
+     */
+    public static void copyFile(File src, File dest, CopyMethod copyMethod) throws IOException {
+        assertExists(src);
+        assertNotExists(dest);
+        switch (copyMethod) {
+            case JAVA7 -> copyFileUsingJava7Files(src, dest);
+            case STREAM -> copyFileUsingFileStreams(src, dest);
+            default -> copyFileUsingFileChannels(src, dest);
+        }
+    }
+
+    /**
+     * 使用FileStreams复制 不能吃到任何缓存
+     * @param src  源文件
+     * @param dest 目标文件
+     */
+    private static void copyFileUsingFileStreams(File src, File dest) throws IOException {
+        try (InputStream input = new FileInputStream(src); OutputStream output = new FileOutputStream(dest)) {
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buf)) > 0) {
+                output.write(buf, 0, bytesRead);
+            }
+        }
+    }
+
+    /**
+     * 使用FileChannel复制 能吃到3种方式的缓存
+     * @param src  源文件
+     * @param dest 目标文件
+     */
+    private static void copyFileUsingFileChannels(File src, File dest) throws IOException {
+        try (FileChannel inputChannel = new FileInputStream(src).getChannel(); FileChannel outputChannel = new FileOutputStream(dest).getChannel()) {
+            outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+        }
+    }
+
+    /**
+     * 使用Java7的Files类复制  能吃到3种方式的缓存
+     * @param source 源文件
+     * @param dest   目标文件
+     */
+    private static void copyFileUsingJava7Files(File source, File dest) throws IOException {
+        Files.copy(source.toPath(), dest.toPath());
+    }
+
+    public enum CopyMethod {
+        STREAM, CHANNEL, JAVA7
+    }
 
 }   
