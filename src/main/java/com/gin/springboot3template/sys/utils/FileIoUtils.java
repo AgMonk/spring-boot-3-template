@@ -118,5 +118,8 @@ public class FileIoUtils {
 
 
     public static void main(String[] args) throws IOException {
+        for (File file : FileUtils.listAllFiles(new File("g:/"), false)) {
+            System.out.println(file.getPath());
+        }
     }
 }

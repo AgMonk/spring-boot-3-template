@@ -2,10 +2,13 @@ package com.gin.springboot3template.sys.utils;
 
 import com.gin.springboot3template.sys.exception.file.*;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 文件工具类
@@ -159,7 +162,7 @@ public class FileUtils {
      * @param dest       目标文件
      * @param copyMethod 复制方法 默认为  CHANNEL
      */
-    public static void copyFile(File src, File dest, CopyMethod copyMethod) throws IOException {
+    public static void copyFile(File src, File dest, @NotNull CopyMethod copyMethod) throws IOException {
         assertExists(src);
         assertNotExists(dest);
         switch (copyMethod) {
@@ -222,6 +225,56 @@ public class FileUtils {
             return null;
         }
         return filename.replaceAll("[?|<>\"*:/\\\\]", replacement);
+    }
+
+    /**
+     * 递归扫描目标目录中的所有文件
+     * @param dir 目录
+     * @return 文件列表
+     */
+    public static ArrayList<File> listAllFiles(File dir) throws IOException {
+        return listAllFiles(dir, false);
+    }
+
+    /**
+     * 递归扫描目标目录中的所有文件和目录
+     * @param dir        目录
+     * @param includeDir 是否把目录也添加到列表中
+     * @return 文件列表
+     */
+    public static ArrayList<File> listAllFiles(File dir, boolean includeDir) throws IOException {
+        final ArrayList<File> files = listFiles(dir);
+        final ArrayList<File> all = new ArrayList<>();
+        for (File file : files) {
+            if (!file.isDirectory()) {
+                //不是目录 添加到列表
+                all.add(file);
+            } else {
+                // 是目录
+                if (includeDir) {
+                    all.add(file);
+                }
+                all.addAll(listAllFiles(file, includeDir));
+            }
+        }
+        return all;
+    }
+
+    /**
+     * 列出指定目录下的所有文件/目录
+     * @param dir 目录
+     * @return 文件列表
+     */
+    public static ArrayList<File> listFiles(File dir) throws IOException {
+        assertExists(dir);
+        if (!dir.isDirectory()) {
+            throw new IOException("该文件不是目录:" + dir.getPath());
+        }
+        final File[] files = dir.listFiles();
+        if (files == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(List.of(files));
     }
 
     public enum CopyMethod {
