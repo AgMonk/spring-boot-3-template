@@ -19,7 +19,7 @@ import java.util.List;
 public class SystemRolePageParam extends BasePageParam {
     @Schema(description = "关键字(名称,中文名称,描述,备注)")
     String key;
-    @Schema(description = "排除的id(一般用于排除用户已持有的角色)")
+    @Schema(description = "排除的id(一般用于排除用户已持有的角色),多个id用逗号分隔")
     List<Long> excludedId;
 
     @Override

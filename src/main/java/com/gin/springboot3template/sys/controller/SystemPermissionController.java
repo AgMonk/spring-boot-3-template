@@ -42,7 +42,7 @@ public class SystemPermissionController {
     private final SystemPermissionService systemPermissionService;
 
     @GetMapping(Constant.Api.GROUP)
-    @Operation(summary = "分组查询")
+    @Operation(summary = "分组查询权限", description = "用于角色权限的'配置'接口")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<PermissionGroup>> group(@SuppressWarnings("unused") HttpServletRequest request) {
         final Map<String, List<SystemPermission>> map = systemPermissionService.list().stream().collect(Collectors.groupingBy(SystemPermission::getGroupName));
@@ -54,7 +54,7 @@ public class SystemPermissionController {
     }
 
     @GetMapping(Constant.Api.PAGE)
-    @Operation(summary = "分页查询")
+    @Operation(summary = "分页查询权限", description = "用于角色权限的'添加'接口")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<ResPage<SystemPermission>> page(
             @ParameterObject SystemPermissionPageParam param,

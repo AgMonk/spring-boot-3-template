@@ -23,7 +23,7 @@ import java.util.List;
 public class SystemPermissionPageParam extends BasePageParam {
     @Schema(description = "关键字(路径,分组名称)")
     String key;
-    @Schema(description = "排除的id(一般用于排除角色已持有的权限)")
+    @Schema(description = "排除的id(一般用于排除角色已持有的权限),多个id用逗号分隔")
     List<Long> excludedId;
 
     @Override
