@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.function.Function;
@@ -18,19 +20,12 @@ public class FileIoUtils {
     private final static ObjectMapper MAPPER = new ObjectMapper();
 
     /**
-     * 从文件获取 BufferedReader
-     * @param file 文件
-     * @return BufferedReader
-     */
-    public static BufferedReader getReader(File file) throws FileNotFoundException {
-        return new BufferedReader(new FileReader(file));
-    }
-
-    /**
      * 从文件获取 BufferedInputStream
      * @param file 文件
      * @return BufferedInputStream
      */
+    @NotNull
+    @Contract("_ -> new")
     public static BufferedInputStream getInputStream(File file) throws FileNotFoundException {
         return new BufferedInputStream(new FileInputStream(file));
     }
@@ -40,8 +35,21 @@ public class FileIoUtils {
      * @param file 文件
      * @return BufferedOutputStream
      */
+    @NotNull
+    @Contract("_ -> new")
     public static BufferedOutputStream getOutputStream(File file) throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(file));
+    }
+
+    /**
+     * 从文件获取 BufferedReader
+     * @param file 文件
+     * @return BufferedReader
+     */
+    @NotNull
+    @Contract("_ -> new")
+    public static BufferedReader getReader(File file) throws FileNotFoundException {
+        return new BufferedReader(new FileReader(file));
     }
 
     /**
@@ -49,20 +57,11 @@ public class FileIoUtils {
      * @param file 文件
      * @return PrintWriter
      */
-    public static PrintWriter getWriter(File file) throws IOException {
+    @NotNull
+    @Contract("_ -> new")
+    public static PrintWriter getWriter(@NotNull File file) throws IOException {
         FileUtils.mkdir(file.getParentFile());
         return new PrintWriter(new FileWriter(file));
-    }
-
-    /**
-     * 将对象转换成json格式写入文件;如果文件已存在将会覆盖文件
-     * @param file 文件
-     * @param obj  对象
-     */
-    public static void writeObj(File file, Object obj) throws IOException {
-        try (PrintWriter writer = getWriter(file)) {
-            MAPPER.writerWithDefaultPrettyPrinter().writeValue(writer, obj);
-        }
     }
 
     /**
@@ -104,7 +103,6 @@ public class FileIoUtils {
         }
     }
 
-
     /**
      * 从文件中读取json字符串并解析为对象
      * @param file 文件
@@ -112,14 +110,21 @@ public class FileIoUtils {
      * @param <T>  T
      * @return 指定类对象
      */
-    public static <T> T readObj(File file, Function<TypeFactory, JavaType> func) throws IOException {
+    public static <T> T readObj(File file, @NotNull Function<TypeFactory, JavaType> func) throws IOException {
         return readObj(file, func.apply(MAPPER.getTypeFactory()));
     }
 
+    /**
+     * 将对象转换成json格式写入文件;如果文件已存在将会覆盖文件
+     * @param file 文件
+     * @param obj  对象
+     */
+    public static void writeObj(File file, Object obj) throws IOException {
+        try (PrintWriter writer = getWriter(file)) {
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(writer, obj);
+        }
+    }
 
     public static void main(String[] args) throws IOException {
-        for (File file : FileUtils.listAllFiles(new File("g:/"), false)) {
-            System.out.println(file.getPath());
-        }
     }
 }
