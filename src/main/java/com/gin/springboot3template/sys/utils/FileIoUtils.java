@@ -27,6 +27,24 @@ public class FileIoUtils {
     }
 
     /**
+     * 从文件获取 BufferedInputStream
+     * @param file 文件
+     * @return BufferedInputStream
+     */
+    public static BufferedInputStream getInputStream(File file) throws FileNotFoundException {
+        return new BufferedInputStream(new FileInputStream(file));
+    }
+
+    /**
+     * 从文件获取 BufferedOutputStream
+     * @param file 文件
+     * @return BufferedOutputStream
+     */
+    public static BufferedOutputStream getOutputStream(File file) throws FileNotFoundException {
+        return new BufferedOutputStream(new FileOutputStream(file));
+    }
+
+    /**
      * 从文件获取 PrintWriter
      * @param file 文件
      * @return PrintWriter
