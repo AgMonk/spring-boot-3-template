@@ -28,12 +28,12 @@ public class FileIoUtils {
     }
 
     /**
-     * 从文件获取 BufferedWriter
+     * 从文件获取 PrintWriter
      * @param file 文件
-     * @return BufferedWriter
+     * @return PrintWriter
      */
     public static PrintWriter getWriter(File file) throws IOException {
-        FileUtils.mkdir(file);
+        FileUtils.mkdir(file.getParentFile());
         return new PrintWriter(new FileWriter(file));
     }
 
@@ -86,7 +86,7 @@ public class FileIoUtils {
             return MAPPER.readValue(reader, typeReference);
         }
     }
-    
+
 
     /**
      * 从文件中读取json字符串并解析为对象
