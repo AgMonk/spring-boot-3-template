@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
 
+import static com.gin.springboot3template.sys.utils.TimeUtils.simpleDuration;
+
 /**
  * 秒表
  * @author : ginstone
@@ -14,6 +16,11 @@ import java.util.LinkedHashMap;
 @Getter
 @Slf4j
 public class Stopwatch {
+    private static final String TEMPLATE = "[{}] 标记计时点 [{}] 距离上一个计时点: {} 总耗时: {}";
+    /**
+     * 任务名称
+     */
+    private final String taskName;
     /**
      * 计时开始的时间
      */
@@ -27,14 +34,24 @@ public class Stopwatch {
      */
     private long last;
 
-    public Stopwatch() {
+    public Stopwatch(String taskName) {
+        this.taskName = taskName;
         final long now = now();
         this.start = now;
         this.last = now;
+
+        log.info("[{}] 开始计时", taskName);
     }
 
     private static long now() {
         return System.currentTimeMillis();
+    }
+
+    /**
+     * 结束
+     */
+    public void stop() {
+        tag("结束", true);
     }
 
     /**
@@ -45,9 +62,18 @@ public class Stopwatch {
     public void tag(String tag, boolean printLog) {
         final long now = now();
         if (printLog) {
-            log.debug("标记计时点 [{}] 距离上一个计时点: {} 总耗时: {}");
+            log.info(TEMPLATE, taskName, tag, simpleDuration(last, now), simpleDuration(start, now));
         }
         this.last = now;
         process.put(tag, now);
     }
+
+    /**
+     * 标记一个计时点
+     * @param tag 标签名
+     */
+    public void tag(String tag) {
+        tag(tag, false);
+    }
+
 }
