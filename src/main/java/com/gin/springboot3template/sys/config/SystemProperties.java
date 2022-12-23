@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "system")
 @Getter
 @Setter
-public class SystemConfig {
+public class SystemProperties {
     /**
      * 开放新用户注册
      */

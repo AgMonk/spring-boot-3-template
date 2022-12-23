@@ -3,7 +3,7 @@ package com.gin.springboot3template.sys.controller;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.bo.SystemUserBo;
-import com.gin.springboot3template.sys.config.SystemConfig;
+import com.gin.springboot3template.sys.config.SystemProperties;
 import com.gin.springboot3template.sys.dto.form.LoginForm;
 import com.gin.springboot3template.sys.dto.form.RegForm;
 import com.gin.springboot3template.sys.dto.form.SystemUserInfoForm;
@@ -56,7 +56,7 @@ public class SystemUserController {
     public static final String API_PREFIX = "/sys/user";
     private final SystemUserService systemUserService;
     private final SystemUserInfoService systemUserInfoService;
-    private final SystemConfig systemConfig;
+    private final SystemProperties systemProperties;
     private final RolePermissionService rolePermissionService;
 
     @PostMapping("changePwd")
@@ -89,7 +89,7 @@ public class SystemUserController {
     @PostMapping("reg")
     @Operation(summary = "注册用户")
     public Res<SystemUserVo> reg(@RequestBody @Validated RegForm regForm) {
-        if (!systemConfig.isNewUser()) {
+        if (!systemProperties.isNewUser()) {
             throw BusinessException.of(HttpStatus.FORBIDDEN, "注册功能已关闭");
         }
         return Res.of(new SystemUserVo(systemUserService.reg(regForm)), "注册成功");
