@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.gin.springboot3template.sys.utils.JacksonUtils.getMapper;
 
@@ -34,13 +35,14 @@ public class FileIoUtils {
 
     /**
      * 从文件获取 BufferedOutputStream
-     * @param file 文件
+     * @param file   文件
+     * @param append 追加模式
      * @return BufferedOutputStream
      */
     @NotNull
-    @Contract("_ -> new")
-    public static BufferedOutputStream getOutputStream(File file) throws FileNotFoundException {
-        return new BufferedOutputStream(new FileOutputStream(file));
+    @Contract("_, _ -> new")
+    public static BufferedOutputStream getOutputStream(File file, boolean append) throws FileNotFoundException {
+        return new BufferedOutputStream(new FileOutputStream(file, append));
     }
 
     /**
@@ -56,14 +58,15 @@ public class FileIoUtils {
 
     /**
      * 从文件获取 PrintWriter
-     * @param file 文件
+     * @param file   文件
+     * @param append 追加模式
      * @return PrintWriter
      */
     @NotNull
-    @Contract("_ -> new")
-    public static PrintWriter getWriter(@NotNull File file) throws IOException {
+    @Contract("_, _ -> new")
+    public static PrintWriter getWriter(@NotNull File file, boolean append) throws IOException {
         FileUtils.mkdir(file.getParentFile());
-        return new PrintWriter(new FileWriter(file));
+        return new PrintWriter(new FileWriter(file, append));
     }
 
     /**
@@ -117,13 +120,34 @@ public class FileIoUtils {
     }
 
     /**
+     * 以字符串形式读取一个文件
+     * @param file 文件
+     * @return 字符串
+     */
+    public static String readStr(File file) throws FileNotFoundException {
+        return getReader(file).lines().collect(Collectors.joining("\n"));
+    }
+
+    /**
      * 将对象转换成json格式写入文件;如果文件已存在将会覆盖文件
      * @param file 文件
      * @param obj  对象
      */
     public static void writeObj(File file, Object obj) throws IOException {
-        try (PrintWriter writer = getWriter(file)) {
+        try (PrintWriter writer = getWriter(file, false)) {
             MAPPER.writeValue(writer, obj);
+        }
+    }
+
+    /**
+     * 写一个字符串到文件
+     * @param file   文件
+     * @param s      字符串
+     * @param append 追加模式
+     */
+    public static void writeStr(File file, String s, boolean append) throws IOException {
+        try (PrintWriter writer = getWriter(file, append)) {
+            writer.write(s);
         }
     }
 

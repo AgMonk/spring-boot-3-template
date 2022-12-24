@@ -24,6 +24,38 @@ public class FileUtils {
     public static final String PATH_DELIMITER = "/";
 
     /**
+     * 断言文件存在
+     * @param file 文件
+     */
+    public static void assertExists(@NotNull File file) throws FileNotExistsException {
+        assertNotNull(file);
+        if (!file.exists()) {
+            throw new FileNotExistsException(file);
+        }
+    }
+
+    /**
+     * 断言文件不存在
+     * @param file 文件
+     */
+    public static void assertNotExists(@NotNull File file) throws FileExistsException {
+        assertNotNull(file);
+        if (!file.exists()) {
+            throw new FileExistsException(file);
+        }
+    }
+
+    /**
+     * 断言文件不是null
+     * @param file 文件
+     */
+    public static void assertNotNull(File file) {
+        if (file == null) {
+            throw new RuntimeException("文件为null");
+        }
+    }
+
+    /**
      * 移除文件名中的非法字符
      * @param filename 文件名
      */
@@ -178,10 +210,13 @@ public class FileUtils {
         if (dir.exists() && !dir.isDirectory()) {
             throw new FileExistsException(dir);
         }
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new DirCreateException(dir);
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                throw new DirCreateException(dir);
+            } else {
+                log.info("创建目录:" + dir.getPath());
+            }
         }
-        log.info("创建目录:" + dir.getPath());
     }
 
     /**
@@ -224,38 +259,6 @@ public class FileUtils {
             return null;
         }
         return filename.replaceAll("[?|<>\"*:/\\\\]", replacement);
-    }
-
-    /**
-     * 断言文件存在
-     * @param file 文件
-     */
-    private static void assertExists(@NotNull File file) throws FileNotExistsException {
-        assertNotNull(file);
-        if (!file.exists()) {
-            throw new FileNotExistsException(file);
-        }
-    }
-
-    /**
-     * 断言文件不存在
-     * @param file 文件
-     */
-    private static void assertNotExists(@NotNull File file) throws FileExistsException {
-        assertNotNull(file);
-        if (!file.exists()) {
-            throw new FileExistsException(file);
-        }
-    }
-
-    /**
-     * 断言文件不是null
-     * @param file 文件
-     */
-    private static void assertNotNull(File file) {
-        if (file == null) {
-            throw new RuntimeException("文件为null");
-        }
     }
 
     /**
