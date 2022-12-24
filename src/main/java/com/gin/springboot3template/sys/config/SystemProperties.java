@@ -17,8 +17,12 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class SystemProperties {
     /**
-     * 开放新用户注册
+     * 注册功能开放 关闭后只能由管理员创建新用户
      */
     boolean newUser = true;
+    /**
+     * 文件根目录,本系统管理的文件将全部放在该目录下
+     */
+    String homePath;
 
 }

@@ -46,7 +46,9 @@ http://host:port/doc.html
 ```yml
 system:
   #注册功能开放 关闭后只能由管理员创建新用户
-  newUser: true
+  new-user: true
+  #文件根目录,本系统管理的文件将全部放在该目录下
+  home-path: d:/spring-boot-3-template
 
 # 接口文档开关 (生产环境建议关闭)
 knife4j:
