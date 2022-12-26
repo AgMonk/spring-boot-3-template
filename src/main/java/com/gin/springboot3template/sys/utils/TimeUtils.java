@@ -33,6 +33,15 @@ public class TimeUtils {
     }
 
     /**
+     * 按格式输出当前时间
+     * @param formatter 格式
+     * @return 日期时间
+     */
+    public static String format(DateTimeFormatter formatter) {
+        return format(ZonedDateTime.now(), formatter);
+    }
+
+    /**
      * 按格式输出一个日期时间
      * @param formatter 格式
      * @param zdt       ZonedDateTime

@@ -2,9 +2,9 @@ package com.gin.springboot3template.sys.service;
 
 import com.gin.springboot3template.sys.config.SystemProperties;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import com.gin.springboot3template.sys.utils.TimeUtils;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import static com.gin.springboot3template.sys.utils.FileUtils.PATH_DELIMITER;
 
 /**
  * 附件服务
@@ -14,19 +14,17 @@ import java.lang.reflect.Type;
  */
 public interface AttachmentService<T> extends MyService<T> {
     /**
-     * 附件在根目录下保存的目录名 默认使用 T 类型名称 + "/attach"
+     * 附件目录名
+     */
+    String PATH = "attach";
+
+    /**
+     * 附件在根目录下保存的目录名 默认使用 "/attach" + 当天日期
      * @return 附近目录
      */
     default String attachPath() {
-        final String path = "/attach";
-        final Type superclass = this.getClass().getGenericSuperclass();
-        if (superclass instanceof ParameterizedType type) {
-            if (type.getActualTypeArguments()[0] instanceof Class<?> clazz) {
-                return clazz.getSimpleName() + path;
-            }
-            return type.getTypeName() + path;
-        }
-        return null;
+        return PATH_DELIMITER + PATH +
+                PATH_DELIMITER + TimeUtils.format(TimeUtils.DATE_FORMATTER);
     }
 
     /**
