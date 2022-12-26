@@ -18,6 +18,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Res<Void>> exceptionHandler(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<>(Res.of(null, "服务器错误 请通知管理员"), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseBody
+    @ExceptionHandler({MaxUploadSizeExceededException.class})
+    public ResponseEntity<Res<String>> exceptionHandler(MaxUploadSizeExceededException e) {
+        return new ResponseEntity<>(Res.of("文件大小超出限制", e.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
     }
 
     /**
