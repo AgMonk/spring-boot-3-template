@@ -34,25 +34,13 @@ public class BaseAttach extends BasePo {
     @Comment("附件所有者Id")
     @Schema(description = "附件所有者Id")
     Long ownerId;
-    @Column(length = 200, nullable = false)
+    @Column(length = 200)
     @Comment("备注")
     @Schema(description = "备注")
     String remark;
-    @Column
+    @Column(nullable = false)
     @Comment("上传者Id")
     @Schema(description = "上传者Id")
     Long uploaderId;
-
-    /**
-     * 写入所有者id / 备注 / 上传者id
-     * @param ownerId    附件所有者Id
-     * @param remark     备注
-     * @param uploaderId 上传者Id
-     */
-    public BaseAttach(long uploaderId, Long ownerId, String remark) {
-        this.ownerId = ownerId;
-        this.remark = remark;
-        this.uploaderId = uploaderId;
-    }
 
 }
