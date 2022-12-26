@@ -134,4 +134,7 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
         return systemProperties.getHomePath();
     }
 
+
+//    todo 定时删除无主附件
+//    todo 删除无主附件 (形参为 T)
 }
