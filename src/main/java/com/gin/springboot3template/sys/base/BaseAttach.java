@@ -1,11 +1,11 @@
 package com.gin.springboot3template.sys.base;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
@@ -19,12 +19,13 @@ import org.hibernate.annotations.Comment;
 @Setter
 @MappedSuperclass
 @Schema(description = "基础附件对象")
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseAttach extends BasePo {
     @Column(length = 100, nullable = false)
     @Comment("文件原名称")
     String originalFilename;
     @Column
-    @TableField(updateStrategy = FieldStrategy.NEVER)
     @Comment("附件所有者Id")
     @Schema(description = "附件所有者Id")
     Long ownerId;
@@ -37,4 +38,6 @@ public class BaseAttach extends BasePo {
     @Column(length = 100, nullable = false)
     @Comment("备注")
     String remark;
+
+
 }
