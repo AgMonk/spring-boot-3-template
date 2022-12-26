@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gin.springboot3template.sys.base.BaseAttach;
+import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.config.SystemProperties;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.service.AttachmentService;
@@ -15,15 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.gin.springboot3template.sys.utils.FileUtils.PATH_DELIMITER;
@@ -52,10 +51,25 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
     }
 
     @Override
-    public final List<T> listByOwnerId(long ownerId) {
-        final QueryWrapper<T> qw = new QueryWrapper<>();
-        qw.eq(OWNER_ID, ownerId);
-        return list(qw);
+    public final List<T> deleteById(Collection<Long> attachIds) {
+        if (CollectionUtils.isEmpty(attachIds)) {
+            return new ArrayList<>();
+        }
+        final List<T> attachments = listByIds(attachIds);
+        if (CollectionUtils.isEmpty(attachments)) {
+            return new ArrayList<>();
+        }
+        // 删除文件
+        for (T a : attachments) {
+            File file = new File(homePath() + a.getFilePath());
+            try {
+                FileUtils.delete(file);
+            } catch (IOException ignored) {
+            }
+        }
+        //移除数据库
+        removeBatchByIds(attachments.stream().map(BasePo::getId).distinct().toList());
+        return attachments;
     }
 
     @Override
@@ -63,6 +77,13 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
         final QueryWrapper<T> qw = new QueryWrapper<>();
         qw.in(OWNER_ID, ownerId);
         return list(qw).stream().collect(Collectors.groupingBy(BaseAttach::getOwnerId));
+    }
+
+    @Override
+    public final List<T> listByOwnerId(long ownerId) {
+        final QueryWrapper<T> qw = new QueryWrapper<>();
+        qw.eq(OWNER_ID, ownerId);
+        return list(qw);
     }
 
     @Override
@@ -87,9 +108,9 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
     }
 
     /**
-     * 附件在根目录下保存的目录名 默认使用 "/attach" + 当天日期
+     * 附件在根目录下保存的目录路径 默认使用 "/attach" + 当天日期
      * 建议重写 , 在路径中添加附件所有者的类型名.
-     * @return 附件目录
+     * @return 目录路径
      */
     public String attachPath() {
         return PATH_DELIMITER + PATH + PATH_DELIMITER + TimeUtils.format(TimeUtils.DATE_FORMATTER);
@@ -113,5 +134,4 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
         return systemProperties.getHomePath();
     }
 
-//    todo 删除附件
 }
