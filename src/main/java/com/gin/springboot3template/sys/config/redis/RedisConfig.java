@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 
@@ -57,6 +58,44 @@ public class RedisConfig {
         log.info("{}", redisTemplate);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.afterPropertiesSet();
+    }
+
+    /**
+     * RedisTemplate 构造器
+     * @param <K> Key类型
+     * @param <V> Value类型
+     */
+    public static class RedisTemplateBuilder<K, V> {
+        final RedisTemplate<K, V> template = new RedisTemplate<>();
+
+        public RedisTemplateBuilder(RedisConnectionFactory redisConnectionFactory) {
+            template.setConnectionFactory(redisConnectionFactory);
+        }
+
+        public RedisTemplate<K, V> build() {
+            template.afterPropertiesSet();
+            return template;
+        }
+
+        public RedisTemplateBuilder<K, V> setHashKeySerializer(RedisSerializer<?> hashKeySerializer) {
+            template.setHashKeySerializer(hashKeySerializer);
+            return this;
+        }
+
+        public RedisTemplateBuilder<K, V> setHashValueSerializer(RedisSerializer<?> hashValueSerializer) {
+            template.setHashValueSerializer(hashValueSerializer);
+            return this;
+        }
+
+        public RedisTemplateBuilder<K, V> setKeySerializer(RedisSerializer<?> serializer) {
+            template.setKeySerializer(serializer);
+            return this;
+        }
+
+        public RedisTemplateBuilder<K, V> setValueSerializer(RedisSerializer<?> serializer) {
+            template.setValueSerializer(serializer);
+            return this;
+        }
     }
 
 }
