@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.response.ResPage;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.cglib.beans.BeanMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -44,18 +46,18 @@ public interface MyService<T> extends IService<T> {
         return "id";
     }
 
-
     /**
-     * 根据参数执行分页查询
-     * @param param 参数
-     * @param qw    查询条件
-     * @return 分页数据
+     * 根据指定列分组并仅查询这些列 , 一般用于查询这些列中已被使用过的值 , 用于分页查询的条件
+     * @param columns 列名
+     * @return 这些列中已被使用过的值
      */
-    default Page<T> pageByParam(BasePageParam param, QueryWrapper<T> qw) {
-        qw = qw != null ? qw : new QueryWrapper<>();
-        //添加条件
-        param.handleQueryWrapper(qw);
-        return page(new Page<>(param.getPage(), param.getSize()), qw);
+    default List<T> listGroup(String... columns) {
+        if (ArrayUtils.isEmpty(columns)) {
+            return new ArrayList<>();
+        }
+        final QueryWrapper<T> qw = new QueryWrapper<>();
+        qw.select(columns).groupBy(Arrays.asList(columns));
+        return list(qw);
     }
 
     /**
@@ -87,6 +89,19 @@ public interface MyService<T> extends IService<T> {
      */
     default Page<T> pageByParam(BasePageParam param) {
         return pageByParam(param, new QueryWrapper<>());
+    }
+
+    /**
+     * 根据参数执行分页查询
+     * @param param 参数
+     * @param qw    查询条件
+     * @return 分页数据
+     */
+    default Page<T> pageByParam(BasePageParam param, QueryWrapper<T> qw) {
+        qw = qw != null ? qw : new QueryWrapper<>();
+        //添加条件
+        param.handleQueryWrapper(qw);
+        return page(new Page<>(param.getPage(), param.getSize()), qw);
     }
 
 }

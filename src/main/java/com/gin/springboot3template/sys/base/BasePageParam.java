@@ -24,7 +24,7 @@ public abstract class BasePageParam {
     @Min(value = 1L, message = "页码最小为1")
     int page = 1;
 
-    @Schema(description = "每页条数,默认值:10", defaultValue = "10")
+    @Schema(description = "每页条数,默认值:10,取值范围[10,50]", defaultValue = "10")
     @Min(value = 10L, message = "条数最小为1")
     @Max(value = 50L, message = "条数最大为50")
     int size = 10;
