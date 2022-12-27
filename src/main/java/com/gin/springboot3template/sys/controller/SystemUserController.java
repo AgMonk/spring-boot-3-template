@@ -133,7 +133,12 @@ public class SystemUserController {
             throw BusinessException.of(HttpStatus.NOT_FOUND, "未找到用户个人信息,请先录入");
         }
         final SystemUserInfoVo vo = new SystemUserInfoVo(userInfo);
-        //todo 用户头像查询
+
+        //用户头像查询
+        final SystemUserAvatar avatar = systemUserAvatarService.getByUserId(userId);
+        if (avatar != null) {
+            vo.setAvatar(avatar.getFilePath());
+        }
 
         return Res.of(vo);
     }
