@@ -26,9 +26,9 @@ public interface SystemUserAvatarService extends AttachmentService<SystemUserAva
     default SystemUserAvatar deleteByUserId(long userId) {
         final SystemUserAvatar avatar = getByUserId(userId);
         if (avatar != null) {
-            deleteById(Collections.singleton(avatar.getId()));
+            return deleteEntities(Collections.singletonList(avatar)).get(0);
         }
-        return avatar;
+        return null;
     }
 
     /**

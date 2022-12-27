@@ -15,6 +15,7 @@ import com.gin.springboot3template.sys.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -51,11 +52,7 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
     }
 
     @Override
-    public final List<T> deleteById(Collection<Long> attachIds) {
-        if (CollectionUtils.isEmpty(attachIds)) {
-            return new ArrayList<>();
-        }
-        final List<T> attachments = listByIds(attachIds);
+    public final List<T> deleteEntities(List<T> attachments) {
         if (CollectionUtils.isEmpty(attachments)) {
             return new ArrayList<>();
         }
@@ -134,7 +131,14 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
         return systemProperties.getHomePath();
     }
 
-
-//    todo 定时删除无主附件
-//    todo 删除无主附件 (形参为 T)
+    /**
+     * 定时删除无主附件
+     */
+    @Scheduled(cron = "0 0 4 * * ?")
+    public void scheduledDeleteAttachmentsNotOwner() {
+        final QueryWrapper<T> qw = new QueryWrapper<>();
+        qw.isNull(OWNER_ID);
+        final List<T> list = list(qw);
+        deleteEntities(list);
+    }
 }

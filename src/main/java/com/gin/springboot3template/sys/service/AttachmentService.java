@@ -47,9 +47,9 @@ public interface AttachmentService<T extends BaseAttach> extends MyService<T> {
     T upload(@NotNull MultipartFile file, T entity) throws IOException;
 
     /**
-     * 根据ID删除附件
-     * @param attachIds 附件id
+     * 删除附件
+     * @param attachments 附件实体
      * @return 被删除的附件
      */
-    List<T> deleteById(Collection<Long> attachIds);
+    List<T> deleteEntities(List<T> attachments);
 }
