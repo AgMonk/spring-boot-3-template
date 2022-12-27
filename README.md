@@ -30,7 +30,7 @@ http://host:port/doc.html
     <dependency>
         <groupId>com.gin</groupId>
         <artifactId>spring-boot-3-template</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </dependency>
 </project>
 ```
@@ -41,37 +41,7 @@ http://host:port/doc.html
 
 ## 启动
 
-子项目配置文件只需要提供如下内容即可
-
-```yml
-system:
-  #注册功能开放 关闭后只能由管理员创建新用户
-  new-user: true
-  #文件根目录,本系统管理的文件将全部放在该目录下
-  home-path: d:/spring-boot-3-template
-
-# 接口文档开关 (生产环境建议关闭)
-knife4j:
-  enable: true
-
-logging:
-  level:
-    #本模板的日志打印级别
-    com.gin: debug
-
-spring:
-  datasource:
-    #数据库连接: 地址,端口,数据库名
-    url: jdbc:mysql://localhost:3306/spring-boot-3-template?serverTimezone=GMT%2B8&characterEncoding=utf-8&allowMultiQueries=true
-    username: 数据库用户名
-    password: 数据库密码
-  data:
-    redis:
-      host: redis服务器ip
-      password: redis密码
-      database: 数据库序号
-
-```
+子项目配置文件请参考 config 目录下的 -dev 或 -prod 配置文件
 
 启动类上需要添加注解
 
@@ -186,25 +156,27 @@ ENTRYPOINT java ${JAVA_OPTS} -jar /app.war  --spring.profiles.active=prod
 - 进入该页需要`分页查询角色`权限
 - 查询结果显示字段：全部
 - 界面提供功能(**均需要对应权限**)：
-  1. 添加角色
-  2. 删除角色
-  3. 修改角色
-  4. 管理角色持有的权限（两种方式）：
-     - 查询、添加、删除，添加时另需要`分页查询权限`权限
-     - 配置 ，配置时另需要`分组查询权限`权限
+    1. 添加角色
+    2. 删除角色
+    3. 修改角色
+    4. 管理角色持有的权限（两种方式）：
+
+    - 查询、添加、删除，添加时另需要`分页查询权限`权限
+    - 配置 ，配置时另需要`分组查询权限`权限
 
 ### 权限管理页
 
 - 提供两种展示权限的方式，分页和分组， 分别需要对应权限
 - 这里查询得到的是`所有需要权限校验的接口及其校验方式`
 - 查询结果展示字段：
-  1. 分页：全部字段
-  2. 分组：以树形结构展示，摘要作为 label ， tooltip显示描述
+    1. 分页：全部字段
+    2. 分组：以树形结构展示，摘要作为 label ， tooltip显示描述
 
 - `preAuthorize`字段说明：
-  - 该字段表示该权限的校验方式
-  - 最常见的值为`hasAuthority(#request.requestURI) or hasRole('admin')`,它表示这个接口需要：持有权限“接口URI” 或者 持有角色 "admin" ， 对于前半段的情况，只需要让某个角色持有该权限（在角色管理页操作），那么持有该角色的用户即可访问本接口
-  - 当该字段值出现`hasPermission`时，表示这是细粒度校验，不再能通过角色持有权限来访问。
+    - 该字段表示该权限的校验方式
+    - 最常见的值为`hasAuthority(#request.requestURI) or hasRole('admin')`,它表示这个接口需要：持有权限“接口URI” 或者 持有角色 "admin" ，
+      对于前半段的情况，只需要让某个角色持有该权限（在角色管理页操作），那么持有该角色的用户即可访问本接口
+    - 当该字段值出现`hasPermission`时，表示这是细粒度校验，不再能通过角色持有权限来访问。
 
 ### 个人中心页
 
