@@ -2,8 +2,3 @@ spring:
   profiles:
     active: dev
 
-system:
-  #注册功能开放 关闭后只能由管理员创建新用户
-  new-user: true
-  #文件根目录,本系统管理的文件将全部放在该目录下
-  home-path: d:/spring-boot-3-template
