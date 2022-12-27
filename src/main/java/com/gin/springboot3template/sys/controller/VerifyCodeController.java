@@ -2,7 +2,8 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.response.Res;
-import com.google.code.kaptcha.Producer;
+import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.base.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,9 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * 验证码接口
@@ -32,17 +32,25 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Tag(name = "验证码接口")
 public class VerifyCodeController {
-    private final Producer producer;
+    /**
+     * 生成验证码 写入到Session中并写出到流
+     * @param httpSession  session
+     * @param outputStream 输出流
+     */
+    private static void createCaptcha(HttpSession httpSession, OutputStream outputStream) {
+        Captcha captcha = new ArithmeticCaptcha(150, 50, 3);
+        final String text = captcha.text();
+        httpSession.setAttribute(Constant.Security.VERIFY_CODE_KEY, text);
+        captcha.out(outputStream);
+    }
 
     @GetMapping("/base64")
     @Operation(summary = "Base64格式", description = "获取验证码")
     @ResponseBody
     public Res<String> base64(@Parameter(hidden = true) HttpSession httpSession) throws IOException {
-        //生成验证码
-        final BufferedImage image = createImage(httpSession);
         //响应图片
         final FastByteArrayOutputStream os = new FastByteArrayOutputStream();
-        ImageIO.write(image, "jpeg", os);
+        createCaptcha(httpSession, os);
         //返回 base64
         return Res.of(Base64.encodeBase64String(os.toByteArray()));
     }
@@ -50,18 +58,9 @@ public class VerifyCodeController {
     @GetMapping("/image")
     @Operation(summary = "图片格式")
     public void image(@Parameter(hidden = true) HttpServletResponse response, @Parameter(hidden = true) HttpSession httpSession) throws IOException {
-        final BufferedImage image = createImage(httpSession);
         //响应图片
         response.setContentType(MimeTypeUtils.IMAGE_JPEG_VALUE);
-        ImageIO.write(image, "jpeg", response.getOutputStream());
+        createCaptcha(httpSession, response.getOutputStream());
     }
 
-    private BufferedImage createImage(HttpSession httpSession) {
-        //生成验证码
-        final String verifyCode = producer.createText();
-        //保存到 session 中（或redis中）
-        httpSession.setAttribute(Constant.Security.VERIFY_CODE_KEY, verifyCode);
-        //生成图片
-        return producer.createImage(verifyCode);
-    }
 }
