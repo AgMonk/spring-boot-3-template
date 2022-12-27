@@ -41,7 +41,7 @@ import java.util.Collections;
 
 import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MAX_LENGTH;
 import static com.gin.springboot3template.sys.bo.Constant.Security.PASSWORD_MIN_LENGTH;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 /**
  * 用户接口
@@ -116,10 +116,13 @@ public class SystemUserController {
         return Res.of(systemUserAvatarService.deleteByUserId(getUserId()), "删除成功");
     }
 
-    @PostMapping(value = "avatar/upload", consumes = {IMAGE_PNG_VALUE, IMAGE_JPEG_VALUE, IMAGE_GIF_VALUE})
+    @PostMapping(value = "avatar/upload", consumes = {MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "用户头像上传")
     public Res<SystemUserAvatar> userAvatarUpload(MultipartFile file) throws IOException {
         final Long userId = getUserId();
+
+        systemUserAvatarService.validateMultipartFile(file);
+
         systemUserAvatarService.deleteByUserId(userId);
         return Res.of(systemUserAvatarService.uploadWithUserId(file, userId), "上传成功");
     }

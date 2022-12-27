@@ -52,4 +52,18 @@ public interface AttachmentService<T extends BaseAttach> extends MyService<T> {
      * @return 被删除的附件
      */
     List<T> deleteEntities(List<T> attachments);
+
+    /**
+     * 校验上传文件
+     * @param file 上传的文件
+     */
+    void validateMultipartFile(@NotNull MultipartFile file);
+
+    /**
+     * 允许的文件ContentType 应当在接收文件之前进行校验
+     * @return ContentType 列表
+     */
+    default List<String> acceptContentType() {
+        return null;
+    }
 }

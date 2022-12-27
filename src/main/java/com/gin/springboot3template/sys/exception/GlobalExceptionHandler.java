@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,6 +49,16 @@ public class GlobalExceptionHandler {
         final SystemPermission permission = systemPermissionService.getByPath(request.getRequestURI());
         final String message = permission == null ? null : new ExpressionExceptionParser(permission.getPreAuthorize(), request).explain();
         return new ResponseEntity<>(Res.of(message, Constant.Messages.ACCESS_DENIED), HttpStatus.FORBIDDEN);
+    }
+
+    @ResponseBody
+    @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
+    public ResponseEntity<Res<String>> exceptionHandler(
+            HttpMediaTypeNotSupportedException e,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        log.warn(e.getLocalizedMessage());
+        return new ResponseEntity<>(Res.of("不允许的 Content-Type", e.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.entity.SystemUserAvatar;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,15 @@ import java.util.List;
 
 @Transactional(rollbackFor = Exception.class)
 public interface SystemUserAvatarService extends AttachmentService<SystemUserAvatar> {
+    /**
+     * 允许的文件ContentType
+     * @return ContentType 列表
+     */
+    @Override
+    default List<String> acceptContentType() {
+        return List.of(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE);
+    }
+
     /**
      * 删除指定用户的头像
      * @param userId 用户id

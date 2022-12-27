@@ -26,7 +26,7 @@ public class BaseAttach extends BasePo {
     @Comment("文件路径")
     @Schema(description = "文件路径")
     String filePath;
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     @Comment("文件原名称")
     @Schema(description = "文件原名称")
     String originalFilename;

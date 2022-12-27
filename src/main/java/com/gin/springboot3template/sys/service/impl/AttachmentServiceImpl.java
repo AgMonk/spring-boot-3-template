@@ -104,6 +104,15 @@ public abstract class AttachmentServiceImpl<M extends BaseMapper<T>, T extends B
         return entity;
     }
 
+    @Override
+    public final void validateMultipartFile(@NotNull MultipartFile file) {
+        //校验content-type
+        final List<String> acceptContentType = acceptContentType();
+        if (!CollectionUtils.isEmpty(acceptContentType) && !acceptContentType.contains(file.getContentType())) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "不允许的ContentType,允许范围如下", acceptContentType);
+        }
+    }
+
     /**
      * 附件在根目录下保存的目录路径 默认使用 "/attach" + 当天日期
      * 建议重写 , 在路径中添加附件所有者的类型名.
