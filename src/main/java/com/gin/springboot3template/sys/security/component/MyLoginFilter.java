@@ -3,12 +3,12 @@ package com.gin.springboot3template.sys.security.component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.service.CaptchaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -32,13 +32,16 @@ import static com.gin.springboot3template.sys.bo.Constant.Security.VERIFY_CODE_K
 @Component
 public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final CaptchaService captchaService;
 
     public MyLoginFilter(
             AuthenticationManager authenticationManager,
             MyAuthenticationHandler authenticationHandler,
-            MyRememberMeServices rememberMeServices
+            MyRememberMeServices rememberMeServices,
+            CaptchaService captchaService
     ) {
         super(authenticationManager);
+        this.captchaService = captchaService;
         setAuthenticationFailureHandler(authenticationHandler);
         setAuthenticationSuccessHandler(authenticationHandler);
         //rememberMe
@@ -83,14 +86,7 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
             rememberMe = request.getParameter(Constant.Security.REMEMBER_ME_KEY);
         }
         //校验验证码
-        final String vc = (String) request.getSession().getAttribute(VERIFY_CODE_KEY);
-        if (vc == null) {
-            throw new BadCredentialsException("验证码不存在,请先获取验证码");
-        } else if (verifyCode == null || "".equals(verifyCode)) {
-            throw new BadCredentialsException("请输入验证码");
-        } else if (!vc.equalsIgnoreCase(verifyCode)) {
-            throw new BadCredentialsException("验证码错误");
-        }
+        captchaService.validate(request.getSession().getId(), verifyCode);
 
         //将 rememberMe 状态存入 attr中
         if (!ObjectUtils.isEmpty(rememberMe)) {

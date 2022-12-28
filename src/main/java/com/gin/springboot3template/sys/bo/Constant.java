@@ -53,6 +53,7 @@ public class Constant {
      */
     public static class Security {
 
+        public static final String COLON = ":";
         public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
         public static final String LOGOUT_URI = "/sys/user/logout";
         /**

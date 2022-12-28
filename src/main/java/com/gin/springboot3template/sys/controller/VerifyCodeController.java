@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.response.Res;
+import com.gin.springboot3template.sys.service.CaptchaService;
 import com.wf.captcha.ArithmeticCaptcha;
 import com.wf.captcha.base.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,9 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +31,8 @@ import java.io.OutputStream;
 @RequiredArgsConstructor
 @Tag(name = "验证码接口")
 public class VerifyCodeController {
+    private final CaptchaService captchaService;
+
     /**
      * 生成验证码 写入到Session中并写出到流
      * @param httpSession  session
@@ -48,19 +49,15 @@ public class VerifyCodeController {
     @Operation(summary = "Base64格式", description = "获取验证码")
     @ResponseBody
     public Res<String> base64(@Parameter(hidden = true) HttpSession httpSession) throws IOException {
-        //响应图片
-        final FastByteArrayOutputStream os = new FastByteArrayOutputStream();
-        createCaptcha(httpSession, os);
-        //返回 base64
-        return Res.of(Base64.encodeBase64String(os.toByteArray()));
+        return Res.of(captchaService.create(httpSession.getId(), ArithmeticCaptcha.class));
     }
 
     @GetMapping("/image")
-    @Operation(summary = "图片格式")
+    @Operation(summary = "图片格式", description = "获取验证码")
     public void image(@Parameter(hidden = true) HttpServletResponse response, @Parameter(hidden = true) HttpSession httpSession) throws IOException {
         //响应图片
         response.setContentType(MimeTypeUtils.IMAGE_JPEG_VALUE);
-        createCaptcha(httpSession, response.getOutputStream());
+        captchaService.create(httpSession.getId(), ArithmeticCaptcha.class, response.getOutputStream());
     }
 
 }

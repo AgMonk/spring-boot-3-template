@@ -20,8 +20,8 @@ import org.springframework.util.DigestUtils;
 public class RedisMybatisCache implements Cache {
 
     private final String id;
-    private RedisTemplate<String, Object> redisJsonTemplate;
     BoundHashOperations<String, String, Object> hash;
+    private RedisTemplate<String, Object> jsonTemplate;
 
     public RedisMybatisCache(String id) {
         String key = "Mybatis:" + id.substring(id.lastIndexOf(".") + 1);
@@ -33,29 +33,10 @@ public class RedisMybatisCache implements Cache {
         return DigestUtils.md5DigestAsHex(key.toString().getBytes());
     }
 
-    private BoundHashOperations<String, String, Object> getHash() {
-
-        if (this.redisJsonTemplate==null){
-            //noinspection unchecked
-            this.redisJsonTemplate = (RedisTemplate<String, Object>) SpringContextUtils.getContext().getBean("redisJsonTemplate", new TypeReference<RedisTemplate<String, Object>>() {
-            });
-        }
-
-        //noinspection ConstantConditions
-        if (this.hash == null || !redisJsonTemplate.hasKey(id)) {
-            this.hash = redisJsonTemplate.boundHashOps(id);
-        }
-        return this.hash;
-    }
-
     @Override
-    public void putObject(Object key, Object value) {
-        if (value == null) {
-            return;
-        }
-        String k = getKey(key);
-        log.debug("[Redis][{}]保存: {} -> {}", id, k, value);
-        getHash().putIfAbsent(k, value);
+    public void clear() {
+        log.info("[Redis]刷新: {}", id);
+        jsonTemplate.delete(id);
     }
 
     @Override
@@ -71,6 +52,22 @@ public class RedisMybatisCache implements Cache {
     }
 
     @Override
+    public int getSize() {
+        //noinspection ConstantConditions
+        return Math.toIntExact(getHash().size());
+    }
+
+    @Override
+    public void putObject(Object key, Object value) {
+        if (value == null) {
+            return;
+        }
+        String k = getKey(key);
+        log.debug("[Redis][{}]保存: {} -> {}", id, k, value);
+        getHash().putIfAbsent(k, value);
+    }
+
+    @Override
     public Object removeObject(Object key) {
         String k = getKey(key);
         Object o = getObject(key);
@@ -81,16 +78,20 @@ public class RedisMybatisCache implements Cache {
         return o;
     }
 
-    @Override
-    public void clear() {
-        log.info("[Redis]刷新: {}", id);
-        redisJsonTemplate.delete(id);
-    }
+    private BoundHashOperations<String, String, Object> getHash() {
 
-    @Override
-    public int getSize() {
+        if (this.jsonTemplate == null) {
+            //noinspection unchecked
+            this.jsonTemplate = (RedisTemplate<String, Object>) SpringContextUtils.getContext().getBean("jsonTemplate",
+                                                                                                        new TypeReference<RedisTemplate<String, Object>>() {
+                                                                                                        });
+        }
+
         //noinspection ConstantConditions
-        return Math.toIntExact(getHash().size());
+        if (this.hash == null || !jsonTemplate.hasKey(id)) {
+            this.hash = jsonTemplate.boundHashOps(id);
+        }
+        return this.hash;
     }
 
 }
