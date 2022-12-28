@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.service;
 
+import com.gin.springboot3template.sys.enums.CaptchaType;
 import com.wf.captcha.ArithmeticCaptcha;
 import com.wf.captcha.ChineseCaptcha;
 import com.wf.captcha.GifCaptcha;
@@ -36,11 +37,11 @@ public class CaptchaService {
     /**
      * 创建验证码 并保存到redis,图片写入到 outputStream
      * @param key          保存的key
-     * @param clazz        创建的验证码类型
+     * @param type         创建的验证码类型
      * @param outputStream outputStream
      */
-    public final void create(@NotNull String key, Class<? extends Captcha> clazz, OutputStream outputStream) {
-        final Captcha captcha = buildCaptcha(clazz);
+    public final void create(@NotNull String key, CaptchaType type, OutputStream outputStream) {
+        final Captcha captcha = buildCaptcha(type);
         //验证码答案
         final String text = captcha.text();
         //写入redis
@@ -50,12 +51,12 @@ public class CaptchaService {
 
     /**
      * 创建验证码 并保存到redis,图片转换为base64返回
-     * @param key   保存的key
-     * @param clazz 创建的验证码类型
+     * @param key  保存的key
+     * @param type 创建的验证码类型
      * @return base64格式图片
      */
-    public final String create(@NotNull String key, Class<? extends Captcha> clazz) {
-        final Captcha captcha = buildCaptcha(clazz);
+    public final String create(@NotNull String key, CaptchaType type) {
+        final Captcha captcha = buildCaptcha(type);
         //验证码答案
         final String text = captcha.text();
         //写入redis
@@ -85,7 +86,11 @@ public class CaptchaService {
         }
     }
 
-    private static Captcha buildCaptcha(Class<? extends Captcha> clazz) {
+    private static Captcha buildCaptcha(CaptchaType type) {
+        if (type == null) {
+            return new ArithmeticCaptcha(WIDTH, HEIGHT, LENGTH);
+        }
+        final Class<? extends Captcha> clazz = type.getClazz();
         if (GifCaptcha.class.equals(clazz)) {
             return new GifCaptcha(WIDTH, HEIGHT, LENGTH);
         } else if (ArithmeticCaptcha.class.equals(clazz)) {

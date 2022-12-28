@@ -1,12 +1,9 @@
 package com.gin.springboot3template.sys.controller;
 
-import com.gin.springboot3template.sys.bo.Constant;
+import com.gin.springboot3template.sys.enums.CaptchaType;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.CaptchaService;
-import com.wf.captcha.ArithmeticCaptcha;
-import com.wf.captcha.base.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,10 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * 验证码接口
@@ -31,33 +28,27 @@ import java.io.OutputStream;
 @RequiredArgsConstructor
 @Tag(name = "验证码接口")
 public class VerifyCodeController {
+    private static final String DESCRIPTION = "获取验证码 <br/>" +
+            "type 参数为指定生成的验证码类型, 具体效果可以尝试请求查看 ,为空时默认为 ARI; <br/>" +
+            "一般来说,用于同一功能的验证码类型应保持不变 , 除非需要较高的安全性;不同功能可以使用不同类型";
     private final CaptchaService captchaService;
 
-    /**
-     * 生成验证码 写入到Session中并写出到流
-     * @param httpSession  session
-     * @param outputStream 输出流
-     */
-    private static void createCaptcha(HttpSession httpSession, OutputStream outputStream) {
-        Captcha captcha = new ArithmeticCaptcha(150, 50, 3);
-        final String text = captcha.text();
-        httpSession.setAttribute(Constant.Security.VERIFY_CODE_KEY, text);
-        captcha.out(outputStream);
-    }
-
     @GetMapping("/base64")
-    @Operation(summary = "Base64格式", description = "获取验证码")
+    @Operation(summary = "Base64格式", description = DESCRIPTION)
     @ResponseBody
-    public Res<String> base64(@Parameter(hidden = true) HttpSession httpSession) throws IOException {
-        return Res.of(captchaService.create(httpSession.getId(), ArithmeticCaptcha.class));
+    public Res<String> base64(HttpSession httpSession, @RequestParam(defaultValue = "ARI") CaptchaType type) {
+        return Res.of(captchaService.create(httpSession.getId(), type));
     }
 
     @GetMapping("/image")
-    @Operation(summary = "图片格式", description = "获取验证码")
-    public void image(@Parameter(hidden = true) HttpServletResponse response, @Parameter(hidden = true) HttpSession httpSession) throws IOException {
-        //响应图片
+    @Operation(summary = "图片格式", description = DESCRIPTION)
+    public void image(
+            HttpServletResponse response,
+            HttpSession httpSession,
+            @RequestParam(defaultValue = "ARI") CaptchaType type
+    ) throws IOException {
         response.setContentType(MimeTypeUtils.IMAGE_JPEG_VALUE);
-        captchaService.create(httpSession.getId(), ArithmeticCaptcha.class, response.getOutputStream());
+        captchaService.create(httpSession.getId(), type, response.getOutputStream());
     }
 
 }
