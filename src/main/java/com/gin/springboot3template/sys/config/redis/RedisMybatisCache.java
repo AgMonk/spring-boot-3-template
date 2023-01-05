@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * RedisRedis-Mybatis缓存
  * @author : ginstone
@@ -65,6 +67,9 @@ public class RedisMybatisCache implements Cache {
         String k = getKey(key);
         log.debug("[Redis][{}]保存: {} -> {}", id, k, value);
         getHash().putIfAbsent(k, value);
+        if (getSize() == 1) {
+            jsonTemplate.expire(id, 5, TimeUnit.MINUTES);
+        }
     }
 
     @Override
