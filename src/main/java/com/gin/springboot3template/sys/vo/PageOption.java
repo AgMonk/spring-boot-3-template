@@ -19,9 +19,10 @@ import java.util.stream.Collectors;
 @Setter
 @AllArgsConstructor
 public class PageOption implements Serializable {
+    @Schema(description = "出现次数")
+    Integer count;
     @Schema(description = "标签")
     String label;
-
     @Schema(description = "值")
     Serializable value;
 

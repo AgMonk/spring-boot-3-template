@@ -26,12 +26,15 @@ public interface MyService<T> extends IService<T> {
      * @return 统计结果
      */
     default List<T> countGroupBy(String... columns) {
-        final ArrayList<String> columnList = new ArrayList<>(Arrays.asList(columns));
-        columnList.add(0, "count(1) count");
-        String[] a = new String[]{};
-        columnList.toArray(a);
         final QueryWrapper<T> qw = new QueryWrapper<>();
-        qw.select(a).groupBy(columnList).orderByDesc("count");
+
+        final List<String> columnsList = Arrays.asList(columns);
+        final ArrayList<String> selectColumns = new ArrayList<>(columnsList);
+        selectColumns.add(0, "count(1) count");
+        qw.select(selectColumns.toArray(new String[]{}))
+                .groupBy(columnsList)
+                .orderByDesc("count")
+        ;
         return list(qw);
     }
 
