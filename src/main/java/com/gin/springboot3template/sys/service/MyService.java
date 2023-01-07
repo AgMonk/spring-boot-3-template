@@ -21,6 +21,21 @@ import java.util.function.Function;
  */
 public interface MyService<T> extends IService<T> {
     /**
+     * 分组统计某些列的出现次数
+     * @param columns 列
+     * @return 统计结果
+     */
+    default List<T> countGroupBy(String... columns) {
+        final ArrayList<String> columnList = new ArrayList<>(Arrays.asList(columns));
+        columnList.add(0, "count(1) count");
+        String[] a = new String[]{};
+        columnList.toArray(a);
+        final QueryWrapper<T> qw = new QueryWrapper<>();
+        qw.select(a).groupBy(columnList).orderByDesc("count");
+        return list(qw);
+    }
+
+    /**
      * 返回不存在的主键id
      * @param ids id
      * @return 不存在的id
