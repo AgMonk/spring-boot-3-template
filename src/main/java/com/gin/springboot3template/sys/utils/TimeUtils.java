@@ -95,6 +95,31 @@ public class TimeUtils {
     }
 
     /**
+     * 判断一个日期时间字符串是否符合格式
+     * @param formatter 格式
+     * @param value     待判断字符串
+     */
+    public static boolean matchFormatter(String value, String formatter) {
+        final DateTimeFormatter pattern = DateTimeFormatter.ofPattern(formatter);
+        try {
+            ZonedDateTime.parse(value, pattern);
+            return true;
+        } catch (Exception ignored) {
+        }
+        try {
+            LocalDateTime.parse(value, pattern);
+            return true;
+        } catch (Exception ignored) {
+        }
+        try {
+            LocalDate.parse(value, pattern);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * 智能识别字符串到 ZonedDateTime
      * @param string 字符串
      * @return ZonedDateTime
