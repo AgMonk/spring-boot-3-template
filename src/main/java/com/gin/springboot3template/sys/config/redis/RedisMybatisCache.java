@@ -37,7 +37,7 @@ public class RedisMybatisCache implements Cache {
 
     @Override
     public void clear() {
-        log.info("[Redis]刷新: {}", id);
+        log.debug("[Redis]刷新: {}", id);
         jsonTemplate.delete(id);
     }
 
