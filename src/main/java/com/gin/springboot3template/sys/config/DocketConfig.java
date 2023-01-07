@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DocketConfig {
     @Bean
-    public GroupedOpenApi user() {
+    public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("用户_角色_权限")
                 .pathsToMatch("/sys/**")
