@@ -9,6 +9,7 @@ import com.gin.springboot3template.sys.response.ResPage;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,12 +44,16 @@ public interface MyService<T> extends IService<T> {
 
     /**
      * 查询指定列是否存在指定值
-     * @param column 列名
-     * @param value  值
+     * @param column   列名
+     * @param value    值
+     * @param exceptId 排除的Id
      * @return 是否已被使用
      */
-    default boolean existsValue(String column, Serializable value) {
+    default boolean existsValue(String column, Serializable value, Collection<Long> exceptId) {
         final QueryWrapper<T> qw = new QueryWrapper<>();
+        if (!CollectionUtils.isEmpty(exceptId)) {
+            qw.notIn("id", exceptId);
+        }
         qw.eq(column, value).last("limit 1");
         return getOne(qw) != null;
     }
@@ -139,11 +144,12 @@ public interface MyService<T> extends IService<T> {
 
     /**
      * 校验唯一列的指定值是否已被使用
-     * @param column 唯一列名
-     * @param value  值
+     * @param column   唯一列名
+     * @param value    值
+     * @param exceptId 排除的Id
      */
-    default void validateUnique(String column, Serializable value) {
-        if (existsValue(column, value)) {
+    default void validateUnique(String column, Serializable value, Collection<Long> exceptId) {
+        if (existsValue(column, value, exceptId)) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, String.format("列 %s 的值 %s 已经存在,不允许重复", column, value));
         }
     }
