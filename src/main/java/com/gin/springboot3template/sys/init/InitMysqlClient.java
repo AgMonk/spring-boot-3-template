@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.init;
 
+import com.gin.springboot3template.sys.service.DatabaseBackupService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +19,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Order(50)
 public class InitMysqlClient implements ApplicationRunner {
+    private final DatabaseBackupService service;
+
     /**
      * 任务内容
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        service.prepare();
     }
 }

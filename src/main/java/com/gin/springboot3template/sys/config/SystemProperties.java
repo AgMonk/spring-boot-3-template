@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 系统配置
@@ -23,10 +22,6 @@ public class SystemProperties implements Serializable {
      * 文件根目录,本系统管理的文件将全部放在该目录下
      */
     String homePath;
-    /**
-     * mysql-client 所需要下载的文件路径 用于备份数据库
-     */
-    List<String> mysqlClient;
     /**
      * 注册功能开放 关闭后只能由管理员创建新用户
      */
