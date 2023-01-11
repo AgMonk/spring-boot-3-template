@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.Serializable;
+
 /**
  * 系统配置
  * @author : ginstone
@@ -15,14 +17,14 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "system")
 @Getter
 @Setter
-public class SystemProperties {
-    /**
-     * 注册功能开放 关闭后只能由管理员创建新用户
-     */
-    boolean newUser = true;
+public class SystemProperties implements Serializable {
     /**
      * 文件根目录,本系统管理的文件将全部放在该目录下
      */
     String homePath;
+    /**
+     * 注册功能开放 关闭后只能由管理员创建新用户
+     */
+    boolean newUser = true;
 
 }
