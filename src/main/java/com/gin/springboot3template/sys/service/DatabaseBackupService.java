@@ -1,6 +1,5 @@
 package com.gin.springboot3template.sys.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gin.springboot3template.sys.bo.DatabaseConConfig;
 import com.gin.springboot3template.sys.config.DatabaseProperties;
 import com.gin.springboot3template.sys.config.SystemProperties;
@@ -28,8 +27,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +45,7 @@ public class DatabaseBackupService {
      * 备份命令
      */
     private static final String DUMP = "mysqldump";
+    private static final String MYSQL = "mysql";
     private static final String PATH_BACKUP = "/database_backup";
     private static final String PATH_TEMP = "/mysql_client";
     private final SystemProperties systemProperties;
@@ -67,7 +65,7 @@ public class DatabaseBackupService {
         //todo 自动清理
     }
 
-    public void backup(boolean gzip) throws IOException, InterruptedException {
+    public void backup(boolean gzip) throws IOException {
         //当状态可用时 执行备份
         if (status != ServiceStatus.enable) {
             return;
@@ -98,11 +96,7 @@ public class DatabaseBackupService {
         cmd.add(filename);
 
         log.info("开始备份: " + filename);
-        log.debug("执行命令: " + String.join(" ", cmd));
-        final Process process = new ProcessBuilder("sh", "-c", String.join(" ", cmd))
-                .redirectErrorStream(true).directory(dirBackup).start();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        IoUtils.readLine(reader, log::info);
+        applyCmd(cmd);
         log.info("备份完成: " + filename);
     }
 
@@ -115,7 +109,7 @@ public class DatabaseBackupService {
     }
 
     @PostConstruct
-    public void init() throws DirCreateException, FileExistsException, JsonProcessingException, MalformedURLException, URISyntaxException {
+    public void init() throws DirCreateException, FileExistsException {
         //初始化 创建文件夹
         dirTemp = new File(systemProperties.getHomePath() + PATH_TEMP);
         dirBackup = new File(systemProperties.getHomePath() + PATH_BACKUP);
@@ -172,8 +166,48 @@ public class DatabaseBackupService {
         }
     }
 
-    public void recover() {
-        //todo 指定一个文件进行还原
+    /**
+     * 指定一个镜像文件进行还原
+     */
+    public void recover(String filename) throws IOException {
+        final File file = new File(dirBackup.getPath() + "/" + filename);
+        FileUtils.assertExists(file);
+        //todo
+        //是否是压缩文件
+        final boolean gzip = filename.endsWith(".gz");
+
+        // 指令
+        List<String> cmd = new ArrayList<>();
+        if (gzip) {
+            cmd.add("gunzip <");
+            cmd.add(filename);
+            cmd.add("|");
+        }
+        cmd.add(MYSQL);
+        cmd.add("-u" + dataSourceProperties.getUsername());
+        cmd.add("-p" + dataSourceProperties.getPassword());
+        cmd.add("-h" + databaseConConfig.getHost());
+        cmd.add(databaseConConfig.getDatabase());
+        if (!gzip) {
+            cmd.add("<");
+            cmd.add(filename);
+        }
+
+        log.info("开始还原: " + filename);
+        applyCmd(cmd);
+        log.info("还原完成: " + filename);
+    }
+
+    /**
+     * 执行指令
+     * @param cmd 指令
+     */
+    private void applyCmd(List<String> cmd) throws IOException {
+        log.debug("执行命令: " + String.join(" ", cmd));
+        final Process process = new ProcessBuilder("sh", "-c", String.join(" ", cmd))
+                .redirectErrorStream(true).directory(dirBackup).start();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        IoUtils.readLine(reader, log::info);
     }
 
     /**

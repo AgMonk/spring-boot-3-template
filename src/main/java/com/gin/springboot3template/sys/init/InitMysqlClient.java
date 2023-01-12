@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-@Order(50)
+@Order(10000)
 public class InitMysqlClient implements ApplicationRunner {
     private final DatabaseBackupService service;
     private final ObjectMapper objectMapper;
