@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.init;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.sys.service.DatabaseBackupService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 @Order(50)
 public class InitMysqlClient implements ApplicationRunner {
     private final DatabaseBackupService service;
+    private final ObjectMapper objectMapper;
 
     /**
      * 任务内容

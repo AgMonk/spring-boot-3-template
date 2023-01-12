@@ -1,7 +1,6 @@
 package com.gin.springboot3template.sys.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.sys.bo.DatabaseConConfig;
 import com.gin.springboot3template.sys.config.DatabaseProperties;
 import com.gin.springboot3template.sys.config.SystemProperties;
@@ -14,6 +13,7 @@ import com.gin.springboot3template.sys.utils.FileUtils;
 import com.gin.springboot3template.sys.utils.IoUtils;
 import com.gin.springboot3template.sys.utils.ProcessUtils;
 import com.gin.springboot3template.sys.utils.TimeUtils;
+import com.gin.springboot3template.sys.vo.FileInfo;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,6 @@ public class DatabaseBackupService {
     private final SystemProperties systemProperties;
     private final DatabaseProperties databaseProperties;
     private final DataSourceProperties dataSourceProperties;
-    private final ObjectMapper objectMapper;
     @Getter
     ServiceStatus status = ServiceStatus.disable;
     private DatabaseConConfig databaseConConfig;
@@ -120,8 +119,14 @@ public class DatabaseBackupService {
 
     }
 
-    public void list() {
-        //todo 列出备份镜像
+    /**
+     * 列出备份镜像
+     * @return 备份镜像
+     */
+    public List<FileInfo> list() throws IOException {
+        return FileUtils.listFiles(dirBackup).stream().map(FileInfo::new)
+                .sorted((o1, o2) -> Math.toIntExact(o2.getLastModified() - o1.getLastModified()))
+                .toList();
     }
 
     /**
@@ -148,9 +153,9 @@ public class DatabaseBackupService {
             try {
                 status = ServiceStatus.preparing;
                 //下载
-                download();
+                downloadClient();
                 //安装
-                install();
+                installClient();
                 //再次检查
                 if (checkDumpCmd()) {
                     log.info("Mysql Client安装完毕 , 备份和还原功能可用");
@@ -189,7 +194,7 @@ public class DatabaseBackupService {
     /**
      * 下载 mysql client 所需文件
      */
-    private void download() throws IOException, InterruptedException {
+    private void downloadClient() throws IOException, InterruptedException {
         final List<String> files = FileUtils.listFiles(dirTemp).stream().map(File::getName).toList();
         for (String url : databaseProperties.getMysqlClient()) {
             final String filename = url.substring(url.lastIndexOf("/") + 1);
@@ -208,7 +213,7 @@ public class DatabaseBackupService {
     /**
      * 安装mysql client
      */
-    private void install() throws IOException {
+    private void installClient() throws IOException {
         final Process installProcess = new ProcessBuilder("rpm", "-ivh", "mysql-community-*").directory(dirTemp).start();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(installProcess.getInputStream()));
         IoUtils.readLine(reader, i -> log.info("正在安装: {}", i));
