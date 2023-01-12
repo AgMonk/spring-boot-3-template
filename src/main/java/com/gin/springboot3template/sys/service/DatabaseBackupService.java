@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -57,12 +58,32 @@ public class DatabaseBackupService {
     private File dirBackup;
     private File dirTemp;
 
-    public void autoBackup() {
-        //todo 自动备份
+    /**
+     * 自动备份
+     */
+    @Scheduled(cron = "0 10 4 * * ?")
+    public void autoBackup() throws IOException {
+        if (!databaseProperties.isAutoBackup()) {
+            return;
+        }
+        backup(true);
     }
 
-    public void autoClear() {
-        //todo 自动清理
+    /**
+     * 自动清理备份镜像
+     */
+    @Scheduled(cron = "0 20 4 * * ?")
+    public void autoClear() throws IOException {
+        final int max = databaseProperties.getMaxBackup();
+        if (max <= 0) {
+            return;
+        }
+        final List<FileInfo> list = list();
+        //需要删除的文件
+        final List<FileInfo> target = list.subList(Math.min(max, list.size()), list.size());
+        for (FileInfo info : target) {
+            FileUtils.deleteFile(info.getFile());
+        }
     }
 
     public void backup(boolean gzip) throws IOException {
@@ -172,7 +193,6 @@ public class DatabaseBackupService {
     public void recover(String filename) throws IOException {
         final File file = new File(dirBackup.getPath() + "/" + filename);
         FileUtils.assertExists(file);
-        //todo
         //是否是压缩文件
         final boolean gzip = filename.endsWith(".gz");
 

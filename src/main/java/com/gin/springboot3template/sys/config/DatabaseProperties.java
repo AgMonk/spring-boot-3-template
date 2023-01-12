@@ -18,6 +18,16 @@ import java.util.List;
 @Getter
 @Setter
 public class DatabaseProperties implements Serializable {
+    /**
+     * 自动备份开关
+     */
+    boolean autoBackup;
+    /**
+     * 保留的最大镜像数量, 每天凌晨清理,保留最新的。0或负数表示不限制
+     */
+    int maxBackup;
+    /**
+     * mysql client 安装包地址(避免修改)
+     */
     List<String> mysqlClient;
-
-}   
+}
