@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,11 +46,11 @@ public class DatabaseController {
 
     private final DatabaseBackupService service;
 
-    @GetMapping(Constant.Api.DOWNLOAD + "/{filename}")
+    @GetMapping(Constant.Api.DOWNLOAD)
     @Operation(summary = "下载镜像文件")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public void getDownload(
-            @PathVariable @Parameter(description = "文件名") String filename,
+            @RequestParam @Parameter(description = "文件名") String filename,
             HttpServletResponse response,
             @SuppressWarnings("unused") HttpServletRequest request
     ) throws IOException {
@@ -103,7 +102,7 @@ public class DatabaseController {
     }
 
     @PostMapping(value = Constant.Api.UPLOAD, consumes = {MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "上传镜像文件", description = "文件后缀必须为 sql 或 gz;返回被上传的文件信息")
+    @Operation(summary = "上传镜像文件", description = "文件后缀必须为 sql 或 gz;<br/>返回被上传的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<FileInfo> postUpload(
             MultipartFile file,

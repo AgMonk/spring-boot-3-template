@@ -13,7 +13,7 @@ import org.springframework.boot.ApplicationRunner;
 import java.util.Collection;
 
 /**
- * 初始化单个模块管理员 @Order 应当在10-20之间
+ * 初始化单个模块管理员 @Order 应当在10-50之间
  * @author bx002
  */
 @Getter
