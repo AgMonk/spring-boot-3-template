@@ -10,13 +10,18 @@ import com.gin.springboot3template.sys.exception.file.DirCreateException;
 import com.gin.springboot3template.sys.exception.file.FileDeleteException;
 import com.gin.springboot3template.sys.exception.file.FileExistsException;
 import com.gin.springboot3template.sys.exception.file.FileNotExistsException;
-import com.gin.springboot3template.sys.utils.*;
+import com.gin.springboot3template.sys.utils.FileUtils;
+import com.gin.springboot3template.sys.utils.IoUtils;
+import com.gin.springboot3template.sys.utils.ProcessUtils;
+import com.gin.springboot3template.sys.utils.TimeUtils;
 import com.gin.springboot3template.sys.vo.FileInfo;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.http.HttpHeaders;
@@ -44,6 +49,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class DatabaseBackupService {
+    public static final List<String> EXT_LIST = new ArrayList<>(List.of("sql", "gz"));
+    public static final String EXT_MESSAGE = "文件后缀必须为其中之一: " + String.join(",", EXT_LIST);
     /**
      * 备份命令
      */
@@ -88,10 +95,15 @@ public class DatabaseBackupService {
         }
     }
 
-    public void backup(boolean gzip) throws IOException {
+    /**
+     * 执行备份
+     * @param gzip 是否使用gzip压缩
+     * @return 备份好的文件
+     */
+    public FileInfo backup(boolean gzip) throws IOException {
         //当状态可用时 执行备份
         if (status != ServiceStatus.enable) {
-            return;
+            return null;
         }
         // 备份当前数据库
         final String database = databaseConConfig.getDatabase();
@@ -121,14 +133,19 @@ public class DatabaseBackupService {
         log.info("开始备份: " + filename);
         applyCmd(cmd);
         log.info("备份完成: " + filename);
+
+        return new FileInfo(getBackupFile(filename));
     }
 
     /**
      * 删除镜像
      * @param filename 文件名
      */
-    public void del(String filename) throws FileNotExistsException, FileDeleteException {
-        FileUtils.deleteFile(new File(dirBackup.getPath() + "/" + filename));
+    public FileInfo del(String filename) throws FileNotExistsException, FileDeleteException {
+        final File file = getBackupFile(filename);
+        final FileInfo fileInfo = new FileInfo(file);
+        FileUtils.deleteFile(file);
+        return fileInfo;
     }
 
     /**
@@ -136,7 +153,7 @@ public class DatabaseBackupService {
      */
     public void download(String filename, HttpServletResponse response) throws IOException {
         //检查文件存在
-        final File file = new File(dirBackup.getPath() + "/" + filename);
+        final File file = getBackupFile(filename);
         FileUtils.assertExists(file);
         final String cache = "max-age=" + Integer.MAX_VALUE;
 
@@ -149,9 +166,8 @@ public class DatabaseBackupService {
         //设置浏览器接受类型为流
         response.setContentType(MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE + ";charset=UTF-8");
 
-        final BufferedReader reader = FileIoUtils.getReader(file);
-        try (PrintWriter pw = new PrintWriter(response.getOutputStream())) {
-            IoUtils.readLine(reader, pw::write);
+        try (FileInputStream fis = new FileInputStream(file); ServletOutputStream os = response.getOutputStream()) {
+            IOUtils.copy(fis, os);
         }
     }
 
@@ -217,8 +233,8 @@ public class DatabaseBackupService {
     /**
      * 指定一个镜像文件进行还原
      */
-    public void recover(String filename) throws IOException {
-        final File file = new File(dirBackup.getPath() + "/" + filename);
+    public FileInfo recover(String filename) throws IOException {
+        final File file = getBackupFile(filename);
         FileUtils.assertExists(file);
         //是否是压缩文件
         final boolean gzip = filename.endsWith(".gz");
@@ -243,6 +259,8 @@ public class DatabaseBackupService {
         log.info("开始还原: " + filename);
         applyCmd(cmd);
         log.info("还原完成: " + filename);
+        return new FileInfo(file);
+
     }
 
     /**
@@ -253,8 +271,13 @@ public class DatabaseBackupService {
         if (ObjectUtils.isEmpty(filename)) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, "必须提供原文件名");
         }
+        final String ext = FileUtils.getFileExtName(filename);
+        if (!EXT_LIST.contains(ext)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, EXT_MESSAGE);
+        }
+
         //目标文件
-        final File destFile = new File(dirBackup.getPath() + "/" + filename);
+        final File destFile = getBackupFile(filename);
 
         if (destFile.exists()) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST, "该文件已存在");
@@ -317,6 +340,11 @@ public class DatabaseBackupService {
                 log.info("文件已存在,跳过: " + filename);
             }
         }
+    }
+
+    @NotNull
+    private File getBackupFile(String filename) {
+        return new File(dirBackup.getPath() + "/" + filename);
     }
 
     /**

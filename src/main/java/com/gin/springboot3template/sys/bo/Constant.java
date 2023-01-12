@@ -95,6 +95,7 @@ public class Constant {
          * 删除接口路径
          */
         public static final String DEL = "del";
+        public static final String DOWNLOAD = "download";
         /**
          * 通过关键字检索对象接口路径
          */
@@ -116,10 +117,12 @@ public class Constant {
          * 分页查询接口路径
          */
         public static final String PAGE = "page";
+        public static final String STATUS = "status";
         /**
          * 更新接口路径
          */
         public static final String UPDATE = "update";
+        public static final String UPLOAD = "upload";
     }
 
 }

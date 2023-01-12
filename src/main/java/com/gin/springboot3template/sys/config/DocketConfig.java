@@ -10,6 +10,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DocketConfig {
     @Bean
+    public GroupedOpenApi databaseApi() {
+        return GroupedOpenApi.builder()
+                .group("数据库")
+                .pathsToMatch("/database/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("用户_角色_权限")

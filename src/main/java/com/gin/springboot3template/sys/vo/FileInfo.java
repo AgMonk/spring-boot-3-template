@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gin.springboot3template.sys.utils.FileUtils;
 import com.gin.springboot3template.sys.utils.TimeUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,12 +22,19 @@ public class FileInfo {
     private static final long K = 1024;
     private static final long M = K * K;
     private static final long M5 = 5 * M;
+    @Schema(description = "文件后缀")
     String ext;
+    @JsonIgnore
     File file;
+    @Schema(description = "文件名")
     String filename;
+    @Schema(description = "最后编辑时间戳(UNIX秒)")
     Long lastModified;
+    @Schema(description = "最后日期时间")
     String lastModifiedDatetime;
+    @Schema(description = "文件大小(短格式)")
     String shortSize;
+    @Schema(description = "文件大小(单位:B)")
     Long size;
 
     public FileInfo(File file) {
@@ -49,7 +57,7 @@ public class FileInfo {
             this.shortSize = size * 10 / M / 10.0 + " MB";
         }
 
-        this.lastModified = file.lastModified();
+        this.lastModified = file.lastModified() / 1000;
         this.lastModifiedDatetime = TimeUtils.format(file.lastModified() / 1000);
     }
 }
