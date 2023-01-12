@@ -12,7 +12,7 @@ import java.io.IOException;
 public class IoUtils {
 
     public static void readLine(BufferedReader reader, Handler handler) throws IOException {
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
             handler.handle(line);
         }

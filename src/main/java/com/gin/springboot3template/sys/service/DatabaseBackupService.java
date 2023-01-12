@@ -10,24 +10,26 @@ import com.gin.springboot3template.sys.exception.file.DirCreateException;
 import com.gin.springboot3template.sys.exception.file.FileDeleteException;
 import com.gin.springboot3template.sys.exception.file.FileExistsException;
 import com.gin.springboot3template.sys.exception.file.FileNotExistsException;
-import com.gin.springboot3template.sys.utils.FileUtils;
-import com.gin.springboot3template.sys.utils.IoUtils;
-import com.gin.springboot3template.sys.utils.ProcessUtils;
-import com.gin.springboot3template.sys.utils.TimeUtils;
+import com.gin.springboot3template.sys.utils.*;
 import com.gin.springboot3template.sys.vo.FileInfo;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,8 +134,25 @@ public class DatabaseBackupService {
     /**
      * 下载镜像文件
      */
-    public void download() {
-        //todo
+    public void download(String filename, HttpServletResponse response) throws IOException {
+        //检查文件存在
+        final File file = new File(dirBackup.getPath() + "/" + filename);
+        FileUtils.assertExists(file);
+        final String cache = "max-age=" + Integer.MAX_VALUE;
+
+        //设置响应的信息
+        response.reset();
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8));
+        response.setHeader(HttpHeaders.PRAGMA, cache);
+        response.setHeader(HttpHeaders.CACHE_CONTROL, cache);
+        //设置浏览器接受类型为流
+        response.setContentType(MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE + ";charset=UTF-8");
+
+        final BufferedReader reader = FileIoUtils.getReader(file);
+        try (PrintWriter pw = new PrintWriter(response.getOutputStream())) {
+            IoUtils.readLine(reader, pw::write);
+        }
     }
 
     @PostConstruct
@@ -229,8 +248,21 @@ public class DatabaseBackupService {
     /**
      * 上传镜像文件
      */
-    public void upload() {
-        //todo
+    public FileInfo upload(@NotNull MultipartFile multipartFile) throws IOException {
+        final String filename = multipartFile.getOriginalFilename();
+        if (ObjectUtils.isEmpty(filename)) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "必须提供原文件名");
+        }
+        //目标文件
+        final File destFile = new File(dirBackup.getPath() + "/" + filename);
+
+        if (destFile.exists()) {
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, "该文件已存在");
+        }
+        // 保存文件
+        multipartFile.transferTo(destFile);
+        // 返回文件信息
+        return new FileInfo(destFile);
     }
 
     /**
