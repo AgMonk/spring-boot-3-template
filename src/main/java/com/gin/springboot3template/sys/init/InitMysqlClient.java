@@ -27,5 +27,7 @@ public class InitMysqlClient implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         service.prepare();
+
+        service.backup(true);
     }
 }
