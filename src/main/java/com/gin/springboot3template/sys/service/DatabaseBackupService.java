@@ -155,7 +155,8 @@ public class DatabaseBackupService {
         //检查文件存在
         final File file = getBackupFile(filename);
         FileUtils.assertExists(file);
-        final String cache = "max-age=" + Integer.MAX_VALUE;
+        final String cache = "no-cache";
+//        final String cache = "max-age=" + Integer.MAX_VALUE;
 
         //设置响应的信息
         response.reset();
