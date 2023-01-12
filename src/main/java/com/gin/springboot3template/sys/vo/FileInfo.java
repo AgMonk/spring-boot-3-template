@@ -22,10 +22,10 @@ public class FileInfo {
     private static final long M = K * K;
     private static final long M5 = 5 * M;
     String ext;
+    File file;
     String filename;
     Long lastModified;
     String lastModifiedDatetime;
-    String path;
     String shortSize;
     Long size;
 
@@ -34,7 +34,7 @@ public class FileInfo {
             throw new NullPointerException();
         }
         this.size = file.length();
-        this.path = file.getPath();
+        this.file = file;
         this.ext = FileUtils.getFileExtName(file.getName());
         this.filename = file.getName();
 

@@ -8,7 +8,9 @@ import com.gin.springboot3template.sys.enums.OsType;
 import com.gin.springboot3template.sys.enums.ServiceStatus;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.exception.file.DirCreateException;
+import com.gin.springboot3template.sys.exception.file.FileDeleteException;
 import com.gin.springboot3template.sys.exception.file.FileExistsException;
+import com.gin.springboot3template.sys.exception.file.FileNotExistsException;
 import com.gin.springboot3template.sys.utils.FileUtils;
 import com.gin.springboot3template.sys.utils.IoUtils;
 import com.gin.springboot3template.sys.utils.ProcessUtils;
@@ -104,8 +106,12 @@ public class DatabaseBackupService {
         log.info("备份完成: " + filename);
     }
 
-    public void del() {
-        //todo 删除镜像
+    /**
+     * 删除镜像
+     * @param filename 文件名
+     */
+    public void del(String filename) throws FileNotExistsException, FileDeleteException {
+        FileUtils.deleteFile(new File(dirBackup.getPath() + "/" + filename));
     }
 
     @PostConstruct
