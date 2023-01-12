@@ -129,6 +129,13 @@ public class DatabaseBackupService {
         FileUtils.deleteFile(new File(dirBackup.getPath() + "/" + filename));
     }
 
+    /**
+     * 下载镜像文件
+     */
+    public void download() {
+        //todo
+    }
+
     @PostConstruct
     public void init() throws DirCreateException, FileExistsException {
         //初始化 创建文件夹
@@ -173,6 +180,7 @@ public class DatabaseBackupService {
             //命令不可用
             try {
                 status = ServiceStatus.preparing;
+                log.info("数据库备份服务状态:{}", status.getZh());
                 //下载
                 downloadClient();
                 //安装
@@ -219,6 +227,13 @@ public class DatabaseBackupService {
     }
 
     /**
+     * 上传镜像文件
+     */
+    public void upload() {
+        //todo
+    }
+
+    /**
      * 执行指令
      * @param cmd 指令
      */
@@ -243,10 +258,12 @@ public class DatabaseBackupService {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             IoUtils.readLine(reader, log::info);
             status = ServiceStatus.enable;
+            log.info("数据库备份服务状态:{}", status.getZh());
             return true;
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
             status = ServiceStatus.disable;
+            log.info("数据库备份服务状态:{}", status.getZh());
             return false;
         }
     }
