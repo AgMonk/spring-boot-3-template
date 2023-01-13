@@ -75,6 +75,7 @@ public class DatabaseBackupService {
         if (!databaseProperties.isAutoBackup()) {
             return;
         }
+        log.info("自动备份数据库...");
         backup(true);
     }
 
@@ -87,12 +88,14 @@ public class DatabaseBackupService {
         if (max <= 0) {
             return;
         }
+        log.info("自动清理备份镜像...");
         final List<FileInfo> list = list();
         //需要删除的文件
         final List<FileInfo> target = list.subList(Math.min(max, list.size()), list.size());
         for (FileInfo info : target) {
             FileUtils.deleteFile(info.getFile());
         }
+        log.info("备份镜像清理完毕...");
     }
 
     /**
