@@ -6,9 +6,9 @@ import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import com.gin.springboot3template.sys.service.RelationUserRoleService;
 import com.gin.springboot3template.sys.service.SystemUserInfoService;
+import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
@@ -25,24 +25,23 @@ import java.util.List;
 @Getter
 @Setter
 @Schema(description = "用户分页查询参数")
-@RequiredArgsConstructor
 public class SystemUserPageParam extends BasePageParam {
-    @Schema(hidden = true)
-    private final RelationUserRoleService relationUserRoleService;
-    @Schema(hidden = true)
-    private final SystemUserInfoService systemUserInfoService;
     @Schema(description = "昵称")
     String nickname;
     @Schema(description = "联系电话")
     String phone;
-    @Schema(description = "用户名")
-    String username;
     @Schema(description = "持有的角色id")
     Long roleId;
+    @Schema(description = "用户名")
+    String username;
+
 
     @Override
     public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
         queryWrapper.orderByDesc("id");
+
+        final RelationUserRoleService relationUserRoleService = SpringContextUtils.getContext().getBean(RelationUserRoleService.class);
+        final SystemUserInfoService systemUserInfoService = SpringContextUtils.getContext().getBean(SystemUserInfoService.class);
 
         if (!ObjectUtils.isEmpty(username)) {
             queryWrapper.and(qw -> qw.eq("username", username).or().like("username", username));

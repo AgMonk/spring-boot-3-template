@@ -12,11 +12,13 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.security.web.server.csrf.CsrfException;
@@ -118,7 +120,11 @@ public class MyAuthenticationHandler implements AuthenticationSuccessHandler
             Authentication authentication
     ) throws IOException {
         writeJson(response, HttpStatus.OK, Res.of(MyUserDetailsVo.of(authentication), "登陆成功"));
-        //清理使用过的验证码
+
+        // https://yangruoyu.blog.csdn.net/article/details/128276473
+        // SecurityContext在设置Authentication的时候并不会自动写入Session，读的时候却会根据Session判断，所以需要手动写入一次，否则下一次刷新时SecurityContext是新创建的实例。
+        // 不写这句会导致即便登陆成功 校验登陆状态时会拿不到 Authentication
+        request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
         request.getSession().removeAttribute(VERIFY_CODE_KEY);
     }
 
