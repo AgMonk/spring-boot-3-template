@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.rememberme.CookieTheftExc
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,6 +72,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Res<Void>> exceptionHandler(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<>(Res.of(null, "服务器错误 请通知管理员"), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseBody
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    public ResponseEntity<Res<String>> exceptionHandler(MissingServletRequestParameterException e) {
+        return new ResponseEntity<>(Res.of(e.getLocalizedMessage(), "请求缺少必须的参数"), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody
