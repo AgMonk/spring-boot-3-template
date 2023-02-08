@@ -29,6 +29,7 @@ public interface SystemUserInfoService extends MyService<SystemUserInfo> {
      * 保存或更新用户个人信息
      * @param userId 用户id
      * @param param  参数
+     * @return 保存或更新的用户个人信息
      */
     default SystemUserInfo saveOrUpdate(Long userId, SystemUserInfoForm param) {
         final SystemUserInfo userInfo = getByUserId(userId);

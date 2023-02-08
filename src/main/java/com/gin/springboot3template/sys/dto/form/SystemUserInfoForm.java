@@ -27,9 +27,9 @@ public class SystemUserInfoForm {
     String phone;
 
     public SystemUserInfo build(long userId) {
-        final SystemUserInfo userRole = new SystemUserInfo();
-        BeanUtils.copyProperties(this, userRole);
-        userRole.setUserId(userId);
-        return userRole;
+        final SystemUserInfo userInfo = new SystemUserInfo();
+        BeanUtils.copyProperties(this, userInfo);
+        userInfo.setUserId(userId);
+        return userInfo;
     }
 }

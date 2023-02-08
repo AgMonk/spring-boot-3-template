@@ -148,10 +148,9 @@ public class SystemUserController {
 
     @PostMapping("userInfoUpdate")
     @Operation(summary = "修改自己的个人信息")
-    public Res<Void> userInfoUpdate(@RequestBody @Validated SystemUserInfoForm param) {
-        final Long userId = getUserId();
-        systemUserInfoService.saveOrUpdate(userId, param);
-        return Res.of(null, "修改成功");
+    public Res<SystemUserInfoVo> userInfoUpdate(@RequestBody @Validated SystemUserInfoForm param) {
+        final SystemUserInfo info = systemUserInfoService.saveOrUpdate(getUserId(), param);
+        return Res.of(new SystemUserInfoVo(info), "修改成功");
     }
 
 

@@ -123,14 +123,14 @@ public class SystemUserAdminController {
     @PostMapping("userInfoUpdate")
     @Operation(summary = "修改指定用户的个人信息", description = NOT_CONFIG_ADMIN)
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<Void> userInfoUpdate(
+    public Res<SystemUserInfoVo> userInfoUpdate(
             @SuppressWarnings("unused") HttpServletRequest request,
             @RequestBody @Validated SystemUserInfoForm param,
             @RequestParam @EntityId(service = SystemUserServiceImpl.class) Long userId
     ) {
         rolePermissionService.forbiddenConfigAdminUser(userId);
-        systemUserInfoService.saveOrUpdate(userId, param);
-        return Res.of(null, "修改成功");
+        final SystemUserInfo userInfo = systemUserInfoService.saveOrUpdate(userId, param);
+        return Res.of(new SystemUserInfoVo(userInfo), "修改成功");
     }
 
 }

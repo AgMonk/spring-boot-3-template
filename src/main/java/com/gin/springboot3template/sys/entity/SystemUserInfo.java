@@ -32,11 +32,11 @@ public class SystemUserInfo extends BasePo {
     String nickname;
     @Column
     @Comment("联系电话")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     String phone;
     @Column
     @Comment("生日(UNIX秒)")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     Long birthday;
 
 
