@@ -6,6 +6,7 @@ import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -102,6 +103,9 @@ public interface SystemRoleService extends MyService<SystemRole> {
      * @param roleId 角色ID
      */
     default void validateRoleId(Collection<Long> roleId) {
+        if (CollectionUtils.isEmpty(roleId)) {
+            return;
+        }
         final List<Long> idNotExists = findNotExistsId(roleId);
         if (idNotExists.size() > 0) {
             throw BusinessException.of(HttpStatus.BAD_REQUEST,

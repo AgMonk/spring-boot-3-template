@@ -5,6 +5,7 @@ import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.dto.form.RelationUserRoleForm;
 import com.gin.springboot3template.sys.entity.RelationUserRole;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +30,9 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * @return 添加好的角色
      */
     default List<RelationUserRole> add(long userId, Collection<RelationUserRoleForm> params) {
+        if (CollectionUtils.isEmpty(params)) {
+            return new ArrayList<>();
+        }
         final List<RelationUserRole> userRoles = new ArrayList<>(params.stream().map(i -> i.build(userId)).toList());
         //去重
         userRoles.removeAll(listByUserId(Collections.singleton(userId)));
@@ -43,6 +47,7 @@ public interface RelationUserRoleService extends MyService<RelationUserRole> {
      * 为指定用户配置角色
      * @param userId 用户id
      * @param params 参数
+     * @return 配置完毕的角色
      */
     default List<RelationUserRole> config(long userId, Collection<RelationUserRoleForm> params) {
         // 查询指定用户持有的角色id
