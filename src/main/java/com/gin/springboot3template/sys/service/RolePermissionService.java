@@ -219,7 +219,7 @@ public class RolePermissionService implements AuthorityProvider {
 
         final HashMap<Long, List<SystemPermission>> rolePermissionMap = findRolePermissionMap(roleId);
         //为每个角色补充权限信息
-        userRoles.forEach(role -> role.setPermissions(rolePermissionMap.get(role.getId())));
+        userRoles.forEach(role -> role.setPermissions(rolePermissionMap.get(role.getRoleId())));
         return userData;
     }
 
