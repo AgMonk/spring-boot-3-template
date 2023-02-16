@@ -1,5 +1,15 @@
 #空闲连接保活
 #解决druid 日志报错：discard long time none received connection:xxx
+
+log-pattern: "%d{yy-MM-dd' 'HH:mm:ss.SSS} [%-5level] [%15.15t] [%40.40c{39}:%4.4L] - %m%n"
+
+logging:
+  pattern:
+    console: ${log-pattern}
+    file: ${log-pattern}
+  file:
+    path: ./logs
+
 druid:
   mysql:
     usePingMethod: false
