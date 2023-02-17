@@ -51,12 +51,17 @@ public class BaseUpdateLog {
     @Schema(description = "记录创建时间(UNIX秒)")
     Long timeCreate;
 
+
+    public BaseUpdateLog() {
+        this.timeCreate = System.currentTimeMillis() / 1000;
+    }
+
     public BaseUpdateLog(Long entityId, Long userId) {
         this(entityId, userId, null);
     }
 
     public BaseUpdateLog(Long entityId, Long userId, String userIp) {
-        this.timeCreate = System.currentTimeMillis() / 1000;
+        this();
         this.entityId = entityId;
         this.userId = userId;
         this.userIp = userIp;

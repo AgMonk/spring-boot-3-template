@@ -37,8 +37,12 @@ public interface UpdateLogService<T extends BaseUpdateLog> extends IService<T> {
             if (oldField != null) {
                 try {
                     //获取两个对应的字段值
+                    newField.setAccessible(true);
+                    oldField.setAccessible(true);
                     final Object newValue = newField.get(newData);
                     final Object oldValue = oldField.get(oldData);
+                    newField.setAccessible(false);
+                    oldField.setAccessible(false);
                     if (!ObjectUtils.nullSafeEquals(newValue, oldValue)) {
                         //如果字段值不相同 生成操作描述
                         final String fieldName = context.getFieldNameFromOldData(oldField);
