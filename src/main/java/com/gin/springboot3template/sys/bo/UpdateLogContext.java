@@ -14,37 +14,34 @@ import java.lang.reflect.Field;
  */
 @Getter
 @RequiredArgsConstructor
-public abstract class UpdateLogContext<T extends BaseUpdateLog> {
+public abstract class UpdateLogContext<T extends BaseUpdateLog, N, O> {
     /**
      * 用户提供的请求表单（新数据）
      */
-    final Object newData;
+    final N newData;
     /**
      * 从数据库查询得到的需要操作的实体对象（旧数据）
      */
-    final Object oldData;
+    final O oldData;
     /**
      * 日志对象，应当已填写好必须字段
      */
-    final T operationLog;
-    /**
-     * 操作内容描述模板
-     */
-    final String template;
+    final T updateLog;
 
     /**
      * 根据旧数据的字段获取该字段的中文名
-     * @param field 旧数据的字段
+     * @param oldField 旧数据的字段
      * @return 字段中文名
      */
-    abstract public String getFieldNameFromOldData(Field field);
+    abstract public String getFieldNameFromOldData(Field oldField);
 
     /**
-     * 根据新数据的字段，返回匹配该字段的旧数据的字段
-     * @param field 新数据的字段
+     * 返回旧数据字段数组中与该新数据中字段匹配的字段
+     * @param newField  新数据的字段
+     * @param oldFields 旧数据的字段
      * @return 旧数据的字段
      */
-    abstract public Field getMatchedField(Field field);
+    abstract public Field getMatchedField(Field newField, Field[] oldFields);
 
     /**
      * 将字段值转换为可读性更高的文字
@@ -55,11 +52,10 @@ public abstract class UpdateLogContext<T extends BaseUpdateLog> {
 
     /**
      * 生成操作描述
-     * @param template  模板
      * @param fieldName 被操作字段中文名
-     * @param oldValue  修改前的值
-     * @param newValue  修改后的值
+     * @param oldStr    修改前的值
+     * @param newStr    修改后的值
      * @return 操作描述
      */
-    abstract public String generateDescription(String template, String fieldName, String oldValue, String newValue);
+    abstract public String generateDescription(String fieldName, String oldStr, String newStr);
 }   

@@ -47,17 +47,16 @@ public class BaseUpdateLog {
     String description;
     @Column(nullable = false)
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    @Comment("记录创建时间(UNIX毫秒)")
-    @Schema(description = "记录创建时间(UNIX毫秒)")
+    @Comment("记录创建时间(UNIX秒)")
+    @Schema(description = "记录创建时间(UNIX秒)")
     Long timeCreate;
 
     public BaseUpdateLog(Long entityId, Long userId) {
-        this.timeCreate = System.currentTimeMillis();
-        this.userId = userId;
-        this.entityId = entityId;
+        this(entityId, userId, null);
     }
 
     public BaseUpdateLog(Long entityId, Long userId, String userIp) {
+        this.timeCreate = System.currentTimeMillis() / 1000;
         this.entityId = entityId;
         this.userId = userId;
         this.userIp = userIp;
