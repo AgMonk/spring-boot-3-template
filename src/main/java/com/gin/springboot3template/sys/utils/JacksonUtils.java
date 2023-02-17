@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
@@ -23,7 +24,15 @@ public class JacksonUtils {
                         //美化输出
                         SerializationFeature.INDENT_OUTPUT,
                         //反序列化时 空串识别为 null
-                        DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+                        DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT
+                ).featuresToDisable(
+                        // 反序列化时,遇到未知属性会不会报错
+                        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+                ).modules(
+                        //支持 ZonedDateTime
+                        new JavaTimeModule()
+                )
+
                 .build();
     }
 
