@@ -23,7 +23,7 @@ import java.util.List;
 @MappedTypes(List.class)
 public class ListStringTypeHandler extends BaseTypeHandler<List<String>> {
 
-    public static final String DELIMITER = ",";
+    public static final String DELIMITER = "\\|";
 
     @Override
     public List<String> getNullableResult(ResultSet resultSet, String s) throws SQLException {

@@ -18,6 +18,14 @@ public class DocketConfig {
     }
 
     @Bean
+    public GroupedOpenApi testApi() {
+        return GroupedOpenApi.builder()
+                .group("测试")
+                .pathsToMatch("/test/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
                 .group("用户_角色_权限")
