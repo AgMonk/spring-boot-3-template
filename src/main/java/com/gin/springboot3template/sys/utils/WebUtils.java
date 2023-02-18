@@ -2,6 +2,8 @@ package com.gin.springboot3template.sys.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * 网络工具类
@@ -11,6 +13,18 @@ import org.springframework.util.ObjectUtils;
  */
 public class WebUtils {
     public static final String UN_KNOWN = "unKnown";
+
+
+    /**
+     * 获取目标主机的ip
+     */
+    public static String getRemoteHost() {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (sra != null) {
+            return getRemoteHost(sra.getRequest());
+        }
+        return null;
+    }
 
     /**
      * 获取目标主机的ip
