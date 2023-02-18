@@ -49,12 +49,11 @@ public class InitAuthority implements ApplicationRunner {
     private final RolePermissionService rolePermissionService;
     private final RelationUserRoleService relationUserRoleService;
     private final SystemUserService systemUserService;
-
+    private SystemRole adminRole;
     /**
      * 所有权限
      */
     private List<SystemPermission> fullPermission;
-    private SystemRole adminRole;
     private SystemRole roleManager;
 
     /**
@@ -155,7 +154,7 @@ public class InitAuthority implements ApplicationRunner {
         // 更新数据
         this.fullPermission = systemPermissionService.updateFromController(new ArrayList<>(permissions));
 
-        if (this.fullPermission.size() > 0) {
+        if (!CollectionUtils.isEmpty(this.fullPermission)) {
             log.info("移除角色对已移除权限的持有");
             final QueryWrapper<RelationRolePermission> qw = new QueryWrapper<>();
             qw.notInSql("permission_id", String.format("select id from %s", SystemPermission.TABLE_NAME));
