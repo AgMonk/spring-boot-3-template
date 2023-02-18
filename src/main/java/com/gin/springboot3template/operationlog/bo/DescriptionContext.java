@@ -1,5 +1,7 @@
 package com.gin.springboot3template.operationlog.bo;
 
+import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
+import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.utils.WebUtils;
 import lombok.Getter;
@@ -15,9 +17,10 @@ import lombok.Setter;
 @Setter
 public class DescriptionContext {
     Object param;
-    Object id;
+    Long id;
     Long userId;
     String userIp;
+    OperationType type;
 
 
     public DescriptionContext() {
@@ -25,9 +28,19 @@ public class DescriptionContext {
         this.userIp = WebUtils.getRemoteHost();
     }
 
-    public DescriptionContext(Object param, Object id) {
+    public DescriptionContext(Object param, Long id, OperationType type) {
         this();
         this.param = param;
         this.id = id;
+        this.type = type;
     }
+
+    public SystemOperationLog generateLog() {
+        final SystemOperationLog log = new SystemOperationLog();
+        log.setType(type);
+        log.setUserIp(userIp);
+        log.setUserId(userId);
+        return log;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.gin.springboot3template.operationlog.config;
 
 import com.gin.springboot3template.operationlog.annotation.OpLog;
 import com.gin.springboot3template.operationlog.bo.DescriptionContext;
+import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,10 @@ public class OperationLogAspectConfig {
         return ObjectUtils.isEmpty(spEl) ? null : new SpelExpressionParser().parseExpression(spEl).getValue(context);
     }
 
+    private static <T> T getElValue(String spEl, StandardEvaluationContext context, Class<T> clazz) {
+        return ObjectUtils.isEmpty(spEl) ? null : new SpelExpressionParser().parseExpression(spEl).getValue(context, clazz);
+    }
+
     /**
      * 解析器上下文
      */
@@ -84,11 +89,13 @@ public class OperationLogAspectConfig {
         // 请求参数
         final Object param = getElValue(annotation.param(), context);
         // 实体id
-        final Object id = getElValue(annotation.id(), context);
+        final Long id = getElValue(annotation.id(), context, Long.class);
+        // 操作类型
+        final OperationType type = annotation.type();
         // 描述上下文
-        final DescriptionContext dc = new DescriptionContext(param, id);
+        final DescriptionContext dc = new DescriptionContext(param, id, type);
 
-        switch (annotation.type()) {
+        switch (type) {
             case ADD -> {
                 return strategy.add(pjp, dc);
             }
