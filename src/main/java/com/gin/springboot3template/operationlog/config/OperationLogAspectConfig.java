@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
@@ -70,7 +71,7 @@ public class OperationLogAspectConfig {
      * @param type  操作类型
      * @return 日志生成策略
      */
-    private static OperationLogStrategy findStrategy(Class<?> clazz, OperationType type) {
+    private static List<OperationLogStrategy> findStrategies(Class<?> clazz, OperationType type) {
         // 查找匹配的日志生成策略
         return SpringContextUtils.getContext().getBeansOfType(OperationLogStrategy.class).values().stream()
                 .filter(strategy -> {
@@ -78,8 +79,9 @@ public class OperationLogAspectConfig {
                     if (annotation == null) {
                         return false;
                     }
+                    // 返回操作实体类型 和 操作类型均匹配的策略
                     return annotation.clazz().equals(clazz) && annotation.type() == type;
-                }).findFirst().orElse(null);
+                }).toList();
     }
 
     /**
@@ -112,22 +114,27 @@ public class OperationLogAspectConfig {
         // 请求结果
         final Object result = pjp.proceed();
         // 查找匹配的日志生成策略
-        OperationLogStrategy strategy = findStrategy(clazz, type);
+        final List<OperationLogStrategy> strategies = findStrategies(clazz, type);
         // 策略不存在 直接放行
-        if (strategy == null) {
+        if (CollectionUtils.isEmpty(strategies)) {
+            log.warn("未找到日志生成策略 class: {} type: {}", clazz, type);
             return result;
         }
         // 生成日志对象
-        final SystemOperationLog operationLog = new SystemOperationLog();
-        operationLog.setType(type);
-        operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
-        operationLog.setUserIp(WebUtils.getRemoteHost());
-        //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
-        operationLog.setEntityId(strategy.getEntityId(result, params));
-        operationLog.setEntityClass(strategy.getEntityClass(result, params));
-        operationLog.setDescription(strategy.getDescription(result, params));
+        final List<SystemOperationLog> logs = strategies.stream().map(strategy -> {
+            final SystemOperationLog operationLog = new SystemOperationLog();
+            operationLog.setType(type);
+            operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
+            operationLog.setUserIp(WebUtils.getRemoteHost());
+            //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
+            operationLog.setEntityId(strategy.getEntityId(result, params));
+            operationLog.setEntityClass(strategy.getEntityClass(result, params));
+            operationLog.setDescription(strategy.getDescription(result, params));
+            return operationLog;
+        }).toList();
+
         // 保存日志
-        logService.write(operationLog);
+        logService.write(logs);
 
         return result;
 

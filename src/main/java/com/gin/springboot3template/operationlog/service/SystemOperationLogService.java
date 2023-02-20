@@ -5,6 +5,8 @@ import com.gin.springboot3template.sys.service.MyService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 /**
  * @author : ginstone
  * @version : v1.0.0
@@ -19,7 +21,7 @@ public interface SystemOperationLogService extends MyService<SystemOperationLog>
      * @param log 日志
      */
     @Async
-    default void write(SystemOperationLog log) {
-        save(log);
+    default void write(Collection<SystemOperationLog> log) {
+        saveBatch(log);
     }
 }

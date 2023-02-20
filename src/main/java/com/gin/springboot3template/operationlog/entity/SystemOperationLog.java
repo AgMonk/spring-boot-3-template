@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 系统操作日志
@@ -31,14 +32,17 @@ public class SystemOperationLog extends BasePo {
     @Comment("操作类型")
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
+    @NotNull
     OperationType type;
     @Comment("关联实体类")
     @Column(nullable = false, length = 100)
     @TableField(typeHandler = ClassTypeHandler.class)
+    @NotNull
     Class<?> entityClass;
     @Comment("关联实体ID")
     @Schema(description = "关联实体ID")
     @Column(nullable = false)
+    @NotNull
     Long entityId;
     @Comment("操作人ID")
     @Schema(description = "操作人ID")
