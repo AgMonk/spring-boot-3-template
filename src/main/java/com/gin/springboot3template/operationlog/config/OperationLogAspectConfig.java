@@ -2,6 +2,8 @@ package com.gin.springboot3template.operationlog.config;
 
 import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.annotation.OpLog;
+import com.gin.springboot3template.operationlog.bo.OperationLogContext;
+import com.gin.springboot3template.operationlog.bo.ParamArg;
 import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.service.SystemOperationLogService;
@@ -107,10 +109,10 @@ public class OperationLogAspectConfig {
         final Class<?> clazz = annotation.clazz();
         // 操作类型
         final OperationType type = annotation.type();
-        // 解析spEL表达式
-        final StandardEvaluationContext evaluationContext = createContext(pjp);
-        // 请求参数
-        final List<Object> params = Arrays.stream(annotation.param()).map(param -> getElValue(param, evaluationContext)).toList();
+        // 方法参数和参数值
+        final List<ParamArg> paramArgs = ParamArg.parse(pjp);
+        // spring - el表达式计算结果
+        final List<Object> expressions = Arrays.stream(annotation.expression()).map(param -> getElValue(param, createContext(pjp))).toList();
         // 请求结果
         final Object result = pjp.proceed();
         // 查找匹配的日志生成策略
@@ -120,6 +122,8 @@ public class OperationLogAspectConfig {
             log.warn("未找到日志生成策略 class: {} type: {}", clazz, type);
             return result;
         }
+        //上下文
+        final OperationLogContext context = new OperationLogContext(paramArgs, result, expressions);
         // 生成日志对象
         final List<SystemOperationLog> logs = strategies.stream().map(strategy -> {
             final SystemOperationLog operationLog = new SystemOperationLog();
@@ -127,9 +131,9 @@ public class OperationLogAspectConfig {
             operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
             operationLog.setUserIp(WebUtils.getRemoteHost());
             //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
-            operationLog.setEntityId(strategy.getEntityId(result, params));
-            operationLog.setEntityClass(strategy.getEntityClass(result, params));
-            operationLog.setDescription(strategy.getDescription(result, params));
+            operationLog.setEntityId(strategy.getEntityId(context));
+            operationLog.setEntityClass(strategy.getEntityClass(context));
+            operationLog.setDescription(strategy.getDescription(context));
             return operationLog;
         }).toList();
 

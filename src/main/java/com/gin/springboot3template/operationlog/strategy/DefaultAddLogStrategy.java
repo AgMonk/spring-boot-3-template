@@ -1,11 +1,10 @@
 package com.gin.springboot3template.operationlog.strategy;
 
 import com.gin.springboot3template.operationlog.annotation.LogStrategy;
+import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import com.gin.springboot3template.sys.base.BaseVo;
 import com.gin.springboot3template.sys.response.Res;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * 默认添加策略
@@ -14,27 +13,27 @@ import java.util.List;
  * @since : 2023/2/18 16:38
  */
 public class DefaultAddLogStrategy implements OperationLogStrategy {
+
+
     /**
      * 获取日志描述
-     * @param result 请求结果
-     * @param params 操作参数
+     * @param context 上下文
      * @return 日志描述
      */
     @NotNull
     @Override
-    public String getDescription(Object result, List<Object> params) {
+    public String getDescription(OperationLogContext context) {
         return null;
     }
 
     /**
      * 获取关联实体类型
-     * @param result 请求结果
-     * @param params 操作参数
+     * @param context 上下文
      * @return 关联实体类型
      */
     @NotNull
     @Override
-    public Class<?> getEntityClass(Object result, List<Object> params) {
+    public Class<?> getEntityClass(OperationLogContext context) {
         final LogStrategy annotation = this.getClass().getAnnotation(LogStrategy.class);
         if (annotation == null) {
             // 表示未知
@@ -52,15 +51,14 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
 
     /**
      * 获取关联实体ID
-     * @param result 请求结果
-     * @param params 操作参数
+     * @param context 上下文
      * @return 关联实体ID
      */
     @NotNull
     @Override
-    public Long getEntityId(Object result, List<Object> params) {
+    public Long getEntityId(OperationLogContext context) {
         // 如果返回对象为 Res 类型
-        if (result instanceof Res<?> res) {
+        if (context.result() instanceof Res<?> res) {
             // 如果data 字段为 Vo 类型
             if (res.getData() instanceof BaseVo vo) {
                 return vo.getId();

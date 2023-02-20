@@ -1,8 +1,7 @@
 package com.gin.springboot3template.operationlog.strategy;
 
+import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * 日志生成策略
@@ -13,29 +12,26 @@ import java.util.List;
 public interface OperationLogStrategy {
     /**
      * 获取关联实体ID
-     * @param result 请求结果
-     * @param params 操作参数
+     * @param context 上下文
      * @return 关联实体ID
      */
     @NotNull
-    Long getEntityId(Object result, List<Object> params);
+    Long getEntityId(OperationLogContext context);
 
     /**
      * 获取关联实体类型
-     * @param result 请求结果
-     * @param params 操作参数
+     * @param context 上下文
      * @return 关联实体类型
      */
     @NotNull
-    Class<?> getEntityClass(Object result, List<Object> params);
+    Class<?> getEntityClass(OperationLogContext context);
 
     /**
      * 获取日志描述
-     * @param result 请求结果
-     * @param params 操作参数
+     * @param context 上下文
      * @return 日志描述
      */
     @NotNull
-    String getDescription(Object result, List<Object> params);
+    String getDescription(OperationLogContext context);
 
 }

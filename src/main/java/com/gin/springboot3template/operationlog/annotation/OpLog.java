@@ -27,8 +27,7 @@ public @interface OpLog {
     OperationType type();
 
     /**
-     * Spring-EL 表达式表示的请求参数，添加、修改、查询时需要
+     * Spring-EL 表达式
      */
-    String[] param() default "";
-
+    String[] expression() default {};
 }
