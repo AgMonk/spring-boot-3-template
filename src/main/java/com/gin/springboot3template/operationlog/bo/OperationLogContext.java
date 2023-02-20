@@ -16,5 +16,4 @@ public record OperationLogContext(
         //表达式计算结果
         List<Object> expressions
 ) {
-
-}   
+}

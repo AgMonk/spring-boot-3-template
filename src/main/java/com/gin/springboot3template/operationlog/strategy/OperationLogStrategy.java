@@ -1,5 +1,6 @@
 package com.gin.springboot3template.operationlog.strategy;
 
+import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,5 +34,14 @@ public interface OperationLogStrategy {
      */
     @NotNull
     String getDescription(OperationLogContext context);
+
+    /**
+     * 获取日志策略注解
+     * @return 日志策略注解
+     */
+    @NotNull
+    default LogStrategy getLogStrategy() {
+        return this.getClass().getAnnotation(LogStrategy.class);
+    }
 
 }
