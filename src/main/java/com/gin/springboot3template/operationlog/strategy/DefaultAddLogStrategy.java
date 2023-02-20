@@ -2,6 +2,7 @@ package com.gin.springboot3template.operationlog.strategy;
 
 import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
+import com.gin.springboot3template.operationlog.bo.ParamArg;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.base.BaseVo;
@@ -10,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 默认添加策略
@@ -25,11 +28,25 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
 
 
     /**
+     * 尝试从请求参数中获取, 如果请求参数的类中有一个返回 BasePo 子类的方法，使用该返回类型
+     * @param paramArgs 参数和参数值
+     * @return 类对象
+     */
+    private static Class<?> findEntityClassFromParam(List<ParamArg> paramArgs) {
+        return paramArgs.stream()
+                .map(ParamArg::parameter)
+                .map(Parameter::getType)
+                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()).map(Method::getReturnType))
+                .filter(BasePo.class::isAssignableFrom)
+                .findFirst().orElse(null);
+    }
+
+    /**
      * 尝试从返回结果获取 , 如果返回结果为 Res<? extents BaseVo> , 有一个单参构造函数，且参数为 BasePo 子类，使用该参数类
      * @param result 返回结果
      * @return 类对象
      */
-    private static Class<?> findFromResult(Object result) {
+    private static Class<?> findEntityClassFromResult(Object result) {
         if (result instanceof Res<?> res && res.getData() instanceof BaseVo vo) {
             // 单参构造函数  且参数为 BasePo 子类
             final Constructor<?> constructor = Arrays.stream(vo.getClass().getConstructors()).filter(con -> {
@@ -55,6 +72,7 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
     @NotNull
     @Override
     public String getDescription(OperationLogContext context) {
+        //todo
         return "";
     }
 
@@ -71,14 +89,18 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
         if (!annotation.entityClass().equals(Object.class)) {
             return annotation.entityClass();
         }
-        //todo  如果未配置 entityClass 尝试从其他地方获取
 
-        final Class<?> fromResult = findFromResult(context.result());
+        //如果未配置 entityClass 尝试从其他地方获取
+
+        final Class<?> fromResult = findEntityClassFromResult(context.result());
         if (fromResult != null) {
             return fromResult;
         }
 
-        //todo 尝试从请求参数中获取, 如果请求参数的类中有一个返回 BasePo 子类的方法，使用该返回类型
+        final Class<?> fromParam = findEntityClassFromParam(context.paramArgs());
+        if (fromParam != null) {
+            return fromParam;
+        }
 
 
         return Object.class;
@@ -92,8 +114,7 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
     @NotNull
     @Override
     public Long getEntityId(OperationLogContext context) {
-        // 如果返回对象为 Res 类型
-        // 如果data 字段为 Vo 类型
+        // 如果返回对象为 Res 类型 且 data 字段为 Vo 类型
         if (context.result() instanceof Res<?> res && res.getData() instanceof BaseVo vo) {
             return vo.getId();
         }
