@@ -60,11 +60,12 @@ public interface OperationLogStrategy {
 
     /**
      * 获取关联实体ID
-     * @param context 上下文
+     * @param context              上下文
+     * @param specifiedEntityClass 是否指定了 EntityClass
      * @return 关联实体ID
      */
     @NotNull
-    Long getEntityId(OperationLogContext context);
+    Long getEntityId(OperationLogContext context, boolean specifiedEntityClass);
 
     /**
      * 获取关联实体类型

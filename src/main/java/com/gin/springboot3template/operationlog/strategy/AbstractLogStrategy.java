@@ -36,12 +36,19 @@ public abstract class AbstractLogStrategy implements OperationLogStrategy {
 
     /**
      * 获取关联实体ID
-     * @param context 上下文
+     * @param context              上下文
+     * @param specifiedEntityClass 是否指定了 EntityClass
      * @return 关联实体ID
      */
     @NotNull
     @Override
-    public Long getEntityId(OperationLogContext context) {
+    public Long getEntityId(OperationLogContext context, boolean specifiedEntityClass) {
+        // 如果指定了 EntityClass 则 EntityId 优先取表达式中的第一个结果
+        if (specifiedEntityClass) {
+            if (context.expressions().get(0) instanceof Long id) {
+                return id;
+            }
+        }
         // 如果返回对象为 Res 类型 且 data 字段为 Vo 类型
         if (context.result() instanceof Res<?> res && res.getData() instanceof BaseVo vo) {
             return vo.getId();

@@ -130,7 +130,7 @@ public class OperationLogAspectConfig {
             operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
             operationLog.setUserIp(WebUtils.getRemoteHost());
             //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
-            operationLog.setEntityId(strategy.getEntityId(context));
+            operationLog.setEntityId(strategy.getEntityId(context, !entityClass.equals(Object.class)));
             // 如果 entityClass 不是默认值，直接使用，否则调用 getEntityClass 方法获取
             operationLog.setEntityClass(!entityClass.equals(Object.class) ? entityClass : strategy.getEntityClass(context));
             operationLog.setDescription(strategy.getDescription(context));
