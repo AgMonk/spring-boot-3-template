@@ -1,10 +1,14 @@
 package com.gin.springboot3template.operationlog.config;
 
+import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.annotation.OpLog;
-import com.gin.springboot3template.operationlog.bo.DescriptionContext;
+import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.operationlog.enums.OperationType;
-import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
+import com.gin.springboot3template.operationlog.service.SystemOperationLogService;
+import com.gin.springboot3template.operationlog.strategy.OperationLogStrategy;
+import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import com.gin.springboot3template.sys.utils.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -19,6 +23,8 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 修改操作日志切面配置
@@ -31,7 +37,13 @@ import java.lang.reflect.Method;
 @Slf4j
 @RequiredArgsConstructor
 public class OperationLogAspectConfig {
+    private final SystemOperationLogService logService;
 
+    /**
+     * 生成表达式上下文
+     * @param joinPoint 接触点
+     * @return spEl表达式上下文
+     */
     private static StandardEvaluationContext createContext(JoinPoint joinPoint) {
         final StandardEvaluationContext context = new StandardEvaluationContext(SpringContextUtils.getContext());
 
@@ -53,14 +65,28 @@ public class OperationLogAspectConfig {
     }
 
     /**
+     * 从spring容器中查找匹配的日志生成策略
+     * @param clazz 操作实体类型
+     * @param type  操作类型
+     * @return 日志生成策略
+     */
+    private static OperationLogStrategy findStrategy(Class<?> clazz, OperationType type) {
+        // 查找匹配的日志生成策略
+        return SpringContextUtils.getContext().getBeansOfType(OperationLogStrategy.class).values().stream()
+                .filter(strategy -> {
+                    final LogStrategy annotation = strategy.getClass().getAnnotation(LogStrategy.class);
+                    if (annotation == null) {
+                        return false;
+                    }
+                    return annotation.clazz().equals(clazz) && annotation.type() == type;
+                }).findFirst().orElse(null);
+    }
+
+    /**
      * 通过表达式获取值
      */
     private static Object getElValue(String spEl, StandardEvaluationContext context) {
         return ObjectUtils.isEmpty(spEl) ? null : new SpelExpressionParser().parseExpression(spEl).getValue(context);
-    }
-
-    private static <T> T getElValue(String spEl, StandardEvaluationContext context, Class<T> clazz) {
-        return ObjectUtils.isEmpty(spEl) ? null : new SpelExpressionParser().parseExpression(spEl).getValue(context, clazz);
     }
 
     /**
@@ -77,41 +103,33 @@ public class OperationLogAspectConfig {
         final OpLog annotation = method.getAnnotation(OpLog.class);
         // 被操作的实体类型
         final Class<?> clazz = annotation.clazz();
-        // 描述生成策略
-        final DescriptionStrategy strategy = SpringContextUtils.getContext().getBeansOfType(DescriptionStrategy.class).values().stream().filter(
-                bean -> bean.clazz().equals(clazz)).findFirst().orElse(null);
-        // 策略不存在 直接放行
-        if (strategy == null) {
-            return pjp.proceed();
-        }
-        // 解析spEL表达式
-        final StandardEvaluationContext context = createContext(pjp);
-        // 请求参数
-        final Object param = getElValue(annotation.param(), context);
-        // 实体id
-        final Long id = getElValue(annotation.id(), context, Long.class);
         // 操作类型
         final OperationType type = annotation.type();
-        // 描述上下文
-        final DescriptionContext dc = new DescriptionContext(param, id, type);
-
-        switch (type) {
-            case ADD -> {
-                return strategy.add(pjp, dc);
-            }
-            case DEL -> {
-                return strategy.del(pjp, dc);
-            }
-            case UPDATE -> {
-                return strategy.update(pjp, dc);
-            }
-            case QUERY -> {
-                return strategy.query(pjp, dc);
-            }
-            default -> {
-                return pjp.proceed();
-            }
+        // 解析spEL表达式
+        final StandardEvaluationContext evaluationContext = createContext(pjp);
+        // 请求参数
+        final List<Object> params = Arrays.stream(annotation.param()).map(param -> getElValue(param, evaluationContext)).toList();
+        // 请求结果
+        final Object result = pjp.proceed();
+        // 查找匹配的日志生成策略
+        OperationLogStrategy strategy = findStrategy(clazz, type);
+        // 策略不存在 直接放行
+        if (strategy == null) {
+            return result;
         }
+        // 生成日志对象
+        final SystemOperationLog operationLog = new SystemOperationLog();
+        operationLog.setType(type);
+        operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
+        operationLog.setUserIp(WebUtils.getRemoteHost());
+        //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
+        operationLog.setEntityId(strategy.getEntityId(result, params));
+        operationLog.setEntityClass(strategy.getEntityClass(result, params));
+        operationLog.setDescription(strategy.getDescription(result, params));
+        // 保存日志
+        logService.write(operationLog);
+
+        return result;
 
     }
 
