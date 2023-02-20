@@ -19,7 +19,13 @@ public @interface OpLog {
     /**
      * 被操作的实体类型,将决定日志的生成策略
      */
-    Class<?> clazz();
+    Class<?> clazz() default Object.class;
+
+    /**
+     * 关联的实体类型, 日志将登记在它名下
+     * @return 关联的实体类型
+     */
+    Class<?> entityClass() default Object.class;
 
     /**
      * 操作类型

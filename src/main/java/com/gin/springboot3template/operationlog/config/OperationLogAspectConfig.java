@@ -107,6 +107,10 @@ public class OperationLogAspectConfig {
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         // 注解
         final OpLog annotation = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(OpLog.class);
+        // 注释中指定的关联实体类型
+        final Class<?> entityClass = annotation.entityClass();
+        // 注释中是否指定了关联的实体类型
+        final boolean specifiedEntityClass = !entityClass.equals(Object.class);
         // 方法参数和参数值
         final List<ParamArg> paramArgs = ParamArg.parse(pjp);
         // spring - el表达式计算结果
@@ -124,15 +128,14 @@ public class OperationLogAspectConfig {
         final OperationLogContext context = new OperationLogContext(paramArgs, result, expressions);
         // 生成日志对象
         final List<SystemOperationLog> logs = strategies.stream().map(strategy -> {
-            final Class<?> entityClass = strategy.getLogStrategy().entityClass();
             final SystemOperationLog operationLog = new SystemOperationLog();
             operationLog.setType(annotation.type());
             operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
             operationLog.setUserIp(WebUtils.getRemoteHost());
             //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
-            operationLog.setEntityId(strategy.getEntityId(context, !entityClass.equals(Object.class)));
+            operationLog.setEntityId(strategy.getEntityId(context, specifiedEntityClass));
             // 如果 entityClass 不是默认值，直接使用，否则调用 getEntityClass 方法获取
-            operationLog.setEntityClass(!entityClass.equals(Object.class) ? entityClass : strategy.getEntityClass(context));
+            operationLog.setEntityClass(specifiedEntityClass ? entityClass : strategy.getEntityClass(context));
             operationLog.setDescription(strategy.getDescription(context));
             return operationLog;
         }).toList();
