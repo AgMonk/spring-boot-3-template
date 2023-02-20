@@ -124,13 +124,15 @@ public class OperationLogAspectConfig {
         final OperationLogContext context = new OperationLogContext(paramArgs, result, expressions);
         // 生成日志对象
         final List<SystemOperationLog> logs = strategies.stream().map(strategy -> {
+            final Class<?> entityClass = strategy.getLogStrategy().entityClass();
             final SystemOperationLog operationLog = new SystemOperationLog();
             operationLog.setType(annotation.type());
             operationLog.setUserId(MySecurityUtils.currentUserDetails().getId());
             operationLog.setUserIp(WebUtils.getRemoteHost());
             //  使用请求结果+生成策略获取 关联实体类型，关联实体ID，描述
             operationLog.setEntityId(strategy.getEntityId(context));
-            operationLog.setEntityClass(strategy.getEntityClass(context));
+            // 如果 entityClass 不是默认值，直接使用，否则调用 getEntityClass 方法获取
+            operationLog.setEntityClass(!entityClass.equals(Object.class) ? entityClass : strategy.getEntityClass(context));
             operationLog.setDescription(strategy.getDescription(context));
             return operationLog;
         }).toList();

@@ -1,6 +1,11 @@
 package com.gin.springboot3template.sys.utils;
 
+import com.gin.springboot3template.sys.bo.FieldValue;
+
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 反射工具类
@@ -10,28 +15,42 @@ import java.lang.reflect.Field;
  */
 public class ReflectUtils {
 
-    public static Object get(Field field, Object obj) throws IllegalAccessException {
-        field.setAccessible(true);
-        final Object res = field.get(obj);
-        field.setAccessible(false);
-        return res;
-    }
-
-    public static long getLong(Field field, Object obj) throws IllegalAccessException {
-        final Object res = get(field, obj);
-        if (res == null) {
-            return 0;
+    /**
+     * 返回一个类的所有字段，含所有父类字段
+     * @param clazz 类对象
+     * @return 字段
+     */
+    public static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> list = new ArrayList<>(List.of(clazz.getDeclaredFields()));
+        final Class<?> superclass = clazz.getSuperclass();
+        if (superclass != null) {
+            list.addAll(getAllFields(superclass));
         }
-        return Long.parseLong(String.valueOf(res));
+        return list;
     }
 
-    public static String getString(Field field, Object obj) throws IllegalAccessException {
-        final Object res = get(field, obj);
-        if (res == null) {
+    public static Object getFieldValue(Field field, Object obj) {
+        try {
+            field.setAccessible(true);
+            final Object res = field.get(obj);
+            field.setAccessible(false);
+            return res;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return null;
         }
-        return String.valueOf(res);
     }
 
+    /**
+     * 返回一个对象所有的字段和字段值
+     * @param obj 对象
+     * @return 字段和字段值
+     */
+    public static List<FieldValue> getFieldValues(Object obj) {
+        return Arrays.stream(obj.getClass().getDeclaredFields()).map(field -> {
+            final Object value = getFieldValue(field, obj);
+            return new FieldValue(field, value);
+        }).toList();
+    }
 
 }   

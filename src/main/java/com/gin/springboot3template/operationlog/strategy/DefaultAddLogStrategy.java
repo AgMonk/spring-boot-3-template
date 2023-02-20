@@ -7,12 +7,17 @@ import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.base.BaseVo;
 import com.gin.springboot3template.sys.response.Res;
+import com.gin.springboot3template.sys.utils.ReflectUtils;
+import com.gin.springboot3template.sys.utils.TimeUtils;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,8 +77,22 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
     @NotNull
     @Override
     public String getDescription(OperationLogContext context) {
-        //todo
-        return "";
+        // 如果返回对象为 Res 类型 且 data 字段为 Vo 类型
+        List<String> list = new ArrayList<>();
+
+        if (context.result() instanceof Res<?> res && res.getData() instanceof BaseVo vo) {
+            list.add("Id: " + vo.getId());
+            list.add("创建时间: " + TimeUtils.format(vo.getTimeCreate()));
+
+            ReflectUtils.getFieldValues(vo).stream().filter(f -> f.value() != null).forEach(fieldValue -> {
+                final Field field = fieldValue.field();
+                final Object value = fieldValue.value();
+                final Schema schema = field.getAnnotation(Schema.class);
+                final String label = schema != null ? schema.description() : field.getName();
+                list.add(label + ": " + value);
+            });
+        }
+        return String.join(", ", list);
     }
 
     /**
@@ -84,14 +103,7 @@ public class DefaultAddLogStrategy implements OperationLogStrategy {
     @NotNull
     @Override
     public Class<?> getEntityClass(OperationLogContext context) {
-        final LogStrategy annotation = getLogStrategy();
-        // 如果配置了 entityClass 以它为准
-        if (!annotation.entityClass().equals(Object.class)) {
-            return annotation.entityClass();
-        }
-
-        //如果未配置 entityClass 尝试从其他地方获取
-
+        //尝试从其他地方获取
         final Class<?> fromResult = findEntityClassFromResult(context.result());
         if (fromResult != null) {
             return fromResult;
