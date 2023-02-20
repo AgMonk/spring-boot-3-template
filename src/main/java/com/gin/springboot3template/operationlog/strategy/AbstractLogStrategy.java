@@ -1,6 +1,7 @@
 package com.gin.springboot3template.operationlog.strategy;
 
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
+import com.gin.springboot3template.operationlog.bo.ParamArg;
 import com.gin.springboot3template.sys.base.BaseVo;
 import com.gin.springboot3template.sys.response.Res;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +46,14 @@ public abstract class AbstractLogStrategy implements OperationLogStrategy {
         if (context.result() instanceof Res<?> res && res.getData() instanceof BaseVo vo) {
             return vo.getId();
         }
+        // 如果存在一个 类型为 Long ，且名称为id的 请求参数，使用该参数
+        final ParamArg paramArg = context.paramArgs().stream()
+                .filter(pa -> "id".equals(pa.parameter().getName()) && pa.parameter().getType().equals(Long.class))
+                .findFirst().orElse(null);
+        if (paramArg != null) {
+            return (Long) paramArg.arg();
+        }
+
         // 表示未知
         return -1L;
     }
