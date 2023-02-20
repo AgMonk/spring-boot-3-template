@@ -19,7 +19,7 @@ public @interface LogStrategy {
     /**
      * 被操作的实体类型,将决定日志的生成策略
      */
-    Class<?> clazz();
+    Class<?> clazz() default Object.class;
 
     /**
      * 关联的实体类型,日志将以该类型名义写入日志,取默认时将根据日志策略的逻辑获取

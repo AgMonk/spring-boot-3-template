@@ -2,9 +2,11 @@ package com.gin.springboot3template.operationlog.strategy;
 
 import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
+import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.base.BaseVo;
 import com.gin.springboot3template.sys.response.Res;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 /**
  * 默认添加策略
@@ -12,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
  * @version : v1.0.0
  * @since : 2023/2/18 16:38
  */
+@Component
+@LogStrategy(type = OperationType.ADD)
 public class DefaultAddLogStrategy implements OperationLogStrategy {
 
 

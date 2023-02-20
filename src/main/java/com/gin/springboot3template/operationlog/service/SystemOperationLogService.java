@@ -2,6 +2,7 @@ package com.gin.springboot3template.operationlog.service;
 
 import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.sys.service.MyService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,10 @@ public interface SystemOperationLogService extends MyService<SystemOperationLog>
      * @param log 日志
      */
     @Async
-    default void write(Collection<SystemOperationLog> log) {
+    default void write(@NotNull Collection<SystemOperationLog> log) {
+        if (log.size() == 0) {
+            return;
+        }
         saveBatch(log);
     }
 }
