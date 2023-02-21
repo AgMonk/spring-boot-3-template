@@ -55,6 +55,10 @@ public class SystemOperationLog extends BasePo {
     @Column(length = 100)
     @TableField(typeHandler = ClassTypeHandler.class)
     Class<?> subClass;
+    @Comment("使用的策略类")
+    @Column(length = 100)
+    @TableField(typeHandler = ClassTypeHandler.class)
+    Class<?> strategyClass;
     @Comment("副实体ID")
     @Column
     Long subId;

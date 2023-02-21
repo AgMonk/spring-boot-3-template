@@ -18,6 +18,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -40,12 +41,12 @@ public class OperationLogAspectConfig {
      * @param entityClass 操作的实体类型
      * @return 策略
      */
-    private static DescriptionStrategy findStrategy(Class<?> entityClass, OperationType type) {
+    private static List<DescriptionStrategy> findStrategies(Class<?> entityClass, OperationType type) {
         return SpringContextUtils.getContext().getBeansOfType(DescriptionStrategy.class).values().stream().filter(s -> {
             // 过滤出有注解的，操作类型匹配的，实体类型包含的策略
             final LogStrategy annotation = s.getClass().getAnnotation(LogStrategy.class);
             return annotation != null && type.equals(annotation.type()) && annotation.value().isAssignableFrom(entityClass);
-        }).min((o1, o2) -> {
+        }).sorted((o1, o2) -> {
             // 排序 ，子类在前
             final Class<?> c1 = o1.getClass().getAnnotation(LogStrategy.class).value();
             final Class<?> c2 = o2.getClass().getAnnotation(LogStrategy.class).value();
@@ -59,7 +60,7 @@ public class OperationLogAspectConfig {
                 return -1;
             }
             return 0;
-        }).orElse(null);
+        }).toList();
     }
 
     @Around("@annotation(com.gin.springboot3template.operationlog.annotation.OpLog)")
@@ -105,27 +106,32 @@ public class OperationLogAspectConfig {
         operationLog.setSubId(subId);
 
         //描述生成策略
-        DescriptionStrategy descriptionStrategy = findStrategy(entityClass, type);
-        final String msg = "未找到匹配的描述策略";
-        if (descriptionStrategy == null) {
-            final String des = String.format("%s class:%s type:%s mainId:%s", msg, entityClass, type, mainId);
-            log.warn(des);
-            operationLog.setDescription(msg);
-        } else {
-            final Class<?> strategyClass = descriptionStrategy.getClass().getAnnotation(LogStrategy.class).value();
-            if (!strategyClass.equals(entityClass)) {
-                log.debug("非专用策略 策略:{} 实体:{}", strategyClass, entityClass);
+        final List<DescriptionStrategy> strategies = findStrategies(entityClass, type);
+        // 如果策略非空，尝试使用策略生成描述
+        if (!CollectionUtils.isEmpty(strategies)) {
+            for (DescriptionStrategy strategy : strategies) {
+                final Class<?> strategyClass = strategy.getClass().getAnnotation(LogStrategy.class).value();
+                // 生成描述
+                final String description = strategy.generateDescription(context);
+                // 输出的描述非空 则应用
+                if (!ObjectUtils.isEmpty(description)) {
+                    if (!strategyClass.equals(entityClass)) {
+                        log.debug("非专用策略 策略:{} 实体:{}", strategyClass, entityClass);
+                    }
+                    operationLog.setStrategyClass(strategy.getClass());
+                    operationLog.setDescription(description);
+                    logService.write(operationLog);
+                    return result;
+                }
             }
-            operationLog.setDescription(descriptionStrategy.generateDescription(context));
         }
 
-        // 如果描述非空 保存日志
-        if (!ObjectUtils.isEmpty(operationLog.getDescription())) {
-            logService.write(operationLog);
-        }
-
+        final String msg = "未找到匹配的描述策略";
+        final String des = String.format("%s class:%s type:%s mainId:%s", msg, entityClass, type, mainId);
+        log.warn(des);
+        operationLog.setDescription(msg);
+        logService.write(operationLog);
         return result;
-
     }
 
 }
