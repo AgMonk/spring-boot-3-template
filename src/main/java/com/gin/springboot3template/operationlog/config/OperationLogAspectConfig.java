@@ -40,11 +40,11 @@ public class OperationLogAspectConfig {
      * @param entityClass 操作的实体类型
      * @return 策略
      */
-    private static DescriptionStrategy findStrategy(Class<?> entityClass) {
+    private static DescriptionStrategy findStrategy(Class<?> entityClass, OperationType type) {
         return SpringContextUtils.getContext().getBeansOfType(DescriptionStrategy.class).values().stream().filter(s -> {
             // 过滤出有注解的，操作类型匹配的，实体类型包含的策略
             final LogStrategy annotation = s.getClass().getAnnotation(LogStrategy.class);
-            return annotation != null && annotation.value().isAssignableFrom(entityClass);
+            return annotation != null && type.equals(annotation.type()) && annotation.value().isAssignableFrom(entityClass);
         }).min((o1, o2) -> {
             // 排序 ，子类在前
             final Class<?> c1 = o1.getClass().getAnnotation(LogStrategy.class).value();
@@ -105,13 +105,17 @@ public class OperationLogAspectConfig {
         operationLog.setSubId(subId);
 
         //描述生成策略
-        DescriptionStrategy descriptionStrategy = findStrategy(entityClass);
+        DescriptionStrategy descriptionStrategy = findStrategy(entityClass, type);
         final String msg = "未找到匹配的描述策略";
         if (descriptionStrategy == null) {
             final String des = String.format("%s class:%s type:%s mainId:%s", msg, entityClass, type, mainId);
             log.warn(des);
             operationLog.setDescription(msg);
         } else {
+            final Class<?> strategyClass = descriptionStrategy.getClass().getAnnotation(LogStrategy.class).value();
+            if (!strategyClass.equals(entityClass)) {
+                log.debug("非专用策略 策略:{} 实体:{}", strategyClass, entityClass);
+            }
             operationLog.setDescription(descriptionStrategy.generateDescription(context));
         }
 
