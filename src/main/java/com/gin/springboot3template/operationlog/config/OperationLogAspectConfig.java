@@ -53,10 +53,10 @@ public class OperationLogAspectConfig {
                 return 0;
             }
             if (c1.isAssignableFrom(c2)) {
-                return -1;
+                return 1;
             }
             if (c2.isAssignableFrom(c1)) {
-                return 1;
+                return -1;
             }
             return 0;
         }).orElse(null);

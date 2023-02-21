@@ -27,10 +27,6 @@ public enum OperationType {
      * 查询
      */
     QUERY("查询"),
-    /**
-     * 上传
-     */
-    UPLOAD("上传"),
     ;
     final String name;
 
