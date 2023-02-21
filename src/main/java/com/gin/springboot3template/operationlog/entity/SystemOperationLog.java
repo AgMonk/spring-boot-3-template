@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.handler.ClassTypeHandler;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,25 +33,32 @@ public class SystemOperationLog extends BasePo {
     @Enumerated(EnumType.STRING)
     @NotNull
     OperationType type;
-    @Comment("关联实体类")
+    @Comment("操作人ID")
+    Long userId;
+    @Comment("操作人IP")
+    @Column(length = 40)
+    String userIp;
+
+
+    @Comment("主实体类型")
     @Column(nullable = false, length = 100)
     @TableField(typeHandler = ClassTypeHandler.class)
     @NotNull
-    Class<?> entityClass;
-    @Comment("关联实体ID")
-    @Schema(description = "关联实体ID")
+    Class<?> mainClass;
+    @Comment("主实体ID")
     @Column(nullable = false)
     @NotNull
-    Long entityId;
-    @Comment("操作人ID")
-    @Schema(description = "操作人ID")
-    Long userId;
-    @Comment("操作人IP")
-    @Schema(description = "操作人IP")
-    @Column(length = 40)
-    String userIp;
+    Long mainId;
+    @Comment("副实体类型")
+    @Column(length = 100)
+    @TableField(typeHandler = ClassTypeHandler.class)
+    Class<?> subClass;
+    @Comment("副实体ID")
+    @Column
+    @NotNull
+    Long subId;
+
     @Comment("操作描述")
-    @Schema(description = "操作描述")
     @Column(length = 10000)
     String description;
 
