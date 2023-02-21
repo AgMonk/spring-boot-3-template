@@ -19,6 +19,6 @@ public record OperationLogContext(
         Object result,
         //表达式计算结果
         List<Object> expressions,
-        OperationType type) {
+        OperationType type, jakarta.servlet.http.HttpServletRequest request) {
 
 }

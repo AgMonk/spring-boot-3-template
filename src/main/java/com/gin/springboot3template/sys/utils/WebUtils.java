@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -14,16 +15,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class WebUtils {
     public static final String UN_KNOWN = "unKnown";
 
-
-    /**
-     * 获取目标主机的ip
-     */
-    public static String getRemoteHost() {
-        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (sra != null) {
-            return getRemoteHost(sra.getRequest());
-        }
-        return null;
+    @Nullable
+    public static HttpServletRequest getHttpServletRequest() {
+        final ServletRequestAttributes attributes = getRequestAttributes();
+        return attributes == null ? null : attributes.getRequest();
     }
 
     /**
@@ -62,5 +57,21 @@ public class WebUtils {
         }
 
         return xFor;
+    }
+
+    /**
+     * 获取目标主机的ip
+     */
+    public static String getRemoteHost() {
+        ServletRequestAttributes sra = getRequestAttributes();
+        if (sra != null) {
+            return getRemoteHost(sra.getRequest());
+        }
+        return null;
+    }
+
+    @Nullable
+    private static ServletRequestAttributes getRequestAttributes() {
+        return (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     }
 }   

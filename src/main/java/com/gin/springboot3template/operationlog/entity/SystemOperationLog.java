@@ -62,6 +62,12 @@ public class SystemOperationLog extends BasePo {
     @Comment("副实体ID")
     @Column
     Long subId;
+    @Comment("请求参数")
+    @Column(length = 2000)
+    String requestParam;
+    @Comment("返回结果")
+    @Column(length = 2000)
+    String responseResult;
 
     @Comment("操作描述")
     @Column(length = 10000)

@@ -1,5 +1,8 @@
 package com.gin.springboot3template.operationlog.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.annotation.OpLog;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
@@ -8,8 +11,13 @@ import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.service.SystemOperationLogService;
 import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
+import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.utils.SpElUtils;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import com.gin.springboot3template.sys.utils.WebUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -21,6 +29,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -63,8 +72,48 @@ public class OperationLogAspectConfig {
         }).toList();
     }
 
+    /**
+     * 生成请求参数描述
+     * @param context 上下文
+     * @return 请求参数描述
+     */
+    private static String getRequestParam(OperationLogContext context) {
+        List<Class<?>> classes = List.of(HttpServletRequest.class, HttpServletResponse.class, HttpSession.class);
+        final ObjectMapper mapper = new ObjectMapper().setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+
+        HashMap<String, Object> map = new HashMap<>();
+
+        context.paramArgs().stream()
+                .filter(f -> !classes.contains(f.parameter().getType()))
+                .forEach(paramArg -> map.put(paramArg.parameter().getName(), paramArg.arg()));
+        try {
+            return mapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 生成返回结果描述
+     * @param context 上下文
+     * @return 返回结果描述
+     */
+    private static String getResponseResult(OperationLogContext context) {
+        final ObjectMapper mapper = new ObjectMapper().setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+        try {
+            final Object result = context.result();
+            if (result instanceof Res<?> res) {
+                return mapper.writeValueAsString(res.getData());
+            }
+            return mapper.writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
     @Around("@annotation(com.gin.springboot3template.operationlog.annotation.OpLog)")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest();
         // 注解
         final OpLog opLog = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(OpLog.class);
         final List<ParamArg> paramArgs = ParamArg.parse(pjp);
@@ -97,13 +146,15 @@ public class OperationLogAspectConfig {
         final Long entityId = subClass != null ? subId : mainId;
 
         // 上下文
-        final OperationLogContext context = new OperationLogContext(entityClass, entityId, paramArgs, result, expressions, type);
+        final OperationLogContext context = new OperationLogContext(entityClass, entityId, paramArgs, result, expressions, type, request);
         // 日志
         final SystemOperationLog operationLog = new SystemOperationLog(type);
         operationLog.setMainClass(mainClass);
         operationLog.setMainId(mainId);
         operationLog.setSubClass(subClass);
         operationLog.setSubId(subId);
+        operationLog.setRequestParam(getRequestParam(context));
+        operationLog.setResponseResult(getResponseResult(context));
 
         //描述生成策略
         final List<DescriptionStrategy> strategies = findStrategies(entityClass, type);
