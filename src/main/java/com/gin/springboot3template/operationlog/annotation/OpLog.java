@@ -17,15 +17,24 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface OpLog {
     /**
-     * 被操作的实体类型,将决定日志的生成策略
+     * 主实体类型
      */
-    Class<?> clazz() default Object.class;
+    Class<?> mainClass();
 
     /**
-     * 关联的实体类型, 日志将登记在它名下
-     * @return 关联的实体类型
+     * 主实体ID  Spring-EL 表达式
      */
-    Class<?> entityClass() default Object.class;
+    String mainId();
+
+    /**
+     * 副实体类型
+     */
+    Class<?> subClass() default Object.class;
+
+    /**
+     * 副实体ID  Spring-EL 表达式
+     */
+    String subId() default "";
 
     /**
      * 操作类型
