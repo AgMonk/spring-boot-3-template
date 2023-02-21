@@ -27,11 +27,20 @@ public enum OperationType {
      * 查询
      */
     QUERY("查询"),
+    /**
+     * 上传
+     */
+    UPLOAD("上传"),
     ;
     final String name;
 
     @JsonValue
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s(%s)", name, name());
     }
 }

@@ -18,6 +18,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -105,16 +106,19 @@ public class OperationLogAspectConfig {
 
         //描述生成策略
         DescriptionStrategy descriptionStrategy = findStrategy(entityClass);
+        final String msg = "未找到匹配的描述策略";
         if (descriptionStrategy == null) {
-            final String msg = "未找到匹配的描述策略";
             final String des = String.format("%s class:%s type:%s mainId:%s", msg, entityClass, type, mainId);
             log.warn(des);
             operationLog.setDescription(msg);
         } else {
             operationLog.setDescription(descriptionStrategy.generateDescription(context));
         }
-        // 保存日志
-        logService.write(operationLog);
+
+        // 如果描述非空 保存日志
+        if (!ObjectUtils.isEmpty(operationLog.getDescription())) {
+            logService.write(operationLog);
+        }
 
         return result;
 
