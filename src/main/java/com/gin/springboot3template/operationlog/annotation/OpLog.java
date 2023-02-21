@@ -24,7 +24,7 @@ public @interface OpLog {
     /**
      * 主实体ID  Spring-EL 表达式
      */
-    String mainId();
+    String mainId() default "";
 
     /**
      * 副实体类型

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.handler.ClassTypeHandler;
+import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
+import com.gin.springboot3template.sys.utils.WebUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 @Entity(name = SystemOperationLog.TABLE_NAME)
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(columnList = "entityClass,entityId,userId"),
+        @Index(columnList = "mainClass,mainId,subClass,subId,userId"),
 })
 public class SystemOperationLog extends BasePo {
     public static final String TABLE_NAME = "t_system_entity_operation_log";
@@ -62,5 +64,9 @@ public class SystemOperationLog extends BasePo {
     @Column(length = 10000)
     String description;
 
-
+    public SystemOperationLog(@NotNull OperationType type) {
+        this.type = type;
+        this.userId = MySecurityUtils.currentUserDetails().getId();
+        this.userIp = WebUtils.getRemoteHost();
+    }
 }
