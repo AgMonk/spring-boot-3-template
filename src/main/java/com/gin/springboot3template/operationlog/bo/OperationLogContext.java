@@ -1,5 +1,7 @@
 package com.gin.springboot3template.operationlog.bo;
 
+import com.gin.springboot3template.operationlog.enums.OperationType;
+
 import java.util.List;
 
 /**
@@ -9,11 +11,14 @@ import java.util.List;
  * @since : 2023/2/20 12:39
  */
 public record OperationLogContext(
+        Class<?> entityClass,
+        Long entityId,
         //  方法参数和参数值
         List<ParamArg> paramArgs,
         //方法执行结果
         Object result,
         //表达式计算结果
-        List<Object> expressions
-) {
+        List<Object> expressions,
+        OperationType type) {
+
 }

@@ -1,7 +1,5 @@
 package com.gin.springboot3template.operationlog.annotation;
 
-import com.gin.springboot3template.operationlog.enums.OperationType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,11 +17,5 @@ public @interface LogStrategy {
     /**
      * 匹配的实体类型
      */
-    Class<?> entityClass() default Object.class;
-
-    /**
-     * 匹配的操作类型
-     */
-    OperationType type();
-
+    Class<?> value() default Object.class;
 }

@@ -1,8 +1,10 @@
 package com.gin.springboot3template.sys.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
+import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.ObjectUtils;
@@ -18,6 +20,7 @@ import java.util.Objects;
  * @version : v1.0.0
  * @since : 2023/2/21 09:51
  */
+@Slf4j
 public class SpElUtils {
 
     /**
@@ -82,6 +85,13 @@ public class SpElUtils {
      * @return 计算结果
      */
     public static List<Object> getElValues(StandardEvaluationContext context, String... spEl) {
-        return Arrays.stream(spEl).map(e -> getElValue(context, e)).toList();
+        return Arrays.stream(spEl).map(e -> {
+            try {
+                return getElValue(context, e);
+            } catch (SpelEvaluationException ex) {
+                log.warn(ex.getLocalizedMessage());
+                return null;
+            }
+        }).toList();
     }
 }

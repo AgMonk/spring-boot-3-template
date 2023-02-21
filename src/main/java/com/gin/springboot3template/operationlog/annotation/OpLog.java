@@ -19,12 +19,12 @@ public @interface OpLog {
     /**
      * 主实体类型
      */
-    Class<?> mainClass();
+    Class<?> mainClass() default Object.class;
 
     /**
      * 主实体ID  Spring-EL 表达式
      */
-    String mainId() default "";
+    String[] mainId() default {"#id", "#result.data.id", "#form.id"};
 
     /**
      * 副实体类型
@@ -34,7 +34,7 @@ public @interface OpLog {
     /**
      * 副实体ID  Spring-EL 表达式
      */
-    String subId() default "";
+    String[] subId() default {"#id", "#result.data.id", "#form.id"};
 
     /**
      * 操作类型
@@ -44,5 +44,5 @@ public @interface OpLog {
     /**
      * Spring-EL 表达式
      */
-    String[] expression() default {};
+    String[] expression() default {"#result.data"};
 }

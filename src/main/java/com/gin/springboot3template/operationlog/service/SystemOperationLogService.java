@@ -28,4 +28,13 @@ public interface SystemOperationLogService extends MyService<SystemOperationLog>
         }
         saveBatch(log);
     }
+
+    /**
+     * 写入日志
+     * @param log 日志
+     */
+    @Async
+    default void write(@NotNull SystemOperationLog log) {
+        save(log);
+    }
 }
