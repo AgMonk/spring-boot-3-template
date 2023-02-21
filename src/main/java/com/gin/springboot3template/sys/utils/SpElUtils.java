@@ -8,6 +8,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * SpEl表达式工具类
@@ -43,9 +46,42 @@ public class SpElUtils {
     }
 
     /**
-     * 通过表达式获取值
+     * 批量计算表达式，过滤掉null值，且仅保留Long类型
+     * @param spEl    表达式
+     * @param context 上下文
+     * @return 计算结果
      */
-    public static Object getElValue(String spEl, StandardEvaluationContext context) {
+    public static List<Long> getElNotnullLong(StandardEvaluationContext context, String... spEl) {
+        return getElValues(context, spEl).stream().filter(Objects::nonNull).filter(i -> i instanceof Long).map(i -> (Long) i).toList();
+    }
+
+    /**
+     * 批量计算表达式(过滤掉null值)
+     * @param spEl    表达式
+     * @param context 上下文
+     * @return 计算结果
+     */
+    public static List<Object> getElNotnullValues(StandardEvaluationContext context, String... spEl) {
+        return getElValues(context, spEl).stream().filter(Objects::nonNull).toList();
+    }
+
+    /**
+     * 计算表达式
+     * @param context 上下文
+     * @param spEl    表达式
+     * @return 计算结果
+     */
+    public static Object getElValue(StandardEvaluationContext context, String spEl) {
         return ObjectUtils.isEmpty(spEl) ? null : new SpelExpressionParser().parseExpression(spEl).getValue(context);
+    }
+
+    /**
+     * 批量计算表达式
+     * @param spEl    表达式
+     * @param context 上下文
+     * @return 计算结果
+     */
+    public static List<Object> getElValues(StandardEvaluationContext context, String... spEl) {
+        return Arrays.stream(spEl).map(e -> getElValue(context, e)).toList();
     }
 }

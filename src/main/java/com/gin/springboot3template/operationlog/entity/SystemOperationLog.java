@@ -57,7 +57,6 @@ public class SystemOperationLog extends BasePo {
     Class<?> subClass;
     @Comment("副实体ID")
     @Column
-    @NotNull
     Long subId;
 
     @Comment("操作描述")
