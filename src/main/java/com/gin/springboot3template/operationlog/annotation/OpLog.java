@@ -24,7 +24,7 @@ public @interface OpLog {
     /**
      * 主实体ID  Spring-EL 表达式
      */
-    String[] mainId() default {"#id", "#result.data.id", "#form.id"};
+    String[] mainId() default {"#id", "#result?.data?.id", "#form?.id"};
 
     /**
      * 副实体类型
@@ -34,7 +34,7 @@ public @interface OpLog {
     /**
      * 副实体ID  Spring-EL 表达式
      */
-    String[] subId() default {"#id", "#result.data.id", "#form.id"};
+    String[] subId() default {"#id", "#result?.data?.id", "#form?.id"};
 
     /**
      * 操作类型
@@ -49,5 +49,5 @@ public @interface OpLog {
     /**
      * 执行方法之后计算的 Spring-EL 表达式
      */
-    String[] sufExp() default {"#result.data"};
+    String[] sufExp() default {"#result?.data"};
 }

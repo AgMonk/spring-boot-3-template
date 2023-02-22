@@ -1,11 +1,10 @@
 package com.gin.springboot3template.operationlog.strategy;
 
-import com.gin.springboot3template.operationlog.bo.FieldDifference;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
-import com.gin.springboot3template.sys.bo.FieldValue;
-import com.gin.springboot3template.sys.utils.ReflectUtils;
+import com.gin.springboot3template.sys.utils.reflect.FieldDifference;
+import com.gin.springboot3template.sys.utils.reflect.FieldValue;
+import com.gin.springboot3template.sys.utils.reflect.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -41,8 +40,12 @@ public abstract class AbstractUpdateStrategy implements DescriptionStrategy {
         //获取他们的所有字段和字段值
         final List<FieldValue> beforeFieldValues = ReflectUtils.getAllFieldValues(beforeEntity);
         final List<FieldValue> updateFieldValues = ReflectUtils.getAllFieldValues(updateEntity);
+        // 合并好的字段差异(已过滤掉值相同部分)
+        final List<FieldDifference<Field, Object>> differences = FieldDifference.merge(beforeFieldValues, updateFieldValues);
+        // 过滤掉部分字段
+        final List<FieldDifference<Field, Object>> filteredDifferences = filter(differences);
         // 字段差异
-        return compare(beforeFieldValues, updateFieldValues).stream()
+        return filteredDifferences.stream()
                 // 字段差异格式化
                 .map(dif -> {
                     final String fieldName = formatField(dif.field());
@@ -51,11 +54,18 @@ public abstract class AbstractUpdateStrategy implements DescriptionStrategy {
                     return new FieldDifference<>(fieldName, beforeValue, updateValue);
                 })
                 // 连接成字符串
-                .map(d -> String.format("字段 [%s] 从 '%s' 更新为 '%s'",
+                .map(d -> String.format("[%s] 从 '%s' 更新为 '%s'",
                                         d.field(),
                                         d.beforeValue(),
                                         d.updateValue())).collect(Collectors.joining(", "));
     }
+
+    /**
+     * 过滤字段差异(筛选掉部分字段)
+     * @param differences 字段差异
+     * @return 字段差异
+     */
+    public abstract List<FieldDifference<Field, Object>> filter(List<FieldDifference<Field, Object>> differences);
 
     /**
      * 格式化字段值
@@ -87,14 +97,5 @@ public abstract class AbstractUpdateStrategy implements DescriptionStrategy {
      */
     @Nullable
     public abstract Object getBeforeEntity(OperationLogContext context);
-
-    /**
-     * 比较两组字段值的不同
-     * @param beforeFieldValues 修改前的实体对象
-     * @param updateFieldValues 修改内容的实体对象
-     * @return 字段值不同
-     */
-    @NotNull
-    public abstract List<FieldDifference<Field, Object>> compare(List<FieldValue> beforeFieldValues, List<FieldValue> updateFieldValues);
 
 }

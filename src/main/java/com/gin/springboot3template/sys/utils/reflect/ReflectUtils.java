@@ -1,6 +1,4 @@
-package com.gin.springboot3template.sys.utils;
-
-import com.gin.springboot3template.sys.bo.FieldValue;
+package com.gin.springboot3template.sys.utils.reflect;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

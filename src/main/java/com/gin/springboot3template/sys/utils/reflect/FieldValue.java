@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.bo;
+package com.gin.springboot3template.sys.utils.reflect;
 
 import java.lang.reflect.Field;
 
