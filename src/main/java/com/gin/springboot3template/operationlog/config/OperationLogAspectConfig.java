@@ -111,8 +111,8 @@ public class OperationLogAspectConfig {
         }
     }
 
-    @Around("@annotation(com.gin.springboot3template.operationlog.annotation.OpLog)")
-    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+    @Around("@annotation(opLog)")
+    public Object around(ProceedingJoinPoint pjp, OpLog opLog) throws Throwable {
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
         // 注解
         final OpLog opLog = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(OpLog.class);
