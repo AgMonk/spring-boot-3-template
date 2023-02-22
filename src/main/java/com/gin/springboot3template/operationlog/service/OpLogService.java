@@ -46,5 +46,19 @@ public class OpLogService {
         }
     }
 
+    /**
+     * 定时删除超时的旧日志
+     */
+    @Scheduled(cron = "0 30 5 * * ?")
+    public void clearOld() {
+        final long maxTime = ZonedDateTime.now()
+                .withHour(0).withMinute(0).withSecond(0)
+                .minusDays(operationLogProperties.getDaysOld())
+                .toEpochSecond();
+        final QueryWrapper<SystemOperationLogOld> qw = new QueryWrapper<>();
+        qw.lt("time_create", maxTime);
+        systemOperationLogOldService.remove(qw);
+    }
+
     //todo 日志查询方法
-}   
+}

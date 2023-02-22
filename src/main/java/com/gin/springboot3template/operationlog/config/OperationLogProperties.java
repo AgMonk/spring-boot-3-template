@@ -25,5 +25,5 @@ public class OperationLogProperties implements Serializable {
      * todo
      * 旧日志表保留天数, 超过时间的将被删除
      */
-    int daysOld = 60;
+    int daysOld = 180;
 }
