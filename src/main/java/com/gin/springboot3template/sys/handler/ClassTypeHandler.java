@@ -22,6 +22,9 @@ public class ClassTypeHandler extends BaseTypeHandler<Class<?>> {
     @Override
     public Class<?> getNullableResult(ResultSet resultSet, String s) throws SQLException {
         String data = resultSet.getString(s);
+        if (data == null) {
+            return null;
+        }
         try {
             return Class.forName(data);
         } catch (ClassNotFoundException e) {
@@ -33,6 +36,9 @@ public class ClassTypeHandler extends BaseTypeHandler<Class<?>> {
     @Override
     public Class<?> getNullableResult(ResultSet resultSet, int i) throws SQLException {
         String data = resultSet.getString(i);
+        if (data == null) {
+            return null;
+        }
         try {
             return Class.forName(data);
         } catch (ClassNotFoundException e) {
@@ -44,6 +50,9 @@ public class ClassTypeHandler extends BaseTypeHandler<Class<?>> {
     @Override
     public Class<?> getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
         String data = callableStatement.getString(i);
+        if (data == null) {
+            return null;
+        }
         try {
             return Class.forName(data);
         } catch (ClassNotFoundException e) {
