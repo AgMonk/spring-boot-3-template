@@ -22,7 +22,7 @@ public class DefaultUpdateStrategy implements DescriptionStrategy {
      */
     @Override
     public String generateDescription(OperationLogContext context) {
-        //todo
+        //todo 比较修改了哪些字段
         return "";
     }
 }

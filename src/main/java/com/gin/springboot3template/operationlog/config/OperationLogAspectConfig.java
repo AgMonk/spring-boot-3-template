@@ -123,21 +123,23 @@ public class OperationLogAspectConfig {
         // 操作类型
         final OperationType type = opLog.type();
 
+        final StandardEvaluationContext evaluationContext = SpElUtils.createContext(pjp);
+        final List<Object> preExp = SpElUtils.getElValues(evaluationContext, opLog.preExp());
+
         final Object result = pjp.proceed();
 
         // SpEl上下文
-        final StandardEvaluationContext evaluationContext = SpElUtils.createContext(pjp);
         evaluationContext.setVariable("result", result);
         // 计算 SpEl表达式
+        final List<Object> sufExp = SpElUtils.getElValues(evaluationContext, opLog.sufExp());
         final Long mainId = SpElUtils.getElNotnullLong(evaluationContext, opLog.mainId()).stream().findFirst().orElse(null);
         final Long subId = subClass != null ? SpElUtils.getElNotnullLong(evaluationContext, opLog.subId()).stream().findFirst().orElse(null) : null;
 
         if (mainId == null) {
-            log.warn("日志注解配置错误: mainId 计算结果为null");
+            log.warn("日志注解配置错误: mainId 计算结果为 null");
             return result;
         }
         // 计算其他表达式
-        final List<Object> expressions = SpElUtils.getElValues(evaluationContext, opLog.expression());
 
 
         // 匹配描述策略
@@ -146,7 +148,7 @@ public class OperationLogAspectConfig {
         final Long entityId = subClass != null ? subId : mainId;
 
         // 上下文
-        final OperationLogContext context = new OperationLogContext(entityClass, entityId, paramArgs, result, expressions, type, request);
+        final OperationLogContext context = new OperationLogContext(entityClass, entityId, paramArgs, result, preExp, sufExp, type, request);
         // 日志
         final SystemOperationLog operationLog = new SystemOperationLog(type);
         operationLog.setMainClass(mainClass);

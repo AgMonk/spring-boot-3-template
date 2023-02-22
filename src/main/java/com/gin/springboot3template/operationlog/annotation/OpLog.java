@@ -42,7 +42,12 @@ public @interface OpLog {
     OperationType type();
 
     /**
-     * Spring-EL 表达式
+     * 执行方法之前计算的 Spring-EL 表达式
      */
-    String[] expression() default {"#result.data"};
+    String[] preExp() default {};
+
+    /**
+     * 执行方法之后计算的 Spring-EL 表达式
+     */
+    String[] sufExp() default {"#result.data"};
 }

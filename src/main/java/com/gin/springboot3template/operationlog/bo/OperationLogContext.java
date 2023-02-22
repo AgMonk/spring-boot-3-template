@@ -16,7 +16,13 @@ public record OperationLogContext(Class<?> entityClass, Long entityId,
                                   List<ParamArg> paramArgs,
                                   //方法执行结果
                                   Object result,
-                                  //表达式计算结果
-                                  List<Object> expressions, OperationType type, HttpServletRequest request) {
+                                  //执行方法之前计算的 Spring-EL 表达式 结果
+                                  List<Object> preExp,
+                                  //执行方法之前计算的 Spring-EL 表达式 结果
+                                  List<Object> sufExp,
+                                  //操作类型
+                                  OperationType type,
+                                  //请求
+                                  HttpServletRequest request) {
 
 }
