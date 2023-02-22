@@ -9,7 +9,7 @@ package com.gin.springboot3template.operationlog.bo;
 public record FieldDifference<F, V>(
         F field,
         V beforeValue,
-        V afterValue
+        V updateValue
 ) {
 
 }   

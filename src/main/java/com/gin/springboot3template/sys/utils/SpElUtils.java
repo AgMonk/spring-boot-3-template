@@ -3,6 +3,8 @@ package com.gin.springboot3template.sys.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -29,7 +31,8 @@ public class SpElUtils {
      * @return spEl表达式上下文
      */
     public static StandardEvaluationContext createContext(JoinPoint joinPoint) {
-        final StandardEvaluationContext context = new StandardEvaluationContext(SpringContextUtils.getContext());
+        final ApplicationContext applicationContext = SpringContextUtils.getContext();
+        final StandardEvaluationContext context = new StandardEvaluationContext(applicationContext);
 
         Object[] args = joinPoint.getArgs();
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -44,6 +47,7 @@ public class SpElUtils {
             //noinspection DataFlowIssue
             context.setVariable(parametersName[i], args[i]);
         }
+        context.setBeanResolver(new BeanFactoryResolver(applicationContext));
 
         return context;
     }
