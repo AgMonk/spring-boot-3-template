@@ -63,4 +63,10 @@ public class BaseOperationLog extends BasePo {
     @Comment("操作描述")
     @Column(length = 10000)
     String description;
+
+    @Comment("会话ID")
+    @Column(length = 36)
+    String sessionId;
+
+
 }   

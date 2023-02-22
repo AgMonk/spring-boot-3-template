@@ -27,6 +27,8 @@ public enum OperationType {
      * 查询
      */
     QUERY("查询"),
+    LOGIN("登录"),
+    LOGIN_FAILED("登录失败"),
     ;
     final String name;
 

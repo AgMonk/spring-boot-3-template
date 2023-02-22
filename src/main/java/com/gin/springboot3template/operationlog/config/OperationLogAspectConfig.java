@@ -11,7 +11,10 @@ import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.service.SystemOperationLogService;
 import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
+import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.response.Res;
+import com.gin.springboot3template.sys.security.bo.MyUserDetails;
+import com.gin.springboot3template.sys.service.SystemUserService;
 import com.gin.springboot3template.sys.utils.SpElUtils;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import com.gin.springboot3template.sys.utils.WebUtils;
@@ -23,9 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -44,6 +50,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OperationLogAspectConfig {
     private final SystemOperationLogService logService;
+    private final SystemUserService systemUserService;
 
     /**
      * 查找匹配的策略
@@ -83,9 +90,8 @@ public class OperationLogAspectConfig {
 
         HashMap<String, Object> map = new HashMap<>();
 
-        context.paramArgs().stream()
-                .filter(f -> !classes.contains(f.parameter().getType()))
-                .forEach(paramArg -> map.put(paramArg.parameter().getName(), paramArg.arg()));
+        context.paramArgs().stream().filter(f -> !classes.contains(f.parameter().getType())).forEach(paramArg -> map.put(paramArg.parameter().getName(),
+                                                                                                                         paramArg.arg()));
         try {
             return mapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
@@ -114,8 +120,8 @@ public class OperationLogAspectConfig {
     @Around("@annotation(opLog)")
     public Object around(ProceedingJoinPoint pjp, OpLog opLog) throws Throwable {
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
+        final HttpSession session = request != null ? request.getSession() : null;
         // 注解
-        final OpLog opLog = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(OpLog.class);
         final List<ParamArg> paramArgs = ParamArg.parse(pjp);
         final Class<?> mainClass = opLog.mainClass();
         // 副类型如果为 object 置为null
@@ -151,6 +157,7 @@ public class OperationLogAspectConfig {
         final OperationLogContext context = new OperationLogContext(entityClass, entityId, paramArgs, result, preExp, sufExp, type, request);
         // 日志
         final SystemOperationLog operationLog = new SystemOperationLog(type);
+        operationLog.setSessionId(session != null ? session.getId() : null);
         operationLog.setMainClass(mainClass);
         operationLog.setMainId(mainId);
         operationLog.setSubClass(subClass);
@@ -187,4 +194,44 @@ public class OperationLogAspectConfig {
         return result;
     }
 
+    /**
+     * 登陆方法环绕切面
+     * @param pjp pjp
+     * @return 返回
+     */
+    @Around("execution(* org.springframework.security.authentication.AuthenticationManager.authenticate(..))")
+    public Object login(ProceedingJoinPoint pjp) throws Throwable {
+        if (ProviderManager.class.equals(pjp.getTarget().getClass())) {
+            try {
+                //登陆成功
+                final Authentication result = (Authentication) pjp.proceed();
+                if (result.isAuthenticated()) {
+                    MyUserDetails principal = (MyUserDetails) result.getPrincipal();
+                    final SystemOperationLog operationLog = new SystemOperationLog(OperationType.LOGIN);
+                    operationLog.setMainClass(SystemUser.class);
+                    operationLog.setMainId(principal.getId());
+                    operationLog.setDescription("登录成功");
+                    logService.write(operationLog);
+                }
+                return result;
+            } catch (Throwable e) {
+                // 登陆失败
+                if (pjp.getArgs()[0] instanceof UsernamePasswordAuthenticationToken arg && arg.getDetails() instanceof WebAuthenticationDetails details) {
+                    final SystemUser user = systemUserService.getByUsername((String) arg.getPrincipal());
+                    final long userId = user != null ? user.getId() : -1;
+                    final SystemOperationLog operationLog = new SystemOperationLog();
+                    operationLog.setType(OperationType.LOGIN_FAILED);
+                    operationLog.setUserId(userId);
+                    operationLog.setUserIp(details.getRemoteAddress());
+                    operationLog.setMainClass(SystemUser.class);
+                    operationLog.setMainId(userId);
+                    operationLog.setDescription(e.getLocalizedMessage());
+                    operationLog.setSessionId(details.getSessionId());
+                    logService.write(operationLog);
+                }
+                throw e;
+            }
+        }
+        return pjp.proceed();
+    }
 }
