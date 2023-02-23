@@ -45,7 +45,7 @@ public abstract class AbstractUpdateStrategy implements DescriptionStrategy {
         // 过滤掉部分字段
         final List<FieldDifference<Field, Object>> filteredDifferences = filter(differences);
         // 字段差异
-        return filteredDifferences.stream()
+        return filteredDifferences.size() == 0 ? "未做修改" : filteredDifferences.stream()
                 // 字段差异格式化
                 .map(dif -> {
                     final String fieldName = formatField(dif.field());
