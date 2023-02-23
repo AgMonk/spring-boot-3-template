@@ -250,4 +250,34 @@ public class OperationLogAspectConfig {
         }
         return pjp.proceed();
     }
+
+    @Around(value = "execution(* org.springframework.security.web.authentication.logout.LogoutSuccessHandler.onLogoutSuccess(..)) && args(request,response,token)"
+            , argNames = "pjp,request,response,token")
+    public Object logout(
+            ProceedingJoinPoint pjp,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            UsernamePasswordAuthenticationToken token
+    ) throws Throwable {
+        if (token.getDetails() instanceof WebAuthenticationDetails details) {
+            final long start = now();
+            MyUserDetails principal = (MyUserDetails) token.getPrincipal();
+            final Long userId = principal.getId();
+
+            final Object result = pjp.proceed();
+
+            final SystemOperationLog operationLog = new SystemOperationLog();
+            operationLog.setMainClass(SystemUser.class);
+            operationLog.setSessionId(details.getSessionId());
+            operationLog.setType(OperationType.LOGOUT);
+            operationLog.setUserIp(WebUtils.getRemoteHost(request));
+            operationLog.setUserId(userId);
+            operationLog.setMainId(userId);
+            operationLog.setDescription("登出成功");
+            operationLog.setTimeCost(now() - start);
+            logService.write(operationLog);
+            return result;
+        }
+        return pjp.proceed();
+    }
 }

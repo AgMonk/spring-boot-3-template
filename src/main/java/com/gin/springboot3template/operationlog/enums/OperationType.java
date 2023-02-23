@@ -29,6 +29,7 @@ public enum OperationType {
     QUERY("查询"),
     LOGIN("登录"),
     LOGIN_FAILED("登录失败"),
+    LOGOUT("登出"),
     DOWNLOAD("下载"),
     UPLOAD("上传"),
     BACKUP("备份"),
