@@ -20,17 +20,17 @@ import java.util.List;
 @Getter
 @Setter
 @Schema(description = "操作日志查询条件")
-public final class OperationLogPageParam extends BasePageParam {
+public class OperationLogPageParam extends BasePageParam {
     @Schema(description = "主实体类型", hidden = true)
     @JsonIgnore
-    Class<?> mainClass;
+    String mainClassName;
     @Schema(description = "主实体ID", hidden = true)
     @JsonIgnore
     Long mainId;
-    @Schema(description = "操作类型")
+    @Schema(description = "操作类型", hidden = true)
     List<OperationType> type;
-    @Schema(description = "副实体类型")
-    Class<?> subClass;
+    @Schema(description = "副实体类型", hidden = true)
+    String subClassName;
     @Schema(description = "最晚时间")
     Long maxTime;
     @Schema(description = "最早时间")
@@ -47,11 +47,11 @@ public final class OperationLogPageParam extends BasePageParam {
         if (mainId != null) {
             queryWrapper.eq("main_id", mainId);
         }
-        if (mainClass != null) {
-            queryWrapper.eq("main_class", mainClass.getName());
+        if (mainClassName != null) {
+            queryWrapper.eq("main_class", mainClassName);
         }
-        if (subClass != null && !subClass.equals(mainClass)) {
-            queryWrapper.eq("sub_class", subClass.getName());
+        if (subClassName != null && !subClassName.equals(mainClassName)) {
+            queryWrapper.eq("sub_class", subClassName);
         }
         if (maxTime != null) {
             queryWrapper.lt("time_create", maxTime);

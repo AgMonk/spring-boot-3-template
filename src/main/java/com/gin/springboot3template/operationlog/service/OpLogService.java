@@ -89,7 +89,7 @@ public class OpLogService {
      * @return 日志
      */
     public ResPage<SystemOperationLogVo> pageByParam(@NotNull Class<?> mainClass, Long mainId, OperationLogPageParam param, boolean old) {
-        param.setMainClass(mainClass);
+        param.setMainClassName(mainClass.getName());
         param.setMainId(mainId);
         final ResPage<SystemOperationLogVo> resPage = getService(old).pageByParam(param, new QueryWrapper<>(), SystemOperationLogVo::new);
         final List<SystemOperationLogVo> data = resPage.getData();
@@ -103,6 +103,9 @@ public class OpLogService {
      */
     private void fillNickname(List<SystemOperationLogVo> data) {
         final List<Long> userId = data.stream().map(BaseOperationLog::getUserId).filter(Objects::nonNull).distinct().toList();
+        if (userId.size() == 0) {
+            return;
+        }
         final HashMap<Long, String> idNameMap = systemUserInfoService.getIdNameMap(userId);
         data.forEach(i -> i.setUserNickname(idNameMap.get(i.getUserId())));
     }

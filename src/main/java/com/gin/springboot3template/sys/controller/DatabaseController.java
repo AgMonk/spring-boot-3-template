@@ -1,13 +1,18 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.operationlog.annotation.OpLog;
+import com.gin.springboot3template.operationlog.bo.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.enums.OperationType;
+import com.gin.springboot3template.operationlog.service.OpLogService;
+import com.gin.springboot3template.operationlog.vo.SubClassOption;
+import com.gin.springboot3template.operationlog.vo.SystemOperationLogVo;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.enums.ServiceStatus;
 import com.gin.springboot3template.sys.exception.file.FileDeleteException;
 import com.gin.springboot3template.sys.exception.file.FileNotExistsException;
 import com.gin.springboot3template.sys.response.Res;
+import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.DatabaseBackupService;
 import com.gin.springboot3template.sys.vo.FileInfo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +55,8 @@ public class DatabaseController {
 
     private final DatabaseBackupService service;
 
+    private final OpLogService opLogService;
+
     @GetMapping(Constant.Api.DOWNLOAD)
     @Operation(summary = "下载镜像文件")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
@@ -66,6 +74,27 @@ public class DatabaseController {
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<List<FileInfo>> getList(@SuppressWarnings("unused") HttpServletRequest request) throws IOException {
         return Res.of(service.list());
+    }
+
+    @GetMapping("/log/options")
+    @Operation(summary = "日志选项")
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<List<SubClassOption>> getLogOptions(
+            @RequestParam(required = false, defaultValue = "false") @Parameter(description = "是否查询旧日志(默认false)") Boolean old,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        return Res.of(opLogService.options(Database.class, null, old));
+    }
+
+    @GetMapping("/log/page")
+    @Operation(summary = "日志分页查询")
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    public ResPage<SystemOperationLogVo> getLogPage(
+            @RequestParam(required = false, defaultValue = "false") @Parameter(description = "是否查询旧日志(默认false)") Boolean old,
+            @ParameterObject OperationLogPageParam param,
+            @SuppressWarnings("unused") HttpServletRequest request
+    ) {
+        return opLogService.pageByParam(Database.class, null, param, old);
     }
 
     @GetMapping(Constant.Api.STATUS)
@@ -118,4 +147,6 @@ public class DatabaseController {
     ) throws IOException {
         return Res.of(service.upload(file), "上传成功");
     }
+
+
 }
