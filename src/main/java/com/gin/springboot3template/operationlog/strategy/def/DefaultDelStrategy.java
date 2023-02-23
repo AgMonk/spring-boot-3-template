@@ -1,19 +1,20 @@
-package com.gin.springboot3template.operationlog.strategy;
+package com.gin.springboot3template.operationlog.strategy.def;
 
 import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import com.gin.springboot3template.operationlog.enums.OperationType;
+import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
 import org.springframework.stereotype.Component;
 
 /**
- * 默认查询策略
+ * 默认删除策略
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/2/22 09:18
  */
 @Component
-@LogStrategy(type = OperationType.QUERY)
-public class DefaultQueryStrategy implements DescriptionStrategy {
+@LogStrategy(type = OperationType.DEL)
+public class DefaultDelStrategy implements DescriptionStrategy {
 
     /**
      * 生成描述
