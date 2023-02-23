@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.sys.base.BasePo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Comment;
 @Setter
 @TableName(value = SystemUserInfo.TABLE_NAME, autoResultMap = true)
 @Entity(name = SystemUserInfo.TABLE_NAME)
+@Schema(description = "用户个人信息")
 @NoArgsConstructor
 public class SystemUserInfo extends BasePo {
     public static final String TABLE_NAME = "t_system_entity_user_info";

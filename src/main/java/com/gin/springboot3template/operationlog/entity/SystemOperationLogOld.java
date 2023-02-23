@@ -21,8 +21,7 @@ import org.springframework.beans.BeanUtils;
 @Entity(name = SystemOperationLogOld.TABLE_NAME)
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(columnList = "mainClass,mainId,subClass,subId"),
-        @Index(columnList = "timeCreate"),
+        @Index(columnList = "mainClass,mainId,subClass,subId,timeCreate"),
 })
 public class SystemOperationLogOld extends BaseOperationLog {
     public static final String TABLE_NAME = "t_system_entity_operation_log_old";

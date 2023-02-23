@@ -1,7 +1,6 @@
 package com.gin.springboot3template.operationlog.service;
 
 import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
-import com.gin.springboot3template.sys.service.MyService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,7 @@ import java.util.Collection;
  */
 
 @Transactional(rollbackFor = Exception.class)
-public interface SystemOperationLogService extends MyService<SystemOperationLog> {
+public interface SystemOperationLogService extends OperationLogService<SystemOperationLog> {
 
     /**
      * 写入日志

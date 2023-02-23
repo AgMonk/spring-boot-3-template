@@ -1,7 +1,6 @@
 package com.gin.springboot3template.operationlog.service;
 
 import com.gin.springboot3template.operationlog.entity.SystemOperationLogOld;
-import com.gin.springboot3template.sys.service.MyService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -11,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @Transactional(rollbackFor = Exception.class)
-public interface SystemOperationLogOldService extends MyService<SystemOperationLogOld> {
+public interface SystemOperationLogOldService extends OperationLogService<SystemOperationLogOld> {
 
 
 }

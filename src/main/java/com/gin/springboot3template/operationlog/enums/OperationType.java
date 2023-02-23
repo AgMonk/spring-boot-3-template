@@ -46,4 +46,5 @@ public enum OperationType {
     public String toString() {
         return String.format("%s(%s)", name, name());
     }
+
 }

@@ -30,8 +30,16 @@ public interface MyService<T> extends IService<T> {
      * @return 统计结果
      */
     default List<T> countGroupBy(String... columns) {
-        final QueryWrapper<T> qw = new QueryWrapper<>();
+        return countGroupBy(new QueryWrapper<>(), columns);
+    }
 
+    /**
+     * 分组统计某些列的出现次数
+     * @param qw      查询条件
+     * @param columns 列
+     * @return 统计结果
+     */
+    default List<T> countGroupBy(QueryWrapper<T> qw, String... columns) {
         final List<String> columnsList = Arrays.asList(columns);
         final ArrayList<String> selectColumns = new ArrayList<>(columnsList);
         selectColumns.add(0, "count(1) count");
@@ -90,10 +98,19 @@ public interface MyService<T> extends IService<T> {
      * @return 这些列中已被使用过的值
      */
     default List<T> listGroup(String... columns) {
+        return listGroup(new QueryWrapper<>(), columns);
+    }
+
+    /**
+     * 根据指定列分组并仅查询这些列 , 一般用于查询这些列中已被使用过的值 , 用于分页查询的条件
+     * @param qw      查询条件
+     * @param columns 列名
+     * @return 这些列中已被使用过的值
+     */
+    default List<T> listGroup(QueryWrapper<T> qw, String... columns) {
         if (ArrayUtils.isEmpty(columns)) {
             return new ArrayList<>();
         }
-        final QueryWrapper<T> qw = new QueryWrapper<>();
         qw.select(columns).groupBy(Arrays.asList(columns));
         return list(qw);
     }

@@ -5,6 +5,10 @@ import com.gin.springboot3template.sys.dto.form.SystemUserInfoForm;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * @author : ginstone
  * @version : v1.0.0
@@ -22,6 +26,20 @@ public interface SystemUserInfoService extends MyService<SystemUserInfo> {
         final QueryWrapper<SystemUserInfo> qw = new QueryWrapper<>();
         qw.eq("user_id", userId);
         return getOne(qw);
+    }
+
+    /**
+     * 查询 userId 到昵称的映射
+     * @param userId 用户id
+     * @return dic
+     */
+    default HashMap<Long, String> getIdNameMap(Collection<Long> userId) {
+        final QueryWrapper<SystemUserInfo> qw = new QueryWrapper<>();
+        qw.select("user_id", "nickname").in("user_id", userId);
+        final List<SystemUserInfo> list = list(qw);
+        final HashMap<Long, String> map = new HashMap<>(list.size());
+        list.forEach(i -> map.put(i.getUserId(), i.getNickname()));
+        return map;
     }
 
     /**
