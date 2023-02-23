@@ -5,6 +5,7 @@ import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
 import com.gin.springboot3template.sys.service.DatabaseBackupService;
+import com.gin.springboot3template.sys.vo.FileInfo;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.orm.jpa.vendor.Database;
@@ -38,6 +39,6 @@ public class DatabaseDownloadStrategy implements DescriptionStrategy {
      */
     @Override
     public String generateDescription(OperationLogContext context) {
-        return service.getBackupFile(getFilename(context)).toString();
+        return new FileInfo(service.getBackupFile(getFilename(context))).toString();
     }
 }

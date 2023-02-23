@@ -52,7 +52,7 @@ public class DatabaseController {
     @GetMapping(Constant.Api.DOWNLOAD)
     @Operation(summary = "下载镜像文件")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    @OpLog(mainClass = Database.class, mainId = "-1", type = OperationType.DOWNLOAD)
+    @OpLog(mainClass = Database.class, mainId = "@databaseBackupService?.getBackupFile(#filename)?.lastModified() / 1000", type = OperationType.DOWNLOAD)
     public void getDownload(
             @RequestParam @Parameter(description = "文件名") String filename,
             HttpServletResponse response,
@@ -78,7 +78,7 @@ public class DatabaseController {
     @PostMapping("backup")
     @Operation(summary = "执行备份", description = "返回备份好的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    @OpLog(mainClass = Database.class, mainId = "-1", type = OperationType.BACKUP)
+    @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.BACKUP)
     public Res<FileInfo> postBackup(
             @RequestParam(required = false, defaultValue = "true") @Parameter(description = "是否使用gzip压缩,默认true") Boolean gzip,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -89,7 +89,7 @@ public class DatabaseController {
     @PostMapping(Constant.Api.DEL)
     @Operation(summary = "删除镜像文件", description = "返回被删除的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    @OpLog(mainClass = Database.class, mainId = "-1", type = OperationType.DEL)
+    @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.DEL)
     public Res<FileInfo> postDel(
             @RequestParam @Parameter(description = "文件名") String filename,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -100,7 +100,7 @@ public class DatabaseController {
     @PostMapping("recover")
     @Operation(summary = "执行还原", description = "返回被还原的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    @OpLog(mainClass = Database.class, mainId = "-1", type = OperationType.RECOVER)
+    @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.RECOVER)
     public Res<FileInfo> postRecover(
             @RequestParam @Parameter(description = "文件名") String filename,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -111,7 +111,7 @@ public class DatabaseController {
     @PostMapping(value = Constant.Api.UPLOAD, consumes = {MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "上传镜像文件", description = "文件后缀必须为 sql 或 gz;<br/>返回被上传的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    @OpLog(mainClass = Database.class, mainId = "-1", type = OperationType.UPLOAD)
+    @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.UPLOAD)
     public Res<FileInfo> postUpload(
             MultipartFile file,
             @SuppressWarnings("unused") HttpServletRequest request
