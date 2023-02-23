@@ -28,16 +28,4 @@ public class SystemOperationLogVo extends BaseOperationLog {
 
     }
 
-    @Schema(description = "实体名")
-    public String getEntityName() {
-        final Class<?> subClass = getSubClass();
-        if (subClass != null) {
-            final Schema schema = subClass.getAnnotation(Schema.class);
-            if (schema != null) {
-                return schema.description();
-            }
-            return subClass.getSimpleName();
-        }
-        return null;
-    }
 }

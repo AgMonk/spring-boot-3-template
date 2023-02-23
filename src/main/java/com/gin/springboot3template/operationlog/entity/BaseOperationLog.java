@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * 操作日志字段
@@ -25,7 +24,6 @@ public class BaseOperationLog extends BasePo {
     @Schema(description = "操作类型")
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    @NotNull
     OperationType type;
     @Comment("操作人ID")
     @Schema(description = "操作人ID")
@@ -89,4 +87,6 @@ public class BaseOperationLog extends BasePo {
     @Transient
     @TableField(exist = false)
     Integer count;
+
+
 }

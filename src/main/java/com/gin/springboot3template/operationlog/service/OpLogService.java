@@ -6,10 +6,10 @@ import com.gin.springboot3template.operationlog.config.OperationLogProperties;
 import com.gin.springboot3template.operationlog.entity.BaseOperationLog;
 import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.operationlog.entity.SystemOperationLogOld;
+import com.gin.springboot3template.operationlog.vo.SubClassOption;
 import com.gin.springboot3template.operationlog.vo.SystemOperationLogVo;
 import com.gin.springboot3template.sys.response.ResPage;
 import com.gin.springboot3template.sys.service.SystemUserInfoService;
-import com.gin.springboot3template.sys.vo.PageOption;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -71,23 +71,26 @@ public class OpLogService {
     }
 
     /**
-     * 列出指定主实体类型 及id 下的操作类型
+     * 列出该主实体类型(和主实体ID)下, 所有的副实体类型,及每个副实体类型下的操作类型
      * @param mainClass 主实体类型
      * @param mainId    主实体id
-     * @param old       是否查询旧日志
-     * @return 操作类型
+     * @return 副实体类型
      */
-    public List<PageOption> listTypes(@NotNull Class<?> mainClass, Long mainId, boolean old) {
-        return getService(old).listTypes(mainClass, mainId);
+    public List<SubClassOption> options(@NotNull Class<?> mainClass, Long mainId, boolean old) {
+        return getService(old).options(mainClass, mainId);
     }
 
     /**
      * 日志查询方法
-     * @param param 分页参数
-     * @param old   是否查询旧日志
+     * @param mainClass 主实体类型
+     * @param mainId    主实体id
+     * @param param     分页参数
+     * @param old       是否查询旧日志
      * @return 日志
      */
-    public ResPage<SystemOperationLogVo> pageByParam(OperationLogPageParam param, boolean old) {
+    public ResPage<SystemOperationLogVo> pageByParam(@NotNull Class<?> mainClass, Long mainId, OperationLogPageParam param, boolean old) {
+        param.setMainClass(mainClass);
+        param.setMainId(mainId);
         final ResPage<SystemOperationLogVo> resPage = getService(old).pageByParam(param, new QueryWrapper<>(), SystemOperationLogVo::new);
         final List<SystemOperationLogVo> data = resPage.getData();
         fillNickname(data);

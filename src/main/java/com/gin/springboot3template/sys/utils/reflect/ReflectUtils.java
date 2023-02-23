@@ -1,5 +1,7 @@
 package com.gin.springboot3template.sys.utils.reflect;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +14,16 @@ import java.util.List;
  * @since : 2023/2/18 17:15
  */
 public class ReflectUtils {
+
+    /**
+     * 获取类的别名
+     * @param clazz 类对象
+     * @return 别名
+     */
+    public static String getAliasName(Class<?> clazz) {
+        final Schema schema = clazz.getAnnotation(Schema.class);
+        return schema != null ? schema.description() : clazz.getSimpleName();
+    }
 
     /**
      * 返回一个对象所有的字段和字段值(含父类)
@@ -62,5 +74,4 @@ public class ReflectUtils {
             return new FieldValue(field, value);
         }).toList();
     }
-
 }   
