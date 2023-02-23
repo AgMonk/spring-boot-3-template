@@ -3,7 +3,6 @@ package com.gin.springboot3template.sys.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.dto.form.SystemUserInfoForm;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
-import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,17 +31,16 @@ public interface SystemUserInfoService extends MyService<SystemUserInfo> {
      * @return 保存或更新的用户个人信息
      */
     default SystemUserInfo saveOrUpdate(Long userId, SystemUserInfoForm param) {
+        final SystemUserInfo build = param.build(userId);
         final SystemUserInfo userInfo = getByUserId(userId);
         if (userInfo == null) {
             //不存在用户信息 添加
-            final SystemUserInfo build = param.build(userId);
             save(build);
-            return build;
         } else {
+            build.setId(userInfo.getId());
             // 已存在用户信息 修改
-            BeanUtils.copyProperties(param, userInfo);
-            updateById(userInfo);
-            return userInfo;
+            updateById(build);
         }
+        return build;
     }
 }

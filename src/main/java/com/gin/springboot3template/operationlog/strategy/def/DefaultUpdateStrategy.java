@@ -76,9 +76,12 @@ public class DefaultUpdateStrategy extends AbstractUpdateStrategy {
      */
     @Override
     public String formatValue(Field field, Object value) {
-        if (value instanceof Long time && field.getName().contains("time")) {
-            // 属于时间戳字段
-            return TimeUtils.format(time);
+        if (value instanceof Long time) {
+            final String fieldName = field.getName();
+            if (fieldName.contains("time") || "birthday".equals(fieldName)) {
+                // 属于时间戳字段
+                return TimeUtils.format(time);
+            }
         }
         return String.valueOf(value);
     }

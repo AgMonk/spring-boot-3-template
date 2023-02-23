@@ -1,5 +1,7 @@
 package com.gin.springboot3template.sys.controller;
 
+import com.gin.springboot3template.operationlog.annotation.OpLog;
+import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.bo.SystemUserBo;
@@ -7,6 +9,7 @@ import com.gin.springboot3template.sys.config.SystemProperties;
 import com.gin.springboot3template.sys.dto.form.LoginForm;
 import com.gin.springboot3template.sys.dto.form.RegForm;
 import com.gin.springboot3template.sys.dto.form.SystemUserInfoForm;
+import com.gin.springboot3template.sys.entity.SystemUser;
 import com.gin.springboot3template.sys.entity.SystemUserAvatar;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.exception.BusinessException;
@@ -148,10 +151,12 @@ public class SystemUserController {
 
     @PostMapping("userInfoUpdate")
     @Operation(summary = "修改自己的个人信息")
+    @OpLog(type = OperationType.UPDATE, mainClass = SystemUser.class, mainId = "#userDetail?.id", subClass = SystemUserInfo.class
+            , preExp = {"@systemUserInfoServiceImpl.getByUserId(#userDetail.id)", "#param.build(#userDetail.id)"}
+    )
     public Res<SystemUserInfoVo> userInfoUpdate(@RequestBody @Validated SystemUserInfoForm param) {
         final SystemUserInfo info = systemUserInfoService.saveOrUpdate(getUserId(), param);
         return Res.of(new SystemUserInfoVo(info), "修改成功");
     }
-
 
 }
