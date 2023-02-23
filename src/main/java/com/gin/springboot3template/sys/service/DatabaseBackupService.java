@@ -175,6 +175,11 @@ public class DatabaseBackupService {
         }
     }
 
+    @NotNull
+    public File getBackupFile(String filename) {
+        return new File(dirBackup.getPath() + "/" + filename);
+    }
+
     @PostConstruct
     public void init() throws DirCreateException, FileExistsException {
         //初始化 创建文件夹
@@ -344,11 +349,6 @@ public class DatabaseBackupService {
                 log.info("文件已存在,跳过: " + filename);
             }
         }
-    }
-
-    @NotNull
-    private File getBackupFile(String filename) {
-        return new File(dirBackup.getPath() + "/" + filename);
     }
 
     /**

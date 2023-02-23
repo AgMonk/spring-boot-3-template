@@ -30,7 +30,7 @@ public class FileInfo {
     String filename;
     @Schema(description = "最后编辑时间戳(UNIX秒)")
     Long lastModified;
-    @Schema(description = "最后日期时间")
+    @Schema(description = "最后编辑日期时间")
     String lastModifiedDatetime;
     @Schema(description = "文件大小(短格式)")
     String shortSize;
@@ -59,5 +59,10 @@ public class FileInfo {
 
         this.lastModified = file.lastModified() / 1000;
         this.lastModifiedDatetime = TimeUtils.format(file.lastModified() / 1000);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("文件名: %s, 最后编辑时间: %s, 文件大小: %s", this.filename, this.lastModifiedDatetime, this.shortSize);
     }
 }

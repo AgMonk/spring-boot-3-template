@@ -4,6 +4,9 @@ import com.gin.springboot3template.operationlog.annotation.LogStrategy;
 import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
+import com.gin.springboot3template.sys.service.DatabaseBackupService;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +18,19 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @LogStrategy(value = Database.class, type = OperationType.DOWNLOAD)
+@RequiredArgsConstructor
 public class DatabaseDownloadStrategy implements DescriptionStrategy {
+    public static final String FILENAME = "filename";
+    private final DatabaseBackupService service;
+
+    @Nullable
+    public static String getFilename(OperationLogContext context) {
+        return context.paramArgs().stream()
+                .filter(pa -> FILENAME.equals(pa.parameter().getName()))
+                .filter(pa -> String.class.equals(pa.parameter().getType()))
+                .map(pa -> (String) pa.arg()).findFirst().orElse(null);
+    }
+
     /**
      * 生成描述
      * @param context 上下文
@@ -23,7 +38,6 @@ public class DatabaseDownloadStrategy implements DescriptionStrategy {
      */
     @Override
     public String generateDescription(OperationLogContext context) {
-        //todo
-        return null;
+        return service.getBackupFile(getFilename(context)).toString();
     }
 }
