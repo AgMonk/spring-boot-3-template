@@ -117,8 +117,13 @@ public class OperationLogAspectConfig {
         }
     }
 
+    private static long now() {
+        return System.currentTimeMillis();
+    }
+
     @Around("@annotation(opLog)")
     public Object around(ProceedingJoinPoint pjp, OpLog opLog) throws Throwable {
+        final long start = now();
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final HttpSession session = request != null ? request.getSession() : null;
         // 注解
@@ -180,6 +185,7 @@ public class OperationLogAspectConfig {
                     }
                     operationLog.setStrategyClass(strategy.getClass());
                     operationLog.setDescription(description);
+                    operationLog.setTimeCost(now() - start);
                     logService.write(operationLog);
                     return result;
                 }
@@ -190,6 +196,7 @@ public class OperationLogAspectConfig {
         final String des = String.format("%s class:%s type:%s mainId:%s", msg, entityClass, type, mainId);
         log.warn(des);
         operationLog.setDescription(msg);
+        operationLog.setTimeCost(now() - start);
         logService.write(operationLog);
         return result;
     }
@@ -199,36 +206,45 @@ public class OperationLogAspectConfig {
      * @param pjp pjp
      * @return 返回
      */
-    @Around("execution(* org.springframework.security.authentication.AuthenticationManager.authenticate(..))")
-    public Object login(ProceedingJoinPoint pjp) throws Throwable {
-        if (ProviderManager.class.equals(pjp.getTarget().getClass())) {
+    @Around(value = "execution(* org.springframework.security.authentication.AuthenticationManager.authenticate(..)) && args(token)", argNames = "pjp,token")
+    public Object login(ProceedingJoinPoint pjp, UsernamePasswordAuthenticationToken token) throws Throwable {
+        if (ProviderManager.class.equals(pjp.getTarget().getClass())
+                && token.getDetails() instanceof WebAuthenticationDetails details
+        ) {
+            final long start = now();
+            final String userIp = details.getRemoteAddress();
             try {
                 //登陆成功
                 final Authentication result = (Authentication) pjp.proceed();
                 if (result.isAuthenticated()) {
                     MyUserDetails principal = (MyUserDetails) result.getPrincipal();
-                    final SystemOperationLog operationLog = new SystemOperationLog(OperationType.LOGIN);
+                    final SystemOperationLog operationLog = new SystemOperationLog();
+                    final Long userId = principal.getId();
                     operationLog.setMainClass(SystemUser.class);
-                    operationLog.setMainId(principal.getId());
+                    operationLog.setSessionId(details.getSessionId());
+                    operationLog.setType(OperationType.LOGIN);
+                    operationLog.setUserIp(userIp);
+                    operationLog.setUserId(userId);
+                    operationLog.setMainId(userId);
                     operationLog.setDescription("登录成功");
+                    operationLog.setTimeCost(now() - start);
                     logService.write(operationLog);
                 }
                 return result;
             } catch (Throwable e) {
                 // 登陆失败
-                if (pjp.getArgs()[0] instanceof UsernamePasswordAuthenticationToken arg && arg.getDetails() instanceof WebAuthenticationDetails details) {
-                    final SystemUser user = systemUserService.getByUsername((String) arg.getPrincipal());
-                    final long userId = user != null ? user.getId() : -1;
-                    final SystemOperationLog operationLog = new SystemOperationLog();
-                    operationLog.setType(OperationType.LOGIN_FAILED);
-                    operationLog.setUserId(userId);
-                    operationLog.setUserIp(details.getRemoteAddress());
-                    operationLog.setMainClass(SystemUser.class);
-                    operationLog.setMainId(userId);
-                    operationLog.setDescription(e.getLocalizedMessage());
-                    operationLog.setSessionId(details.getSessionId());
-                    logService.write(operationLog);
-                }
+                final SystemUser user = systemUserService.getByUsername((String) token.getPrincipal());
+                final long userId = user != null ? user.getId() : -1;
+                final SystemOperationLog operationLog = new SystemOperationLog();
+                operationLog.setMainClass(SystemUser.class);
+                operationLog.setSessionId(details.getSessionId());
+                operationLog.setType(OperationType.LOGIN_FAILED);
+                operationLog.setUserIp(userIp);
+                operationLog.setUserId(userId);
+                operationLog.setMainId(userId);
+                operationLog.setDescription(e.getLocalizedMessage());
+                operationLog.setTimeCost(now() - start);
+                logService.write(operationLog);
                 throw e;
             }
         }
