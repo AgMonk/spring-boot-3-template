@@ -1,8 +1,8 @@
 package com.gin.springboot3template.operationlog.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.operationlog.bo.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.config.OperationLogProperties;
+import com.gin.springboot3template.operationlog.dto.param.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.entity.BaseOperationLog;
 import com.gin.springboot3template.operationlog.entity.SystemOperationLog;
 import com.gin.springboot3template.operationlog.entity.SystemOperationLogOld;

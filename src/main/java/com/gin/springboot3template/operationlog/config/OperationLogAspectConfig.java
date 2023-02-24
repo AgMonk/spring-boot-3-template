@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 修改操作日志切面配置
+ * 操作日志切面配置
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/2/18 09:49

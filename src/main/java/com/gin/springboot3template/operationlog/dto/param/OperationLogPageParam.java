@@ -1,4 +1,4 @@
-package com.gin.springboot3template.operationlog.bo;
+package com.gin.springboot3template.operationlog.dto.param;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.annotation.JsonIgnore;

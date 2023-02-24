@@ -1,10 +1,10 @@
-package com.gin.springboot3template.sys.controller;
+package com.gin.springboot3template.databsebackup.controller;
 
+import com.gin.springboot3template.databsebackup.service.DatabaseBackupService;
 import com.gin.springboot3template.operationlog.annotation.OpLog;
-import com.gin.springboot3template.operationlog.bo.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.controller.OperationLogController;
+import com.gin.springboot3template.operationlog.dto.param.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.enums.OperationType;
-import com.gin.springboot3template.operationlog.service.OpLogService;
 import com.gin.springboot3template.operationlog.vo.SubClassOption;
 import com.gin.springboot3template.operationlog.vo.SystemOperationLogVo;
 import com.gin.springboot3template.sys.annotation.MyRestController;
@@ -14,7 +14,6 @@ import com.gin.springboot3template.sys.exception.file.FileDeleteException;
 import com.gin.springboot3template.sys.exception.file.FileNotExistsException;
 import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.response.ResPage;
-import com.gin.springboot3template.sys.service.DatabaseBackupService;
 import com.gin.springboot3template.sys.vo.FileInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,8 +53,6 @@ public class DatabaseController implements OperationLogController {
     public static final String GROUP_NAME = "数据库备份服务接口";
 
     private final DatabaseBackupService service;
-
-    private final OpLogService opLogService;
 
     @GetMapping(Constant.Api.DOWNLOAD)
     @Operation(summary = "下载镜像文件")

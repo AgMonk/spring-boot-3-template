@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.config;
+package com.gin.springboot3template.databsebackup.config;
 
 import lombok.Getter;
 import lombok.Setter;

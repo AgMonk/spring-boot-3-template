@@ -1,6 +1,6 @@
 package com.gin.springboot3template.sys.init.quest;
 
-import com.gin.springboot3template.sys.controller.DatabaseController;
+import com.gin.springboot3template.databsebackup.controller.DatabaseController;
 import com.gin.springboot3template.sys.entity.SystemRole;
 import com.gin.springboot3template.sys.service.RolePermissionService;
 import org.jetbrains.annotations.NotNull;

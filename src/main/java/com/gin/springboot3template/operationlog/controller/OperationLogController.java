@@ -1,6 +1,6 @@
 package com.gin.springboot3template.operationlog.controller;
 
-import com.gin.springboot3template.operationlog.bo.OperationLogPageParam;
+import com.gin.springboot3template.operationlog.dto.param.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.service.OpLogService;
 import com.gin.springboot3template.operationlog.vo.SubClassOption;
 import com.gin.springboot3template.operationlog.vo.SystemOperationLogVo;

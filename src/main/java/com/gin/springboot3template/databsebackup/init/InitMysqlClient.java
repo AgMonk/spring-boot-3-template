@@ -1,7 +1,7 @@
-package com.gin.springboot3template.sys.init;
+package com.gin.springboot3template.databsebackup.init;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gin.springboot3template.sys.service.DatabaseBackupService;
+import com.gin.springboot3template.databsebackup.service.DatabaseBackupService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

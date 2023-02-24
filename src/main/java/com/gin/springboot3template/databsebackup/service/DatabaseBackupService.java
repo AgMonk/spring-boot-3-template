@@ -1,7 +1,7 @@
-package com.gin.springboot3template.sys.service;
+package com.gin.springboot3template.databsebackup.service;
 
-import com.gin.springboot3template.sys.bo.DatabaseConConfig;
-import com.gin.springboot3template.sys.config.DatabaseProperties;
+import com.gin.springboot3template.databsebackup.config.DatabaseConConfig;
+import com.gin.springboot3template.databsebackup.config.DatabaseProperties;
 import com.gin.springboot3template.sys.config.SystemProperties;
 import com.gin.springboot3template.sys.enums.OsType;
 import com.gin.springboot3template.sys.enums.ServiceStatus;
