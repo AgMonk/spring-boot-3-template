@@ -75,7 +75,7 @@ public class SystemUserController implements OperationLogController {
 
     @PostMapping("changePwd")
     @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
-    @OpLog(type = OperationType.UPDATE, mainClass = SystemUser.class, mainId = "#userDetail?.id", subClass = PasswordSubClass.class, subId = "", sufExp = "")
+    @OpLog(type = OperationType.UPDATE, mainClass = SystemUser.class, mainId = "#userDetail?.id", subClass = PasswordSubClass.class, requestParam = false, responseResult = false)
     public void changePwd(
             @SuppressWarnings("unused") HttpServletRequest request,
             HttpServletResponse response,

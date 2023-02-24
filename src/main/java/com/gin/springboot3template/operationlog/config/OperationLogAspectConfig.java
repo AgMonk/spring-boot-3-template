@@ -109,6 +109,9 @@ public class OperationLogAspectConfig {
         final ObjectMapper mapper = new ObjectMapper().setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         try {
             final Object result = context.result();
+            if (result == null) {
+                return null;
+            }
             if (result instanceof Res<?> res) {
                 return mapper.writeValueAsString(res.getData());
             }
