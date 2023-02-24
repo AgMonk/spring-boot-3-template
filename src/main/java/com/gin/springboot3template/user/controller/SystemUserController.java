@@ -3,6 +3,7 @@ package com.gin.springboot3template.user.controller;
 import com.gin.springboot3template.operationlog.annotation.OpLog;
 import com.gin.springboot3template.operationlog.controller.OperationLogController;
 import com.gin.springboot3template.operationlog.enums.OperationType;
+import com.gin.springboot3template.operationlog.subclass.PasswordSubClass;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.config.SystemProperties;
@@ -74,6 +75,7 @@ public class SystemUserController implements OperationLogController {
 
     @PostMapping("changePwd")
     @Operation(summary = "修改密码", description = "修改成功后会自动登出,需要重新登陆")
+    @OpLog(type = OperationType.UPDATE, mainClass = SystemUser.class, mainId = "#userDetail?.id", subClass = PasswordSubClass.class, subId = "", sufExp = "")
     public void changePwd(
             @SuppressWarnings("unused") HttpServletRequest request,
             HttpServletResponse response,

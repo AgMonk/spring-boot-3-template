@@ -25,6 +25,9 @@ public class WebUtils {
      * 获取目标主机的ip
      */
     public static String getRemoteHost(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
         String xip = request.getHeader("X-Real-IP");
         String xFor = request.getHeader("X-Forwarded-For");
         if (!ObjectUtils.isEmpty(xFor) && !UN_KNOWN.equalsIgnoreCase(xFor)) {

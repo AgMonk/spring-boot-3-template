@@ -17,6 +17,7 @@ import com.gin.springboot3template.sys.utils.WebUtils;
 import com.gin.springboot3template.sys.vo.response.Res;
 import com.gin.springboot3template.user.entity.SystemUser;
 import com.gin.springboot3template.user.security.bo.MyUserDetails;
+import com.gin.springboot3template.user.security.utils.MySecurityUtils;
 import com.gin.springboot3template.user.service.SystemUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -126,6 +127,7 @@ public class OperationLogAspectConfig {
         final long start = now();
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final HttpSession session = request != null ? request.getSession() : null;
+        final MyUserDetails userDetails = MySecurityUtils.currentUserDetails();
         // 注解
         final List<ParamArg> paramArgs = ParamArg.parse(pjp);
         final Class<?> mainClass = opLog.mainClass();
@@ -161,14 +163,17 @@ public class OperationLogAspectConfig {
         // 上下文
         final OperationLogContext context = new OperationLogContext(entityClass, entityId, paramArgs, result, preExp, sufExp, type, request);
         // 日志
-        final SystemOperationLog operationLog = new SystemOperationLog(type);
+        final SystemOperationLog operationLog = new SystemOperationLog();
         operationLog.setSessionId(session != null ? session.getId() : null);
+        operationLog.setType(type);
+        operationLog.setUserId(userDetails.getId());
+        operationLog.setUserIp(WebUtils.getRemoteHost(request));
         operationLog.setMainClass(mainClass);
         operationLog.setMainId(mainId);
         operationLog.setSubClass(subClass);
         operationLog.setSubId(subId);
-        operationLog.setRequestParam(getRequestParam(context));
-        operationLog.setResponseResult(getResponseResult(context));
+        operationLog.setRequestParam(opLog.requestParam() ? getRequestParam(context) : null);
+        operationLog.setResponseResult(opLog.responseResult() ? getResponseResult(context) : null);
 
         //描述生成策略
         final List<DescriptionStrategy> strategies = findStrategies(entityClass, type);

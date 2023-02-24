@@ -47,7 +47,7 @@ public class MySecurityConfig {
     /**
      * 白名单:注册
      */
-    private static final List<String> WHITE_LIST = List.of("/sys/user/reg");
+    private static final List<String> WHITE_LIST = List.of("/sys/user/reg", "/test/**");
     /**
      * 验证码放行
      */
@@ -107,7 +107,7 @@ public class MySecurityConfig {
                 .requestMatchers(HttpMethod.GET, DOC_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(HttpMethod.GET, VERIFY_CODE_WHITE_LIST.toArray(new String[0])).permitAll()
                 .requestMatchers(WHITE_LIST.toArray(new String[0])).permitAll()
-//                .requestMatchers(HttpMethod.GET, TEST_WHITE_LIST.toArray(new String[0])).permitAll()
+                .requestMatchers(TEST_WHITE_LIST.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated()
         ;
 

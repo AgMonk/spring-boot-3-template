@@ -50,4 +50,14 @@ public @interface OpLog {
      * 执行方法之后计算的 Spring-EL 表达式
      */
     String[] sufExp() default {"#result?.data"};
+
+    /**
+     * 是否记录请求参数
+     */
+    boolean requestParam() default true;
+
+    /**
+     * 是否记录返回结果
+     */
+    boolean responseResult() default true;
 }
