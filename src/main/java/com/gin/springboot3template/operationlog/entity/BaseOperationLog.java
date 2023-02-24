@@ -36,7 +36,7 @@ public class BaseOperationLog extends BasePo {
 
     @Comment("主实体类型")
     @Schema(description = "主实体类型")
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 150)
     @TableField(typeHandler = ClassTypeHandler.class)
     Class<?> mainClass;
     @Comment("主实体ID")
@@ -45,7 +45,7 @@ public class BaseOperationLog extends BasePo {
     Long mainId;
     @Comment("副实体类型")
     @Schema(description = "副实体类型")
-    @Column(length = 100)
+    @Column(length = 150)
     @TableField(typeHandler = ClassTypeHandler.class)
     Class<?> subClass;
     @Comment("副实体ID")
