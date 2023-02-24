@@ -27,9 +27,9 @@ public class OperationLogPageParam extends BasePageParam {
     @Schema(description = "主实体ID", hidden = true)
     @JsonIgnore
     Long mainId;
-    @Schema(description = "操作类型", hidden = true)
+    @Schema(description = "操作类型(多个用逗号隔开)")
     List<OperationType> type;
-    @Schema(description = "副实体类型", hidden = true)
+    @Schema(description = "副实体类型")
     String subClassName;
     @Schema(description = "最晚时间")
     Long maxTime;
@@ -50,8 +50,12 @@ public class OperationLogPageParam extends BasePageParam {
         if (mainClassName != null) {
             queryWrapper.eq("main_class", mainClassName);
         }
-        if (subClassName != null && !subClassName.equals(mainClassName)) {
-            queryWrapper.eq("sub_class", subClassName);
+        if (subClassName != null) {
+            if (!subClassName.equals(mainClassName)) {
+                queryWrapper.eq("sub_class", subClassName);
+            } else {
+                queryWrapper.isNull("sub_class");
+            }
         }
         if (maxTime != null) {
             queryWrapper.lt("time_create", maxTime);

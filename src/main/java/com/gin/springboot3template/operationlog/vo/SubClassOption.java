@@ -23,9 +23,9 @@ import java.util.List;
 public class SubClassOption {
     @Schema(description = "出现次数")
     Integer count;
-    @Schema(description = "标签")
+    @Schema(description = "副实体类型标签")
     String label;
-    @Schema(description = "值")
+    @Schema(description = "副实体类型值")
     String value;
     @Schema(description = "操作类型")
     List<PageOption> types;
