@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.response;
+package com.gin.springboot3template.sys.vo.response;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gin.springboot3template.sys.bo.Constant;

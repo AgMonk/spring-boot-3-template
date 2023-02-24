@@ -2,8 +2,8 @@ package com.gin.springboot3template.sys.security.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gin.springboot3template.sys.bo.Constant;
-import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.security.vo.MyUserDetailsVo;
+import com.gin.springboot3template.sys.vo.response.Res;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

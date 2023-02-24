@@ -5,9 +5,9 @@ import com.gin.springboot3template.operationlog.bo.OperationLogContext;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.strategy.DescriptionStrategy;
 import com.gin.springboot3template.sys.base.BaseVo;
-import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.utils.TimeUtils;
 import com.gin.springboot3template.sys.utils.reflect.ReflectUtils;
+import com.gin.springboot3template.sys.vo.response.Res;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.stereotype.Component;
 

@@ -1,8 +1,8 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.sys.enums.CaptchaType;
-import com.gin.springboot3template.sys.response.Res;
 import com.gin.springboot3template.sys.service.CaptchaService;
+import com.gin.springboot3template.sys.vo.response.Res;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;

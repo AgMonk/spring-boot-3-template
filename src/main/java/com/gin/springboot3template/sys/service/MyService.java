@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gin.springboot3template.sys.base.BasePageParam;
 import com.gin.springboot3template.sys.exception.BusinessException;
-import com.gin.springboot3template.sys.response.ResPage;
+import com.gin.springboot3template.sys.vo.response.ResPage;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.HttpStatus;

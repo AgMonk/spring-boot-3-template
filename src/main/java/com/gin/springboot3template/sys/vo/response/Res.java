@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.response;
+package com.gin.springboot3template.sys.vo.response;
 
 import com.gin.springboot3template.sys.bo.Constant;
 import io.swagger.v3.oas.annotations.media.Schema;
