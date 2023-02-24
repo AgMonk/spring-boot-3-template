@@ -27,9 +27,9 @@ public class OperationLogPageParam extends BasePageParam {
     @Schema(description = "主实体ID", hidden = true)
     @JsonIgnore
     Long mainId;
-    @Schema(description = "操作类型(多个用逗号隔开)")
+    @Schema(description = "操作类型(多个用逗号隔开),选择副实体类型后,从其中的 types 字段中选择")
     List<OperationType> type;
-    @Schema(description = "副实体类型")
+    @Schema(description = "副实体类型,从'日志选项'接口的返回值中选择")
     String subClassName;
     @Schema(description = "最晚时间")
     Long maxTime;
