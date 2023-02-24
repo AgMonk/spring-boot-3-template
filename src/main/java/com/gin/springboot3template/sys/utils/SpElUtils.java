@@ -1,6 +1,6 @@
 package com.gin.springboot3template.sys.utils;
 
-import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
+import com.gin.springboot3template.user.security.utils.MySecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;

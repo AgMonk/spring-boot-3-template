@@ -2,8 +2,8 @@ package com.gin.springboot3template.operationlog.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gin.springboot3template.operationlog.enums.OperationType;
-import com.gin.springboot3template.sys.security.utils.MySecurityUtils;
 import com.gin.springboot3template.sys.utils.WebUtils;
+import com.gin.springboot3template.user.security.utils.MySecurityUtils;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;

@@ -1,6 +1,6 @@
 package com.gin.springboot3template.sys.vo;
 
-import com.gin.springboot3template.sys.entity.SystemPermission;
+import com.gin.springboot3template.user.entity.SystemPermission;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

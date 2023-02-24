@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.vo;
 
 import com.gin.springboot3template.sys.base.BaseVo;
-import com.gin.springboot3template.sys.entity.SystemUser;
+import com.gin.springboot3template.user.entity.SystemUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
