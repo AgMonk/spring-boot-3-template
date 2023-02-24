@@ -2,6 +2,7 @@ package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.operationlog.annotation.OpLog;
 import com.gin.springboot3template.operationlog.bo.OperationLogPageParam;
+import com.gin.springboot3template.operationlog.controller.OperationLogController;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.service.OpLogService;
 import com.gin.springboot3template.operationlog.vo.SubClassOption;
@@ -22,7 +23,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +46,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @Tag(name = DatabaseController.GROUP_NAME)
 @Slf4j
-public class DatabaseController {
+public class DatabaseController implements OperationLogController {
     /**
      * 接口路径前缀
      */
@@ -76,25 +76,29 @@ public class DatabaseController {
         return Res.of(service.list());
     }
 
-    @GetMapping("/log/options")
-    @Operation(summary = "日志选项")
+    /**
+     * 列出该主实体类型(和主实体ID)下, 所有的副实体类型,及每个副实体类型下的操作类型
+     * @param old     是否查询旧日志
+     * @param request 请求
+     * @return 所有的副实体类型, 及每个副实体类型下的操作类型
+     */
+    @Override
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SubClassOption>> getLogOptions(
-            @RequestParam(required = false, defaultValue = "false") @Parameter(description = "是否查询旧日志(默认false)") Boolean old,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        return Res.of(opLogService.options(Database.class, null, old));
+    public Res<List<SubClassOption>> getLogOptions(Boolean old, HttpServletRequest request) {
+        return OperationLogController.super.getLogOptions(old, request);
     }
 
-    @GetMapping("/log/page")
-    @Operation(summary = "日志分页查询")
+    /**
+     * 日志分页查询
+     * @param old     是否查询旧日志
+     * @param param   查询参数
+     * @param request 请求
+     * @return 日志
+     */
+    @Override
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public ResPage<SystemOperationLogVo> getLogPage(
-            @RequestParam(required = false, defaultValue = "false") @Parameter(description = "是否查询旧日志(默认false)") Boolean old,
-            @ParameterObject OperationLogPageParam param,
-            @SuppressWarnings("unused") HttpServletRequest request
-    ) {
-        return opLogService.pageByParam(Database.class, null, param, old);
+    public ResPage<SystemOperationLogVo> getLogPage(Boolean old, OperationLogPageParam param, HttpServletRequest request) {
+        return OperationLogController.super.getLogPage(old, param, request);
     }
 
     @GetMapping(Constant.Api.STATUS)
@@ -102,6 +106,24 @@ public class DatabaseController {
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     public Res<ServiceStatus> getStatus(@SuppressWarnings("unused") HttpServletRequest request) {
         return Res.of(service.getStatus(), service.getStatus().getZh());
+    }
+
+    /**
+     * 主实体类型
+     * @return 主实体类型
+     */
+    @Override
+    public Class<?> mainClass() {
+        return Database.class;
+    }
+
+    /**
+     * 主实体ID
+     * @return 主实体ID
+     */
+    @Override
+    public Long mainId() {
+        return null;
     }
 
     @PostMapping("backup")
@@ -147,6 +169,4 @@ public class DatabaseController {
     ) throws IOException {
         return Res.of(service.upload(file), "上传成功");
     }
-
-
 }

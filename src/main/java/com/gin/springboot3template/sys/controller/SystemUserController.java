@@ -1,6 +1,7 @@
 package com.gin.springboot3template.sys.controller;
 
 import com.gin.springboot3template.operationlog.annotation.OpLog;
+import com.gin.springboot3template.operationlog.controller.OperationLogController;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
@@ -56,7 +57,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @Tag(name = "用户接口")
 @Slf4j
-public class SystemUserController {
+public class SystemUserController implements OperationLogController {
     /**
      * 接口路径前缀
      */
@@ -96,6 +97,24 @@ public class SystemUserController {
     @Operation(summary = "登出", description = "假登出接口 ,用于生成 doc")
     public void logout() {
         System.out.println("logout...");
+    }
+
+    /**
+     * 主实体类型
+     * @return 主实体类型
+     */
+    @Override
+    public Class<?> mainClass() {
+        return SystemUser.class;
+    }
+
+    /**
+     * 主实体ID
+     * @return 主实体ID
+     */
+    @Override
+    public Long mainId() {
+        return getUserId();
     }
 
     @PostMapping("reg")
@@ -158,5 +177,6 @@ public class SystemUserController {
         final SystemUserInfo info = systemUserInfoService.saveOrUpdate(getUserId(), param);
         return Res.of(new SystemUserInfoVo(info), "修改成功");
     }
+
 
 }

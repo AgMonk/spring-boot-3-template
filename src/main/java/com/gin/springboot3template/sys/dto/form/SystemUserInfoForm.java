@@ -3,7 +3,7 @@ package com.gin.springboot3template.sys.dto.form;
 import com.gin.springboot3template.sys.entity.SystemUserInfo;
 import com.gin.springboot3template.sys.validation.Phone;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -20,7 +20,7 @@ public class SystemUserInfoForm {
     @Schema(description = "生日(UNIX秒)")
     Long birthday;
     @Schema(description = "昵称")
-    @NotNull
+    @NotEmpty
     String nickname;
     @Schema(description = "联系电话")
     @Phone(nullable = true)
