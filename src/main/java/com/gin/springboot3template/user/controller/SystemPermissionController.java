@@ -2,12 +2,12 @@ package com.gin.springboot3template.user.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
-import com.gin.springboot3template.sys.vo.PermissionGroup;
 import com.gin.springboot3template.sys.vo.response.Res;
 import com.gin.springboot3template.sys.vo.response.ResPage;
 import com.gin.springboot3template.user.dto.param.SystemPermissionPageParam;
 import com.gin.springboot3template.user.entity.SystemPermission;
 import com.gin.springboot3template.user.service.SystemPermissionService;
+import com.gin.springboot3template.user.vo.PermissionGroup;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

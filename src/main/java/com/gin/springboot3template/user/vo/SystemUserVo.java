@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.vo;
+package com.gin.springboot3template.user.vo;
 
 import com.gin.springboot3template.sys.base.BaseVo;
 import com.gin.springboot3template.user.entity.SystemUser;
