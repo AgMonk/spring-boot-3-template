@@ -115,7 +115,7 @@ public class SystemUserController implements OperationLogController {
      * @return 主实体ID
      */
     @Override
-    public Long mainId() {
+    public Long mainId(Long mainId) {
         return getUserId();
     }
 

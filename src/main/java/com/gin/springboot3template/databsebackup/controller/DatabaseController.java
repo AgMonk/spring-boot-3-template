@@ -76,13 +76,14 @@ public class DatabaseController implements OperationLogController {
     /**
      * 列出该主实体类型(和主实体ID)下, 所有的副实体类型,及每个副实体类型下的操作类型
      * @param old     是否查询旧日志
+     * @param mainId  主实体Id ， 是否由用户指定由接口决定
      * @param request 请求
      * @return 所有的副实体类型, 及每个副实体类型下的操作类型
      */
     @Override
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
-    public Res<List<SubClassOption>> getLogOptions(Boolean old, HttpServletRequest request) {
-        return OperationLogController.super.getLogOptions(old, request);
+    public Res<List<SubClassOption>> getLogOptions(Boolean old, Long mainId, HttpServletRequest request) {
+        return OperationLogController.super.getLogOptions(old, mainId, request);
     }
 
     /**
@@ -119,7 +120,7 @@ public class DatabaseController implements OperationLogController {
      * @return 主实体ID
      */
     @Override
-    public Long mainId() {
+    public Long mainId(Long mainId) {
         return null;
     }
 

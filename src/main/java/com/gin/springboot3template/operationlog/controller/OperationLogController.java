@@ -35,14 +35,16 @@ public interface OperationLogController {
 
     /**
      * 主实体ID
+     * @param mainId 用户传入的主实体Id
      * @return 主实体ID
      */
     @Nullable
-    Long mainId();
+    Long mainId(Long mainId);
 
     /**
      * 列出该主实体类型(和主实体ID)下, 所有的副实体类型,及每个副实体类型下的操作类型
      * @param old     是否查询旧日志
+     * @param mainId  主实体Id ， 是否由用户指定由接口决定
      * @param request 请求
      * @return 所有的副实体类型, 及每个副实体类型下的操作类型
      */
@@ -50,9 +52,10 @@ public interface OperationLogController {
     @Operation(summary = "日志选项", description = "列出该主实体类型(和主实体ID)下, 所有的副实体类型,及每个副实体类型下的操作类型")
     default Res<List<SubClassOption>> getLogOptions(
             @RequestParam(required = false, defaultValue = "false") @Parameter(description = "是否查询旧日志(默认false)") Boolean old,
+            @RequestParam(required = false) @Parameter(description = "主实体ID") Long mainId,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
-        return Res.of(SpringContextUtils.getContext().getBean(OpLogService.class).options(mainClass(), mainId(), old));
+        return Res.of(SpringContextUtils.getContext().getBean(OpLogService.class).options(mainClass(), mainId(mainId), old));
     }
 
     /**
@@ -69,6 +72,6 @@ public interface OperationLogController {
             @ParameterObject OperationLogPageParam param,
             @SuppressWarnings("unused") HttpServletRequest request
     ) {
-        return SpringContextUtils.getContext().getBean(OpLogService.class).pageByParam(mainClass(), mainId(), param, old);
+        return SpringContextUtils.getContext().getBean(OpLogService.class).pageByParam(mainClass(), mainId(param.getMainId()), param, old);
     }
 }

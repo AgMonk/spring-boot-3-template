@@ -12,20 +12,19 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 /**
- * 操作日志查询参数
+ * 操作日志分页查询条件
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/2/23 13:33
  */
 @Getter
 @Setter
-@Schema(description = "操作日志查询条件")
+@Schema(description = "操作日志分页查询条件")
 public class OperationLogPageParam extends BasePageParam {
     @Schema(description = "主实体类型", hidden = true)
     @JsonIgnore
     String mainClassName;
-    @Schema(description = "主实体ID", hidden = true)
-    @JsonIgnore
+    @Schema(description = "主实体ID")
     Long mainId;
     @Schema(description = "操作类型(多个用逗号隔开),选择副实体类型后,从其中的 types 字段中选择")
     List<OperationType> type;
