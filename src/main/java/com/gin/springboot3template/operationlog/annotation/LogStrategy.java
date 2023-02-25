@@ -21,5 +21,8 @@ public @interface LogStrategy {
      */
     Class<?> value() default Object.class;
 
+    /**
+     * 匹配的操作类型
+     */
     OperationType type();
 }

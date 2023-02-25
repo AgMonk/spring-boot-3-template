@@ -54,10 +54,8 @@ public abstract class AbstractUpdateStrategy implements DescriptionStrategy {
                     return new FieldDifference<>(fieldName, beforeValue, updateValue);
                 })
                 // 连接成字符串
-                .map(d -> String.format("[%s] 从 '%s' 更新为 '%s'",
-                                        d.field(),
-                                        d.beforeValue(),
-                                        d.updateValue())).collect(Collectors.joining(", "));
+                .map(d -> String.format("[%s] 从 '%s' 更新为 '%s'", d.field(), d.beforeValue(), d.updateValue()))
+                .collect(Collectors.joining(", "));
     }
 
     /**

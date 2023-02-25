@@ -128,10 +128,12 @@ public class OperationLogAspectConfig {
     @Around("@annotation(opLog)")
     public Object around(ProceedingJoinPoint pjp, OpLog opLog) throws Throwable {
         final long start = now();
+        //静态方法获取 HttpServletRequest
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final HttpSession session = request != null ? request.getSession() : null;
+        // 权限框架获取 userId
         final MyUserDetails userDetails = MySecurityUtils.currentUserDetails();
-        // 注解
+        // 请求参数和参数值
         final List<ParamArg> paramArgs = ParamArg.parse(pjp);
         final Class<?> mainClass = opLog.mainClass();
         // 副类型如果为 object 置为null

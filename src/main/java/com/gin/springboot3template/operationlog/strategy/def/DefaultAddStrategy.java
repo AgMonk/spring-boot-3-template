@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 默认描述策略
+ * 默认添加描述策略
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/2/21 14:44

@@ -173,10 +173,10 @@ public class SystemUserController implements OperationLogController {
     @PostMapping("userInfoUpdate")
     @Operation(summary = "修改自己的个人信息")
     @OpLog(type = OperationType.UPDATE, mainClass = SystemUser.class, mainId = "#userDetail?.id", subClass = SystemUserInfo.class
-            , preExp = {"@systemUserInfoServiceImpl.getByUserId(#userDetail.id)", "#param.build(#userDetail.id)"}
+            , preExp = {"@systemUserInfoServiceImpl.getByUserId(#userDetail.id)", "#form.build(#userDetail.id)"}
     )
-    public Res<SystemUserInfoVo> userInfoUpdate(@RequestBody @Validated SystemUserInfoForm param) {
-        final SystemUserInfo info = systemUserInfoService.saveOrUpdate(getUserId(), param);
+    public Res<SystemUserInfoVo> userInfoUpdate(@RequestBody @Validated SystemUserInfoForm form) {
+        final SystemUserInfo info = systemUserInfoService.saveOrUpdate(getUserId(), form);
         return Res.of(new SystemUserInfoVo(info), "修改成功");
     }
 
