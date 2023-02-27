@@ -47,7 +47,7 @@ http://host:port/doc.html
 
 ```java
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.gin."})
+@ComponentScan(basePackages = {"com.gin.*"})
 @MapperScan(basePackages = {"com.gin.springboot3template.*.dao"})
 ```
 
