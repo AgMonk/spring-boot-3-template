@@ -24,7 +24,8 @@ import org.jetbrains.annotations.NotNull;
 @Entity(name = SystemOperationLog.TABLE_NAME)
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(columnList = "mainClass,mainId,subClass,type,subId,timeCreate"),
+        @Index(columnList = "mainClass,mainId,type,subClass,subId,timeCreate"),
+        @Index(columnList = "sub_class,type"),
 })
 public class SystemOperationLog extends BaseOperationLog {
     public static final String TABLE_NAME = "t_system_entity_operation_log";

@@ -43,11 +43,14 @@ public class OperationLogPageParam extends BasePageParam {
     @Override
     public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
         queryWrapper.orderByAsc("time_create");
+        if (mainClassName != null) {
+            queryWrapper.eq("main_class", mainClassName);
+        }
         if (mainId != null) {
             queryWrapper.eq("main_id", mainId);
         }
-        if (mainClassName != null) {
-            queryWrapper.eq("main_class", mainClassName);
+        if (!CollectionUtils.isEmpty(type)) {
+            queryWrapper.in("type", type.stream().map(Enum::name).toList());
         }
         if (subClassName != null) {
             if (!subClassName.equals(mainClassName)) {
@@ -61,9 +64,6 @@ public class OperationLogPageParam extends BasePageParam {
         }
         if (minTime != null) {
             queryWrapper.ge("time_create", minTime);
-        }
-        if (!CollectionUtils.isEmpty(type)) {
-            queryWrapper.in("type", type.stream().map(Enum::name).toList());
         }
     }
 }
