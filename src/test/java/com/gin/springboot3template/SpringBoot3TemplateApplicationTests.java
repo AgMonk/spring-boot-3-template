@@ -13,10 +13,6 @@ class SpringBoot3TemplateApplicationTests {
 
     @Test
     void contextLoads() {
-//        final OperationLogPageParam param = new OperationLogPageParam(SystemUser.class);
-//        param.setSize(5);
-//        param.setPage(2);
-//        JacksonUtils.printPretty(opLogService.pageByParam(param, false).getData());
     }
 
 }
