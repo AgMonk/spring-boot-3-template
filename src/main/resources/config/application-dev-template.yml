@@ -13,9 +13,9 @@ spring:
     password: lzbx2837200
   data:
     redis:
-      host: 192.168.0.68
+      host: 192.168.0.10
       password: lzbx2837200
-      database: 8
+      database: 15
 
 system:
   #注册功能开放 关闭后只能由管理员创建新用户
