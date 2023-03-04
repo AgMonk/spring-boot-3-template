@@ -86,6 +86,7 @@ public class BaseOperationLog extends BasePo {
      */
     @Transient
     @TableField(exist = false)
+    @Schema(hidden = true)
     Integer count;
 
 
