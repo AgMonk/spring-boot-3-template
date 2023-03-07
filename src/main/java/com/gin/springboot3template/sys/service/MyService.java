@@ -165,9 +165,9 @@ public interface MyService<T> extends IService<T> {
      * @param value    值
      * @param exceptId 排除的Id
      */
-    default void validateUnique(String column, Serializable value, Collection<Long> exceptId) {
+    default void validateUnique(String column, String label, Serializable value, Collection<Long> exceptId) {
         if (existsValue(column, value, exceptId)) {
-            throw BusinessException.of(HttpStatus.BAD_REQUEST, String.format("列 %s 的值 %s 已经存在,不允许重复", column, value));
+            throw BusinessException.of(HttpStatus.BAD_REQUEST, String.format("[%s] 的值 [%s] 已经存在,不允许重复", label, value));
         }
     }
 
