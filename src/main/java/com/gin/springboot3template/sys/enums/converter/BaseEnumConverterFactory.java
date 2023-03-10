@@ -1,4 +1,4 @@
-package com.gin.springboot3template.sys.converter;
+package com.gin.springboot3template.sys.enums.converter;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.converter.Converter;

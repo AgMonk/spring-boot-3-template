@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gin.springboot3template.sys.converter.BaseEnumConverterFactory;
+import com.gin.springboot3template.sys.enums.converter.BaseEnumConverterFactory;
 import com.gin.springboot3template.sys.utils.JacksonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

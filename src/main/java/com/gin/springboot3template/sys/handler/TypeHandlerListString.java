@@ -21,7 +21,7 @@ import java.util.List;
  */
 @MappedJdbcTypes(JdbcType.VARCHAR)
 @MappedTypes(List.class)
-public class ListStringTypeHandler extends BaseTypeHandler<List<String>> {
+public class TypeHandlerListString extends BaseTypeHandler<List<String>> {
 
     public static final String DELIMITER = "\\|";
 
