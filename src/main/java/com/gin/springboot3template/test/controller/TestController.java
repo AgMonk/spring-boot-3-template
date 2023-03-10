@@ -1,6 +1,7 @@
 package com.gin.springboot3template.test.controller;
 
 import com.gin.springboot3template.sys.annotation.MyRestController;
+import com.gin.springboot3template.sys.enums.Gender;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -14,8 +15,8 @@ public class TestController {
 
 
     @GetMapping("pdf")
-    public void getPdf() {
-
+    public void getPdf(Gender gender) {
+        System.out.println("gender = " + gender);
     }
 
 }

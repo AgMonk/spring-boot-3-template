@@ -1,11 +1,13 @@
 package com.gin.springboot3template.sys.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gin.springboot3template.sys.converter.BaseEnumConverterFactory;
 import com.gin.springboot3template.sys.utils.JacksonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -17,6 +19,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverterFactory(new BaseEnumConverterFactory());
+    }
 
     @Bean
     @Primary

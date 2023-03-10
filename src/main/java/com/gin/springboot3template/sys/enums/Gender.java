@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -25,5 +26,6 @@ public enum Gender {
      */
     secret("秘密");
 
+    @JsonValue
     final String zh;
 }
