@@ -1,7 +1,6 @@
 package com.gin.springboot3template.sys.converter;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gin.springboot3template.sys.utils.JacksonUtils;
 import org.springframework.core.convert.converter.Converter;
 
 import java.lang.reflect.Field;
@@ -51,8 +50,6 @@ public class BaseEnumConverter<T extends Enum<?>> implements Converter<String, T
                 }
             });
         }
-
-        JacksonUtils.printPretty(enumMap);
     }
 
     @Override
