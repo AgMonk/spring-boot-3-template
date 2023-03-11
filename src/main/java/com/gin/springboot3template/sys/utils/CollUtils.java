@@ -1,9 +1,8 @@
 package com.gin.springboot3template.sys.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +25,26 @@ public class CollUtils {
         final List<T> intersection = intersection(colA, colB);
 
         return subtract(union, intersection);
+    }
+
+    /**
+     * 列表查重
+     * @param list 列表
+     * @return 重复出现的元素
+     */
+    public static <T> Set<T> distinct(@NotNull List<T> list) {
+        final HashSet<T> set = new HashSet<>();
+        final HashSet<T> duplicate = new HashSet<>();
+        list.forEach(item -> {
+            if (!set.contains(item)) {
+                // set中不存在的，放入set
+                set.add(item);
+            } else {
+                // set中存在的，放入重复 set
+                duplicate.add(item);
+            }
+        });
+        return duplicate;
     }
 
     /**
