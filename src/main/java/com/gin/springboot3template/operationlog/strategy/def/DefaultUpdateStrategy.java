@@ -9,8 +9,8 @@ import com.gin.springboot3template.operationlog.strategy.AbstractUpdateStrategy;
 import com.gin.springboot3template.sys.utils.TimeUtils;
 import com.gin.springboot3template.sys.utils.reflect.FieldDifference;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import org.hibernate.annotations.Comment;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 

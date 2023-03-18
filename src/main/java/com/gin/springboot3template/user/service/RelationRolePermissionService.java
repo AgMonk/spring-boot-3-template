@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gin.springboot3template.sys.base.BasePo;
 import com.gin.springboot3template.sys.service.MyService;
 import com.gin.springboot3template.user.entity.RelationRolePermission;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;

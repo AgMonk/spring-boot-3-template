@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.utils;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

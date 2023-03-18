@@ -7,10 +7,10 @@ import com.gin.springboot3template.user.security.utils.MySecurityUtils;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * 系统操作日志

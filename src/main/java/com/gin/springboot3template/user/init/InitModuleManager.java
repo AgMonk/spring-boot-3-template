@@ -2,11 +2,11 @@ package com.gin.springboot3template.user.init;
 
 import com.gin.springboot3template.user.entity.SystemRole;
 import com.gin.springboot3template.user.service.RolePermissionService;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 

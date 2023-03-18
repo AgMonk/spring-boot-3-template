@@ -1,9 +1,8 @@
 package com.gin.springboot3template.sys.utils;
 
 import com.gin.springboot3template.sys.exception.file.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -189,7 +188,6 @@ public class FileUtils {
      * @return 文件列表
      */
     @NotNull
-    @Contract("_ -> new")
     public static ArrayList<File> listFiles(@NotNull File dir) throws IOException {
         assertExists(dir);
         if (!dir.isDirectory()) {

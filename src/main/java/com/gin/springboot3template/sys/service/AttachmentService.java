@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.service;
 
 import com.gin.springboot3template.sys.base.BaseAttach;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

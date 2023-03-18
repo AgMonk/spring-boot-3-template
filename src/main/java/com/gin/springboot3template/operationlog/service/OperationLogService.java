@@ -6,7 +6,7 @@ import com.gin.springboot3template.operationlog.vo.SubClassOption;
 import com.gin.springboot3template.sys.service.MyService;
 import com.gin.springboot3template.sys.utils.reflect.ReflectUtils;
 import com.gin.springboot3template.sys.vo.PageOption;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;

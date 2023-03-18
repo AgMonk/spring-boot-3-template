@@ -1,7 +1,7 @@
 package com.gin.springboot3template.sys.utils;
 
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

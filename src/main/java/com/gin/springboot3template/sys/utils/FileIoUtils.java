@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.*;
 import java.util.function.Function;
@@ -28,7 +27,6 @@ public class FileIoUtils {
      * @return BufferedInputStream
      */
     @NotNull
-    @Contract("_ -> new")
     public static BufferedInputStream getInputStream(File file) throws FileNotFoundException {
         return new BufferedInputStream(new FileInputStream(file));
     }
@@ -40,7 +38,6 @@ public class FileIoUtils {
      * @return BufferedOutputStream
      */
     @NotNull
-    @Contract("_, _ -> new")
     public static BufferedOutputStream getOutputStream(File file, boolean append) throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(file, append));
     }
@@ -51,7 +48,6 @@ public class FileIoUtils {
      * @return BufferedReader
      */
     @NotNull
-    @Contract("_ -> new")
     public static BufferedReader getReader(File file) throws FileNotFoundException {
         return new BufferedReader(new FileReader(file));
     }
@@ -63,7 +59,6 @@ public class FileIoUtils {
      * @return PrintWriter
      */
     @NotNull
-    @Contract("_, _ -> new")
     public static PrintWriter getWriter(@NotNull File file, boolean append) throws IOException {
         FileUtils.mkdir(file.getParentFile());
         return new PrintWriter(new FileWriter(file, append));

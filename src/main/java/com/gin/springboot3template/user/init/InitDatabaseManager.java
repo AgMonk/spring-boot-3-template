@@ -3,8 +3,8 @@ package com.gin.springboot3template.user.init;
 import com.gin.springboot3template.databsebackup.controller.DatabaseController;
 import com.gin.springboot3template.user.entity.SystemRole;
 import com.gin.springboot3template.user.service.RolePermissionService;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
