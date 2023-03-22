@@ -1,11 +1,11 @@
 package com.gin.springboot3template.sys.config.redis;
 
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -29,9 +29,8 @@ import java.time.Duration;
 @EnableCaching
 @Slf4j
 public class RedisConfig {
-    private final RedisTemplate<Object, Object> redisTemplate;
-
     @Bean
+    @Primary
     public RedisTemplate<String, Object> jsonTemplate(RedisConnectionFactory redisConnectionFactory) {
         return new RedisTemplateBuilder<String, Object>(redisConnectionFactory)
                 .setValueSerializer(new GenericJackson2JsonRedisSerializer())
@@ -58,16 +57,6 @@ public class RedisConfig {
                 .setValueSerializer(new StringRedisSerializer())
                 .setHashValueSerializer(new StringRedisSerializer())
                 .build();
-    }
-
-    /**
-     * 修改默认Template的key序列化方式
-     */
-    @PostConstruct
-    void init() {
-        log.info("{}", redisTemplate);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.afterPropertiesSet();
     }
 
     /**
