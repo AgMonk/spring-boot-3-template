@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.exception;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.bo.ExpressionExceptionParser;
 import com.gin.springboot3template.sys.vo.response.Res;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.validation.BindException;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,9 +72,23 @@ public class GlobalExceptionHandler {
      */
     @ResponseBody
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<Res<Void>> exceptionHandler(Exception e) {
+    public ResponseEntity<Res<?>> exceptionHandler(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<>(Res.of(null, "服务器错误 请通知管理员"), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseBody
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public ResponseEntity<Res<?>> exceptionHandler(HttpMessageNotReadableException e) {
+        if (e.getCause() instanceof UnrecognizedPropertyException ee) {
+            final ArrayList<String> data = new ArrayList<>();
+            data.add("不存在的字段: " + ee.getPropertyName());
+            data.add("合法字段列表: " + ee.getKnownPropertyIds());
+            data.add("目标类型:" + ee.getTargetType());
+            data.add(ee.getLocalizedMessage());
+            return new ResponseEntity<>(Res.of(data, "请求参数非法"), HttpStatus.BAD_REQUEST);
+        }
+        return exceptionHandler((Exception) e);
     }
 
     @ResponseBody
