@@ -1,7 +1,6 @@
 package com.gin.springboot3template.sys.config.redis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.gin.springboot3template.sys.utils.JacksonUtils;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,7 @@ public class CustomRedisHashCache implements Cache {
      */
     @Override
     public final void clear() {
-        log.info("[Redis][{}] 清空", key);
+        log.info("[Redis][{}] 清空缓存", key);
         getRedisTemplate().delete(key);
     }
 
@@ -102,7 +101,6 @@ public class CustomRedisHashCache implements Cache {
      * @return 日志key
      */
     public String getLogKey(Object key) {
-        JacksonUtils.printPretty(String.valueOf(key).split(":"));
         return getHashKey(key);
     }
 
