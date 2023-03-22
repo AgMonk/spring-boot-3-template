@@ -3,6 +3,7 @@ package com.gin.springboot3template.sys.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PageOption implements Serializable {
     @Schema(description = "出现次数")
     Integer count;
