@@ -40,6 +40,22 @@ public class StrUtils {
     }
 
     /**
+     * 根据包全名，返回简单名
+     */
+    public static String getSimplePackageName(String fullName) {
+        final String[] split = fullName.split("\\.");
+        final StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < split.length; i++) {
+            if (i == split.length - 1) {
+                sb.append(split[i]);
+            } else {
+                sb.append(split[i].charAt(0)).append(".");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * 字符串裁剪(自动处理:越界,负数,位置反写)
      * @param src   源字符串
      * @param start 开始位置

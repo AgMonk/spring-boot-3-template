@@ -1,12 +1,12 @@
 package com.gin.springboot3template.sys.utils;
 
-/**
- * @since : 2023/2/18 16:13
- */
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * @since : 2023/2/18 16:13
+ */
 public class GenericSuperclassUtil {
 
     public static Class<?> getActualTypeArgument(Class<?> clazz) {
