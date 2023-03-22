@@ -3,13 +3,19 @@ package com.gin.springboot3template.sys.config.redis;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
 
 
 /**
@@ -20,6 +26,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  **/
 @Configuration
 @AllArgsConstructor
+@EnableCaching
 @Slf4j
 public class RedisConfig {
     private final RedisTemplate<Object, Object> redisTemplate;
@@ -29,6 +36,19 @@ public class RedisConfig {
         return new RedisTemplateBuilder<String, Object>(redisConnectionFactory)
                 .setValueSerializer(new GenericJackson2JsonRedisSerializer())
                 .setHashValueSerializer(new GenericJackson2JsonRedisSerializer())
+                .build();
+    }
+
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        final RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(30))
+                .computePrefixWith(cacheName -> "Cache:" + cacheName + ":")
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(config)
+                .transactionAware()
                 .build();
     }
 

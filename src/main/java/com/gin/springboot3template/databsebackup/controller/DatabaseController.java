@@ -22,6 +22,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,13 +48,14 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @Tag(name = DatabaseController.GROUP_NAME)
 @Slf4j
+@CacheConfig(cacheManager = "redisCacheManager")
 public class DatabaseController implements OperationLogController {
     /**
      * 接口路径前缀
      */
     public static final String API_PREFIX = "/database";
+    public static final String CACHE_NAME = "database";
     public static final String GROUP_NAME = "数据库备份服务接口";
-
     private final DatabaseBackupService service;
 
     @GetMapping(Constant.Api.DOWNLOAD)
@@ -69,6 +73,7 @@ public class DatabaseController implements OperationLogController {
     @GetMapping(Constant.Api.LIST)
     @Operation(summary = "查询镜像列表")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    @Cacheable(value = CACHE_NAME, key = "#root.methodName")
     public Res<List<FileInfo>> getList(@SuppressWarnings("unused") HttpServletRequest request) throws IOException {
         return Res.of(service.list());
     }
@@ -128,6 +133,7 @@ public class DatabaseController implements OperationLogController {
     @Operation(summary = "执行备份", description = "返回备份好的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.BACKUP)
+    @CacheEvict(value = CACHE_NAME, allEntries = true)
     public Res<FileInfo> postBackup(
             @RequestParam(required = false, defaultValue = "true") @Parameter(description = "是否使用gzip压缩,默认true") Boolean gzip,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -139,6 +145,7 @@ public class DatabaseController implements OperationLogController {
     @Operation(summary = "删除镜像文件", description = "返回被删除的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.DEL)
+    @CacheEvict(value = CACHE_NAME, allEntries = true)
     public Res<FileInfo> postDel(
             @RequestParam @Parameter(description = "文件名") String filename,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -150,6 +157,7 @@ public class DatabaseController implements OperationLogController {
     @Operation(summary = "执行还原", description = "返回被还原的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.RECOVER)
+    @CacheEvict(value = CACHE_NAME, allEntries = true)
     public Res<FileInfo> postRecover(
             @RequestParam @Parameter(description = "文件名") String filename,
             @SuppressWarnings("unused") HttpServletRequest request
@@ -161,6 +169,7 @@ public class DatabaseController implements OperationLogController {
     @Operation(summary = "上传镜像文件", description = "文件后缀必须为 sql 或 gz;<br/>返回被上传的文件信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     @OpLog(mainClass = Database.class, mainId = "#result?.data?.lastModified", type = OperationType.UPLOAD)
+    @CacheEvict(value = CACHE_NAME, allEntries = true)
     public Res<FileInfo> postUpload(
             MultipartFile file,
             @SuppressWarnings("unused") HttpServletRequest request
