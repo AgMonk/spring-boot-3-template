@@ -15,9 +15,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
  * 自动包装响应体
+ * {@link ControllerAdvice} 的 basePackages属性限制了生效的包路径, 避免与swagger 冲突
  * @author bx002
  */
-@ControllerAdvice
+@ControllerAdvice(basePackages = {
+        "com.gin.*",
+        "com.baixun.*",
+})
 @RequiredArgsConstructor
 @Slf4j
 public class JsonResponseWrapper implements ResponseBodyAdvice<Object> {
