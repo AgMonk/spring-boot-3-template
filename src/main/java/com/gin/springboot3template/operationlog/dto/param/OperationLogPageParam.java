@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class OperationLogPageParam extends BasePageParam {
     Long mainId;
     @Schema(description = "操作类型(多个用逗号隔开),选择副实体类型后,从其中的 types 字段中选择")
     List<OperationType> type;
-    @Schema(description = "副实体类型,从'日志选项'接口的返回值中选择")
+    @Schema(description = "副实体类型,如果选择,应当从'日志选项'接口的返回值中选择")
     String subClassName;
     @Schema(description = "最晚时间")
     Long maxTime;
@@ -43,21 +44,19 @@ public class OperationLogPageParam extends BasePageParam {
     @Override
     public void handleQueryWrapper(QueryWrapper<?> queryWrapper) {
         queryWrapper.orderByAsc("time_create");
-        if (mainClassName != null) {
+        if (!ObjectUtils.isEmpty(mainClassName)) {
             queryWrapper.eq("main_class", mainClassName);
-        }
-        if (mainId != null) {
-            queryWrapper.eq("main_id", mainId);
         }
         if (!CollectionUtils.isEmpty(type)) {
             queryWrapper.in("type", type.stream().map(Enum::name).toList());
         }
-        if (subClassName != null) {
-            if (!subClassName.equals(mainClassName)) {
-                queryWrapper.eq("sub_class", subClassName);
-            } else {
-                queryWrapper.isNull("sub_class");
-            }
+        if (!ObjectUtils.isEmpty(subClassName) && !subClassName.equals(mainClassName)) {
+            queryWrapper.eq("sub_class", subClassName);
+        } else {
+            queryWrapper.isNull("sub_class");
+        }
+        if (mainId != null) {
+            queryWrapper.eq("main_id", mainId);
         }
         if (maxTime != null) {
             queryWrapper.lt("time_create", maxTime);
