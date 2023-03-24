@@ -29,7 +29,7 @@ public class Res<T> implements Serializable {
     @Schema(description = "数据")
     T data;
     @Schema(description = "时间戳(UNIX秒)")
-    Long timestamp;
+    Long timestamp = System.currentTimeMillis() / 1000;
 
     public Res(String message, T data) {
         this(message, data, System.currentTimeMillis() / 1000);

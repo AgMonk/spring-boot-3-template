@@ -29,12 +29,13 @@ public class CustomKeyGenerator implements KeyGenerator {
      * 需要排除的参数类型
      */
     private static final List<Class<?>> EXCLUDED_CLASSES = List.of(HttpServletRequest.class, HttpServletResponse.class, HttpSession.class);
-    private static final ObjectMapper MAPPER = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL).build();
+    private static final ObjectMapper MAPPER = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL)
+            .build();
     private static final String SPLIT = ":";
 
     public static String valueOf(Object obj) {
         try {
-            return MAPPER.writeValueAsString(obj);
+            return MAPPER.writeValueAsString(obj).replace(":", "=");
         } catch (JsonProcessingException e) {
             return null;
         }

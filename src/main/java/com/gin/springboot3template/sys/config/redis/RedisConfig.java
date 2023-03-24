@@ -1,6 +1,14 @@
 package com.gin.springboot3template.sys.config.redis;
 
-import com.gin.springboot3template.sys.utils.JacksonUtils;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,6 +23,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.Duration;
 
@@ -30,9 +39,30 @@ import java.time.Duration;
 @EnableCaching
 @Slf4j
 public class RedisConfig {
-    public static final GenericJackson2JsonRedisSerializer GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER =
-            new GenericJackson2JsonRedisSerializer(JacksonUtils.MAPPER);
+    public static final GenericJackson2JsonRedisSerializer GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER = getSerializer();
     public static final String REDIS_CACHE_MANAGER = "redisCacheManager";
+
+    private static GenericJackson2JsonRedisSerializer getSerializer() {
+        final ObjectMapper mapper = new Jackson2ObjectMapperBuilder()
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .visibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
+                .featuresToEnable(
+                        //反序列化时 空串识别为 null
+                        DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT
+                ).featuresToDisable(
+                        // 反序列化时,遇到未知属性会不会报错
+                        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                        SerializationFeature.FAIL_ON_EMPTY_BEANS,
+                        MapperFeature.USE_ANNOTATIONS
+                ).modules(
+                        //支持 ZonedDateTime
+                        new JavaTimeModule()
+                )
+
+                .build();
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        return new GenericJackson2JsonRedisSerializer(mapper);
+    }
 
     @Bean
     @Primary
@@ -50,18 +80,14 @@ public class RedisConfig {
                 .computePrefixWith(cacheName -> "Cache:" + cacheName + ":")
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER));
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(config)
-                .transactionAware()
-                .build();
+
+        return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(config).transactionAware().build();
     }
 
     @Bean
     public RedisTemplate<String, String> stringTemplate(RedisConnectionFactory redisConnectionFactory) {
-        return new RedisTemplateBuilder<String, String>(redisConnectionFactory)
-                .setValueSerializer(new StringRedisSerializer())
-                .setHashValueSerializer(new StringRedisSerializer())
-                .build();
+        return new RedisTemplateBuilder<String, String>(redisConnectionFactory).setValueSerializer(new StringRedisSerializer()).setHashValueSerializer(
+                new StringRedisSerializer()).build();
     }
 
     /**
