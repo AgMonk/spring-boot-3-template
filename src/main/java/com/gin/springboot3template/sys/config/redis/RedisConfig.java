@@ -29,6 +29,8 @@ import java.time.Duration;
 @EnableCaching
 @Slf4j
 public class RedisConfig {
+    public static final String REDIS_CACHE_MANAGER = "redisCacheManager";
+
     @Bean
     @Primary
     public RedisTemplate<String, Object> jsonTemplate(RedisConnectionFactory redisConnectionFactory) {
@@ -38,7 +40,7 @@ public class RedisConfig {
                 .build();
     }
 
-    @Bean
+    @Bean(name = RedisConfig.REDIS_CACHE_MANAGER)
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         final RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(30))
