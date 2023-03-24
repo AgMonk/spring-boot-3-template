@@ -15,7 +15,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  * @since : 2022/12/23 15:44
  */
 public class JacksonUtils {
-    private final static ObjectMapper MAPPER = getMapper();
+    public final static ObjectMapper MAPPER = getMapper();
 
     public static ObjectMapper getMapper() {
         return new Jackson2ObjectMapperBuilder()

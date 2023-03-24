@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.config.redis;
 
+import com.gin.springboot3template.sys.utils.JacksonUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
@@ -29,14 +30,16 @@ import java.time.Duration;
 @EnableCaching
 @Slf4j
 public class RedisConfig {
+    public static final GenericJackson2JsonRedisSerializer GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER =
+            new GenericJackson2JsonRedisSerializer(JacksonUtils.MAPPER);
     public static final String REDIS_CACHE_MANAGER = "redisCacheManager";
 
     @Bean
     @Primary
     public RedisTemplate<String, Object> jsonTemplate(RedisConnectionFactory redisConnectionFactory) {
         return new RedisTemplateBuilder<String, Object>(redisConnectionFactory)
-                .setValueSerializer(new GenericJackson2JsonRedisSerializer())
-                .setHashValueSerializer(new GenericJackson2JsonRedisSerializer())
+                .setValueSerializer(GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER)
+                .setHashValueSerializer(GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER)
                 .build();
     }
 
@@ -46,7 +49,7 @@ public class RedisConfig {
                 .entryTtl(Duration.ofMinutes(30))
                 .computePrefixWith(cacheName -> "Cache:" + cacheName + ":")
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(GENERIC_JACKSON_2_JSON_REDIS_SERIALIZER));
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(config)
                 .transactionAware()
