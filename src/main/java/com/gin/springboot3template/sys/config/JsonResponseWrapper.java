@@ -19,8 +19,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author bx002
  */
 @ControllerAdvice(basePackages = {
-        "com.gin.*",
-        "com.baixun.*",
+        "com.gin",
+        "com.baixun",
 })
 @RequiredArgsConstructor
 @Slf4j
