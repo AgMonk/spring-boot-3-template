@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.cache.Cache;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.DigestUtils;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -68,18 +69,27 @@ public class CustomRedisCache implements Cache {
     @Override
     public final void putObject(Object key, Object value) {
         if (timeoutSeconds > 0) {
-            log.debug("[Redis][{}] 保存: {} 过期时间 {} 秒", id, key, timeoutSeconds);
+            log.debug("[Redis][{}] 保存: {} 过期时间 {} 秒", id, getLogKey(key), timeoutSeconds);
             getRedisTemplate().opsForValue().set(getKey(key), value, timeoutSeconds, TimeUnit.SECONDS);
         } else {
-            log.debug("[Redis][{}] 保存: {}", id, key);
+            log.debug("[Redis][{}] 保存: {}", id, getLogKey(key));
             getRedisTemplate().opsForValue().set(getKey(key), value);
         }
     }
 
     @Override
     public final Object removeObject(Object key) {
-        log.debug("[Redis][{}] 移除: {}", id, key);
+        log.debug("[Redis][{}] 移除: {}", id, getLogKey(key));
         return getRedisTemplate().opsForValue().getAndDelete(getKey(key));
+    }
+
+    /**
+     * 在打印日志时使用的key
+     * @param key key
+     * @return 日志key
+     */
+    public String getLogKey(Object key) {
+        return getRedisKey(key);
     }
 
     /**
@@ -88,7 +98,8 @@ public class CustomRedisCache implements Cache {
      * @return RedisKey
      */
     public String getRedisKey(Object key) {
-        return String.valueOf(key);
+        final String s = String.valueOf(key).replace("\n", "");
+        return s.length() < 50 ? s : DigestUtils.md5DigestAsHex(s.getBytes());
     }
 
     public RedisTemplate<String, Object> getRedisTemplate() {

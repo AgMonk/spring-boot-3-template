@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since : 2022/4/18 10:40
  **/
 @Slf4j
-public class RedisMybatisCache extends CustomRedisHashCache {
+public class RedisMybatisCache extends CustomRedisCache {
     public RedisMybatisCache(String id) {
         super(StrUtils.getSimplePackageName(id), "MyBatis:" + StrUtils.getSimplePackageName(id), 300);
         log.info("初始化缓存: " + id);
