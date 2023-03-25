@@ -8,8 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
 /**
  * 初始化标签管理员
@@ -26,13 +25,13 @@ public class InitDatabaseManager extends InitModuleManager {
 
     @Nullable
     @Override
-    public Collection<String> groupName() {
-        return Collections.singleton(DatabaseController.GROUP_NAME);
+    public Set<String> groupName() {
+        return Set.of(DatabaseController.GROUP_NAME);
     }
 
     @Nullable
     @Override
-    public Collection<String> path() {
+    public Set<String> path() {
         return null;
     }
 
