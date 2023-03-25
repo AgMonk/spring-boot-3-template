@@ -80,6 +80,8 @@ public class Constant {
         public static final String DATA_NOT_FOUND = "没有找到数据";
         public static final String FORBIDDEN_CONFIG_ADMIN = "不能分配/取消分配 admin 角色";
         public static final String NOT_CONFIG_ADMIN = "不能对持有 admin 角色 的用户进行操作";
+        public static final String SUCCESS = "操作成功";
+        public static final String UPDATE_SUCCESS = "修改成功";
     }
 
     /**
