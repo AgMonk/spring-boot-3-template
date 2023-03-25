@@ -41,6 +41,7 @@ public class JsonResponseWrapper implements ResponseBodyAdvice<Object> {
         if (body instanceof Res) {
             return body;
         }
+
         // 如果方法或类上存在注解,且disable字段为true 直接返回
         final RestWrapper a1 = returnType.getMethodAnnotation(RestWrapper.class);
         final RestWrapper a2 = returnType.getDeclaringClass().getAnnotation(RestWrapper.class);
@@ -48,6 +49,7 @@ public class JsonResponseWrapper implements ResponseBodyAdvice<Object> {
         if (restWrapper != null && restWrapper.disable()) {
             return body;
         }
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         // 包装结果
         final Res<Object> res = Res.of(body);
