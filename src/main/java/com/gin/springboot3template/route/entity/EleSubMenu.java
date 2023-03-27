@@ -12,7 +12,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 /**
- * 对应Element的SubMenu组件
+ * 路由导航项子菜单, 对应Element的SubMenu组件
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/3/25 16:01

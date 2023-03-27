@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 对应Element的MenuItem组件
+ * 路由导航项, 对应Element的MenuItem组件
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/3/25 16:03
@@ -21,7 +21,7 @@ public class EleMenuItem extends EleMenuComponent {
     private final MenuComponentType type = MenuComponentType.menu_item;
     @Schema(description = "组件的index属性")
     String index;
-    @Schema(description = "组件的index属性")
+    @Schema(description = "组件的route属性")
     String route;
     @Schema(description = "是否禁用")
     boolean disabled;
