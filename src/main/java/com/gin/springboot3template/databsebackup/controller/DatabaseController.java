@@ -51,7 +51,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @Tag(name = DatabaseController.GROUP_NAME)
 @Slf4j
 @CacheConfig(cacheManager = "redisCacheManager")
-@MenuItem(title = "数据库管理")
+@MenuItem(title = "数据库管理", description = "数据库镜像的查询、备份、还原、下载、上传、删除")
 public class DatabaseController implements OperationLogController {
     /**
      * 接口路径前缀

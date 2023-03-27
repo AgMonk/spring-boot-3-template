@@ -1,5 +1,6 @@
 package com.gin.springboot3template.route.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.route.enums.MenuComponentType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class EleMenuComponent {
     @Schema(description = "排序序号")
+    @JsonIgnore
     int order = 0;
     @Schema(description = "组件的title属性")
     String title;

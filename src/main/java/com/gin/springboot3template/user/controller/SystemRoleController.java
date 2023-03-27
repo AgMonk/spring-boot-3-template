@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Tag(name = SystemRoleController.GROUP_NAME)
 @Slf4j
-@MenuItem(title = "角色管理", order = 9, path = @MenuPath(title = "用户和权限", order = 1))
+@MenuItem(title = "角色管理", description = "角色的增删改查, 管理角色持有的权限", order = 9, path = @MenuPath(title = "用户和权限", order = 1))
 public class SystemRoleController {
     /**
      * 接口路径前缀

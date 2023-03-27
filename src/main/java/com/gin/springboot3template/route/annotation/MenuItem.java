@@ -39,6 +39,11 @@ public @interface MenuItem {
     String title();
 
     /**
+     * 描述, 该路由内的功能
+     */
+    String description() default "";
+
+    /**
      * 保存路径，决定SubMenu的层级和分组，只有最后一个成员可以是分组
      */
     MenuPath[] path() default {};

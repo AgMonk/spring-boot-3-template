@@ -28,6 +28,8 @@ public class EleMenuItem extends EleMenuComponent {
     String route;
     @Schema(description = "是否禁用")
     boolean disabled = false;
+    @Schema(description = "描述")
+    String description;
 
     /**
      * 使用注解构造
@@ -36,6 +38,7 @@ public class EleMenuItem extends EleMenuComponent {
         super(menuItem.order(), menuItem.title());
         this.index = UUID.randomUUID().toString();
         this.route = menuItem.route();
+        this.description = menuItem.description();
     }
 
 }

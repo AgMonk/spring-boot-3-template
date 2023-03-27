@@ -59,7 +59,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @Tag(name = "用户接口")
 @Slf4j
-@MenuItem(title = "用户中心")
+@MenuItem(title = "用户中心", description = "当前用户对自己的信息查询和操作")
 public class SystemUserController implements OperationLogController {
     /**
      * 接口路径前缀

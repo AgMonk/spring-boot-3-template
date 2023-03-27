@@ -50,7 +50,7 @@ import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_AD
 @RequiredArgsConstructor
 @Tag(name = SystemUserAdminController.GROUP_NAME)
 @Slf4j
-@MenuItem(title = "用户管理", order = 10, path = @MenuPath(title = "用户和权限", order = 1))
+@MenuItem(title = "用户管理", description = "用户的管理, 管理用户持有的角色", order = 10, path = @MenuPath(title = "用户和权限", order = 1))
 public class SystemUserAdminController {
     /**
      * 接口路径前缀

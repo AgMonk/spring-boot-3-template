@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Tag(name = SystemPermissionController.GROUP_NAME)
 @Slf4j
-@MenuItem(title = "权限列表", order = 8, path = @MenuPath(title = "用户和权限", order = 1))
+@MenuItem(title = "权限列表", description = "查询现有的粗粒度权限", order = 8, path = @MenuPath(title = "用户和权限", order = 1))
 public class SystemPermissionController {
     /**
      * 接口路径前缀
