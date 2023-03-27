@@ -1,9 +1,9 @@
 package com.gin.springboot3template.user.init;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.utils.SpringContextUtils;
+import com.gin.springboot3template.sys.utils.reflect.ReflectUtils;
 import com.gin.springboot3template.user.controller.SystemPermissionController;
 import com.gin.springboot3template.user.controller.SystemRoleController;
 import com.gin.springboot3template.user.controller.SystemRolePermissionController;
@@ -25,11 +25,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -55,31 +52,6 @@ public class InitAuthority implements ApplicationRunner {
      */
     private List<SystemPermission> fullPermission;
     private SystemRole roleManager;
-
-    /**
-     * 返回持有4种注解的元素
-     * @param annotatedElement 元素
-     * @return 接口方法
-     */
-    private static List<String> getApiPath(AnnotatedElement annotatedElement) {
-        MyRestController a0 = annotatedElement.getAnnotation(MyRestController.class);
-        if (a0 != null) {
-            return Arrays.asList(a0.value());
-        }
-        RequestMapping a1 = annotatedElement.getAnnotation(RequestMapping.class);
-        if (a1 != null) {
-            return Arrays.asList(a1.value());
-        }
-        PostMapping a2 = annotatedElement.getAnnotation(PostMapping.class);
-        if (a2 != null) {
-            return Arrays.asList(a2.value());
-        }
-        GetMapping a3 = annotatedElement.getAnnotation(GetMapping.class);
-        if (a3 != null) {
-            return Arrays.asList(a3.value());
-        }
-        return new ArrayList<>();
-    }
 
     private static Class<?> getClass(Object object) throws ClassNotFoundException {
         final String name = object.getClass().getName();
@@ -130,11 +102,11 @@ public class InitAuthority implements ApplicationRunner {
                 return Stream.ofNullable(null);
             }
             //接口路径前缀
-            final List<String> prePaths = getApiPath(controllerClass);
+            final List<String> prePaths = ReflectUtils.getApiPath(controllerClass);
             final Tag tag = controllerClass.getAnnotation(Tag.class);
 
             return Arrays.stream(controllerClass.getDeclaredMethods()).flatMap(method -> {
-                final List<String> apiPaths = getApiPath(method);
+                final List<String> apiPaths = ReflectUtils.getApiPath(method);
                 final ArrayList<SystemPermission> list = new ArrayList<>();
                 final Operation operation = method.getAnnotation(Operation.class);
                 final PreAuthorize preAuthorize = method.getAnnotation(PreAuthorize.class);

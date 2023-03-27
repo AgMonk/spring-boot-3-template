@@ -7,6 +7,8 @@ import com.gin.springboot3template.operationlog.dto.param.OperationLogPageParam;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.vo.SubClassOption;
 import com.gin.springboot3template.operationlog.vo.SystemOperationLogVo;
+import com.gin.springboot3template.route.annotation.MenuEntry;
+import com.gin.springboot3template.route.annotation.MenuItem;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.enums.ServiceStatus;
@@ -49,6 +51,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @Tag(name = DatabaseController.GROUP_NAME)
 @Slf4j
 @CacheConfig(cacheManager = "redisCacheManager")
+@MenuItem(title = "数据库管理")
 public class DatabaseController implements OperationLogController {
     /**
      * 接口路径前缀
@@ -74,6 +77,7 @@ public class DatabaseController implements OperationLogController {
     @Operation(summary = "查询镜像列表")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
     @Cacheable(value = CACHE_NAME, key = "#root.methodName")
+    @MenuEntry
     public Res<List<FileInfo>> getList(@SuppressWarnings("unused") HttpServletRequest request) throws IOException {
         return Res.of(service.list());
     }

@@ -1,5 +1,6 @@
 package com.gin.springboot3template.route.base;
 
+import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.route.enums.MenuComponentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -20,6 +21,15 @@ public abstract class EleMenuComponent {
     int order = 0;
     @Schema(description = "组件的title属性")
     String title;
+
+    public EleMenuComponent(int order, String title) {
+        this.order = order;
+        this.title = title;
+    }
+
+    public EleMenuComponent(MenuPath menuPath) {
+        this(menuPath.order(), menuPath.title());
+    }
 
     /**
      * 该组件是否禁用

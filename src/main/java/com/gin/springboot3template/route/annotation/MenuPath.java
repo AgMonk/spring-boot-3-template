@@ -8,7 +8,7 @@ package com.gin.springboot3template.route.annotation;
  */
 public @interface MenuPath {
     /**
-     * 是否为 menu_item_group ,仅对数组最后一个成员有效
+     * 是否为 menu_item_group ,group 只能放在 path 的最后一个
      */
     boolean isGroup() default false;
 

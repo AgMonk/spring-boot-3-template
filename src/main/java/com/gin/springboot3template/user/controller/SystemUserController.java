@@ -4,6 +4,7 @@ import com.gin.springboot3template.operationlog.annotation.OpLog;
 import com.gin.springboot3template.operationlog.controller.OperationLogController;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.operationlog.subclass.PasswordSubClass;
+import com.gin.springboot3template.route.annotation.MenuItem;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.config.SystemProperties;
@@ -58,6 +59,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequiredArgsConstructor
 @Tag(name = "用户接口")
 @Slf4j
+@MenuItem(title = "用户中心")
 public class SystemUserController implements OperationLogController {
     /**
      * 接口路径前缀

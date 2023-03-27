@@ -1,5 +1,6 @@
 package com.gin.springboot3template.route.entity;
 
+import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.route.base.EleMenuComponent;
 import com.gin.springboot3template.route.base.HasChildren;
 import com.gin.springboot3template.route.enums.MenuComponentType;
@@ -21,10 +22,14 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EleMenuItemGroup extends EleMenuComponent implements HasChildren<EleMenuItem> {
+public class EleMenuItemGroup extends EleMenuComponent implements HasChildren<EleMenuComponent> {
     private final MenuComponentType type = MenuComponentType.menu_item_group;
     @Schema(description = "子SubMenu组件")
-    List<EleMenuItem> children;
+    List<EleMenuComponent> children;
+
+    public EleMenuItemGroup(MenuPath menuPath) {
+        super(menuPath);
+    }
 
     /**
      * 该组件是否可用

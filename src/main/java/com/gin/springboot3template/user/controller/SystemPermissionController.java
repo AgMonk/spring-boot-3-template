@@ -1,5 +1,7 @@
 package com.gin.springboot3template.user.controller;
 
+import com.gin.springboot3template.route.annotation.MenuItem;
+import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.vo.response.Res;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Tag(name = SystemPermissionController.GROUP_NAME)
 @Slf4j
+@MenuItem(title = "权限列表", order = 8, path = @MenuPath(title = "用户和权限", order = 1))
 public class SystemPermissionController {
     /**
      * 接口路径前缀

@@ -1,5 +1,6 @@
 package com.gin.springboot3template.route.entity;
 
+import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.route.base.EleMenuComponent;
 import com.gin.springboot3template.route.base.HasChildren;
 import com.gin.springboot3template.route.enums.MenuComponentType;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 路由导航项子菜单, 对应Element的SubMenu组件
@@ -27,6 +29,11 @@ public class EleSubMenu extends EleMenuComponent implements HasChildren<EleMenuC
     String index;
     @Schema(description = "子组件,可能为SubMenu, SubMenu, MenuItemGroup")
     List<EleMenuComponent> children;
+
+    public EleSubMenu(MenuPath menuPath) {
+        super(menuPath);
+        this.index = UUID.randomUUID().toString();
+    }
 
     /**
      * 该组件是否禁用
@@ -48,5 +55,6 @@ public class EleSubMenu extends EleMenuComponent implements HasChildren<EleMenuC
     @Override
     public void sortChildren() {
         this.children.sort((o1, o2) -> o2.getOrder() - o1.getOrder());
+        this.children.stream().filter(i -> i instanceof HasChildren<?>).forEach(i -> ((HasChildren<?>) i).sortChildren());
     }
 }

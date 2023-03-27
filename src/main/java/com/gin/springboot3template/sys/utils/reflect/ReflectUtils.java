@@ -1,7 +1,12 @@
 package com.gin.springboot3template.sys.utils.reflect;
 
+import com.gin.springboot3template.sys.annotation.MyRestController;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +55,47 @@ public class ReflectUtils {
         }
         return list;
     }
+
+    /**
+     * 返回持有4种注解的元素
+     * @param annotatedElement 元素
+     * @return 接口方法
+     */
+    public static List<String> getApiPath(AnnotatedElement annotatedElement) {
+        MyRestController a0 = annotatedElement.getAnnotation(MyRestController.class);
+        if (a0 != null) {
+            return Arrays.asList(a0.value());
+        }
+        RequestMapping a1 = annotatedElement.getAnnotation(RequestMapping.class);
+        if (a1 != null) {
+            return Arrays.asList(a1.value());
+        }
+        PostMapping a2 = annotatedElement.getAnnotation(PostMapping.class);
+        if (a2 != null) {
+            return Arrays.asList(a2.value());
+        }
+        GetMapping a3 = annotatedElement.getAnnotation(GetMapping.class);
+        if (a3 != null) {
+            return Arrays.asList(a3.value());
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 从Controller实例中获取本类对象
+     * @param controllerInstance controller 实例
+     * @return 类对象
+     */
+    public static Class<?> getControllerClass(Object controllerInstance) {
+        final String name = controllerInstance.getClass().getName();
+        final String className = name.contains("$") ? name.substring(0, name.indexOf("$")) : name;
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
 
     public static Object getFieldValue(Field field, Object obj) {
         try {

@@ -1,5 +1,8 @@
 package com.gin.springboot3template.user.controller;
 
+import com.gin.springboot3template.route.annotation.MenuEntry;
+import com.gin.springboot3template.route.annotation.MenuItem;
+import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.sys.annotation.MyRestController;
 import com.gin.springboot3template.sys.bo.Constant;
 import com.gin.springboot3template.sys.exception.BusinessException;
@@ -47,6 +50,7 @@ import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_AD
 @RequiredArgsConstructor
 @Tag(name = SystemUserAdminController.GROUP_NAME)
 @Slf4j
+@MenuItem(title = "用户管理", order = 10, path = @MenuPath(title = "用户和权限", order = 1))
 public class SystemUserAdminController {
     /**
      * 接口路径前缀
@@ -85,6 +89,7 @@ public class SystemUserAdminController {
     @GetMapping(Constant.Api.PAGE)
     @Operation(summary = "分页查询用户账号信息")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    @MenuEntry
     public ResPage<SystemUserVo> page(
             @ParameterObject SystemUserPageParam pageParam,
             @SuppressWarnings("unused") HttpServletRequest request

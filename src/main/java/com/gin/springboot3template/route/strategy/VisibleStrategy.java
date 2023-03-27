@@ -15,7 +15,7 @@ public interface VisibleStrategy {
      * 判断{@link  com.gin.springboot3template.route.entity.EleMenuItem} 的disabled字段
      * @param menuItem   Controller上的注解
      * @param method     请求方法
-     * @param requestUrl 请求路径
+     * @param requestUrl 请求地址
      * @return 是否disabled
      */
     boolean isDisable(MenuItem menuItem, Method method, String requestUrl);
