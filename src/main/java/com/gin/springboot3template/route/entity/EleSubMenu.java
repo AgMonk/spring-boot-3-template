@@ -46,7 +46,7 @@ public class EleSubMenu extends EleMenuComponent implements HasChildren<EleMenuC
             return false;
         }
         // children里有任意不禁用的组件 ，则不禁用
-        return children.stream().anyMatch(i -> !i.isDisabled());
+        return children.stream().allMatch(EleMenuComponent::isDisabled);
     }
 
     /**
@@ -54,7 +54,9 @@ public class EleSubMenu extends EleMenuComponent implements HasChildren<EleMenuC
      */
     @Override
     public void sortChildren() {
+        // 降序排序
         this.children.sort((o1, o2) -> o2.getOrder() - o1.getOrder());
+        // 对children中有children的对象也进行排序
         this.children.stream().filter(i -> i instanceof HasChildren<?>).forEach(i -> ((HasChildren<?>) i).sortChildren());
     }
 }

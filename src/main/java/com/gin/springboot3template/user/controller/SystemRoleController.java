@@ -1,5 +1,6 @@
 package com.gin.springboot3template.user.controller;
 
+import com.gin.springboot3template.route.annotation.MenuEntry;
 import com.gin.springboot3template.route.annotation.MenuItem;
 import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.sys.annotation.MyRestController;
@@ -78,6 +79,7 @@ public class SystemRoleController {
     @GetMapping(Constant.Api.PAGE)
     @Operation(summary = "分页查询角色")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    @MenuEntry
     public ResPage<SystemRoleVo> rolePage(
             @ParameterObject SystemRolePageParam pageParam,
             @SuppressWarnings("unused") HttpServletRequest request

@@ -1,5 +1,6 @@
 package com.gin.springboot3template.user.controller;
 
+import com.gin.springboot3template.route.annotation.MenuEntry;
 import com.gin.springboot3template.route.annotation.MenuItem;
 import com.gin.springboot3template.route.annotation.MenuPath;
 import com.gin.springboot3template.sys.annotation.MyRestController;
@@ -59,6 +60,7 @@ public class SystemPermissionController {
     @GetMapping(Constant.Api.PAGE)
     @Operation(summary = "分页查询权限", description = "用于角色权限的'添加'接口")
     @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    @MenuEntry
     public Res<ResPage<SystemPermission>> page(
             @ParameterObject SystemPermissionPageParam param,
             @SuppressWarnings("unused") HttpServletRequest request

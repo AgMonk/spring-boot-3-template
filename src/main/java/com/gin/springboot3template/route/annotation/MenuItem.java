@@ -1,7 +1,7 @@
 package com.gin.springboot3template.route.annotation;
 
 import com.gin.springboot3template.route.enums.Logic;
-import com.gin.springboot3template.route.strategy.AlwaysFalseStrategy;
+import com.gin.springboot3template.route.strategy.SpringSecurityStrategy;
 import com.gin.springboot3template.route.strategy.VisibleStrategy;
 
 import java.lang.annotation.ElementType;
@@ -56,6 +56,6 @@ public @interface MenuItem {
     /**
      * 展示策略，决定 disabled字段值的策略，默认为全显示
      */
-    Class<? extends VisibleStrategy> strategy() default AlwaysFalseStrategy.class;
+    Class<? extends VisibleStrategy> strategy() default SpringSecurityStrategy.class;
 
 }

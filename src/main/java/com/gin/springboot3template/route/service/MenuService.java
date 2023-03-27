@@ -43,7 +43,7 @@ public class MenuService {
         final Collection<Object> controllers = SpringContextUtils.getContext().getBeansWithAnnotation(MenuItem.class).values();
         final List<? extends Class<?>> controllerClasses = controllers.stream().map(ReflectUtils::getControllerClass).filter(Objects::nonNull).filter(
                 clazz -> clazz.getAnnotation(MenuItem.class).menuName().equals(menuName)).toList();
-        // 根列表
+        // 根列节点
         final EleSubMenu root = new EleSubMenu();
         // 返回的路由导航列表
 
@@ -61,8 +61,8 @@ public class MenuService {
                 eleMenuItem.setRoute(ctlPath);
             }
 
+            //如果 使用了 MenuEntry 注解，调用策略计算 disabled 字段
             if (!CollectionUtils.isEmpty(methods)) {
-                // 使用了 MenuEntry 注解，调用策略计算 disabled 字段
 
                 // 计算结果
                 final List<Boolean> results = methods.stream().map(method -> {
@@ -87,15 +87,15 @@ public class MenuService {
                 }
             }
 
-            final MenuPath[] paths = menuItem.path();
             // 将路由导航项放到指定路径 和分组中
+            final MenuPath[] paths = menuItem.path();
             if (paths != null && paths.length > 0) {
                 // 当前节点
                 HasChildren<EleMenuComponent> node = root;
                 for (int i = 0; i < paths.length; i++) {
                     final MenuPath menuPath = paths[i];
                     if (menuPath.isGroup()) {
-                        // 如果是分组，穿件分组，跳出循环
+                        // 如果是分组，创建分组，跳出循环
                         node = (EleMenuItemGroup) node.findOrDefault(
                                 g -> g instanceof EleMenuItemGroup && g.getTitle().equals(menuPath.title()),
                                 new EleMenuItemGroup(menuPath)
