@@ -18,6 +18,14 @@ public class DocketConfig {
     }
 
     @Bean
+    public GroupedOpenApi routeApi() {
+        return GroupedOpenApi.builder()
+                .group("路由导航菜单")
+                .pathsToMatch("/route/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi testApi() {
         return GroupedOpenApi.builder()
                 .group("测试")

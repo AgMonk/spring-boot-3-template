@@ -33,6 +33,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MenuService {
 
+    private static Collection<Object> getControllers() {
+        return SpringContextUtils.getContext().getBeansWithAnnotation(MenuItem.class).values();
+    }
+
     /**
      * 根据菜单名查询路由导航项
      * @param menuName 菜单名
@@ -40,9 +44,11 @@ public class MenuService {
      */
     public List<EleMenuComponent> listItemByMenuName(String menuName) {
         // 含有 MenuItem 注解的 controller 的class
-        final Collection<Object> controllers = SpringContextUtils.getContext().getBeansWithAnnotation(MenuItem.class).values();
-        final List<? extends Class<?>> controllerClasses = controllers.stream().map(ReflectUtils::getControllerClass).filter(Objects::nonNull).filter(
-                clazz -> clazz.getAnnotation(MenuItem.class).menuName().equals(menuName)).toList();
+        final List<? extends Class<?>> controllerClasses = getControllers().stream()
+                .map(ReflectUtils::getControllerClass)
+                .filter(Objects::nonNull)
+                .filter(clazz -> clazz.getAnnotation(MenuItem.class).menuName().equals(menuName))
+                .toList();
         // 根列节点
         final EleSubMenu root = new EleSubMenu();
         // 返回的路由导航列表
@@ -119,6 +125,20 @@ public class MenuService {
             root.sortChildren();
         }
         return root.getChildren();
+    }
+
+    /**
+     * 返回所有菜单名称
+     * @return 菜单名称
+     */
+    public List<String> listMenuNames() {
+        return getControllers().stream()
+                .map(ReflectUtils::getControllerClass)
+                .filter(Objects::nonNull)
+                .map(clazz -> clazz.getAnnotation(MenuItem.class))
+                .map(MenuItem::menuName)
+                .distinct()
+                .toList();
     }
 
 }   
