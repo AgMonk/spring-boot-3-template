@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageOption implements Serializable {
+public class PageOption implements Serializable, Cloneable {
     @Schema(description = "出现次数")
     Integer count;
     @Schema(description = "标签")
@@ -30,5 +30,15 @@ public class PageOption implements Serializable {
 
     public static <T> List<PageOption> of(List<T> source, Function<T, PageOption> func) {
         return source.stream().map(func).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public PageOption clone() {
+        try {
+            return (PageOption) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
