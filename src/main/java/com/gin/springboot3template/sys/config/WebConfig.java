@@ -24,6 +24,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+    private final SystemProperties systemProperties;
+
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverterFactory(new BaseEnumConverterFactory());
@@ -32,23 +34,29 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
-        return new Jackson2ObjectMapperBuilder()
+        final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .featuresToEnable(
                         //美化输出
-                        SerializationFeature.INDENT_OUTPUT,
+                        SerializationFeature.INDENT_OUTPUT
                         //反序列化时 空串识别为 null
-                        DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT,
-                        // 反序列化时,遇到未知属性会报错
-                        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+                        , DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT
                 ).featuresToDisable(
                         // 反序列化时,遇到未知属性会不会报错
 //                        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
                 ).modules(
                         //支持 ZonedDateTime
                         new JavaTimeModule()
-                )
+                );
 
-                .build();
+        // 是否在遇到未知属性时报错
+        if (systemProperties.isFailOnUnknownProperties()) {
+            builder.featuresToEnable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        }
+        {
+            builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        }
+
+        return builder.build();
     }
 }   

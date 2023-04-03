@@ -26,4 +26,8 @@ public class SystemProperties implements Serializable {
      * 注册功能开放 关闭后只能由管理员创建新用户
      */
     boolean newUser = true;
+    /**
+     * 解析json时是否在遇到未知字段时报错
+     */
+    boolean failOnUnknownProperties = true;
 }
