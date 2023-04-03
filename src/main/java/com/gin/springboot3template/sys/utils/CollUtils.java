@@ -61,6 +61,15 @@ public class CollUtils {
     }
 
     /**
+     * 将 KeyList中的对象按照match方法与ValueList中的对象进行匹配，将匹配上的对象按照KeyList的顺序输出
+     */
+    public static <K, V> List<V> pick(List<K> keyList, List<V> valueList, Matcher<K, V> matcher) {
+        final ArrayList<V> res = new ArrayList<>();
+        keyList.forEach(k -> valueList.stream().filter(v -> matcher.match(k, v)).findFirst().ifPresent(res::add));
+        return res;
+    }
+
+    /**
      * 差集（扣除）
      * @param colA 集合A
      * @param colB 集合B
@@ -85,4 +94,8 @@ public class CollUtils {
         return new ArrayList<>(set);
     }
 
+
+    public interface Matcher<K, V> {
+        boolean match(K key, V value);
+    }
 }   
