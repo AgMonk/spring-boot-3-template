@@ -34,26 +34,21 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
-        final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .featuresToEnable(
-                        //美化输出
-                        SerializationFeature.INDENT_OUTPUT
-                        //反序列化时 空串识别为 null
-                        , DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT
-                ).featuresToDisable(
-                        // 反序列化时,遇到未知属性会不会报错
+        final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL).featuresToEnable(
+                //美化输出
+                SerializationFeature.INDENT_OUTPUT
+                //反序列化时 空串识别为 null
+                , DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT).featuresToDisable(
+                // 反序列化时,遇到未知属性会不会报错
 //                        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-                ).modules(
-                        //支持 ZonedDateTime
-                        new JavaTimeModule()
-                );
+        ).modules(
+                //支持 ZonedDateTime
+                new JavaTimeModule());
 
         // 是否在遇到未知属性时报错
         if (systemProperties.isFailOnUnknownProperties()) {
             builder.featuresToEnable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        }
-        {
+        } else {
             builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         }
 
