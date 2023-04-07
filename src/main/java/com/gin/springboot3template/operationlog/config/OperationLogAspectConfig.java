@@ -142,6 +142,8 @@ public class OperationLogAspectConfig {
         final OperationType type = opLog.type();
 
         final StandardEvaluationContext evaluationContext = SpElUtils.createContext(pjp);
+        evaluationContext.setVariable("userDetail", MySecurityUtils.currentUserDetails());
+
         final List<Object> preExp = SpElUtils.getElValues(evaluationContext, opLog.preExp());
 
         final Object result = pjp.proceed();
