@@ -3,7 +3,7 @@ package com.gin.springboot3template.sys.config.redis;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gin.springboot3template.operationlog.bo.ParamArg;
+import com.gin.springboot3template.sys.utils.ParamArg;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -66,7 +66,7 @@ public class CustomKeyGenerator implements KeyGenerator {
             return simpleKey;
         }
         // 有参数
-        return simpleKey + ":" + paramArgs.stream()
+        return simpleKey + SPLIT + paramArgs.stream()
                 .map(paramArg -> paramArg.parameter().getName() + "=" + valueOf(paramArg.arg()))
                 .collect(Collectors.joining(";"));
     }

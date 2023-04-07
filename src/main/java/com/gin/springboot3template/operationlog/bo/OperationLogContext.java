@@ -1,6 +1,7 @@
 package com.gin.springboot3template.operationlog.bo;
 
 import com.gin.springboot3template.operationlog.enums.OperationType;
+import com.gin.springboot3template.sys.utils.ParamArg;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;

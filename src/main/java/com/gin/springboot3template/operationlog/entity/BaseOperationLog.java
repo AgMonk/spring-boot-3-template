@@ -3,7 +3,7 @@ package com.gin.springboot3template.operationlog.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.gin.springboot3template.operationlog.enums.OperationType;
 import com.gin.springboot3template.sys.base.BasePo;
-import com.gin.springboot3template.sys.handler.ClassTypeHandler;
+import com.gin.springboot3template.sys.handler.TypeHandlerClass;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class BaseOperationLog extends BasePo {
     @Comment("主实体类型")
     @Schema(description = "主实体类型")
     @Column(nullable = false, length = 150)
-    @TableField(typeHandler = ClassTypeHandler.class)
+    @TableField(typeHandler = TypeHandlerClass.class)
     Class<?> mainClass;
     @Comment("主实体ID")
     @Schema(description = "主实体ID")
@@ -46,7 +46,7 @@ public class BaseOperationLog extends BasePo {
     @Comment("副实体类型")
     @Schema(description = "副实体类型")
     @Column(length = 150)
-    @TableField(typeHandler = ClassTypeHandler.class)
+    @TableField(typeHandler = TypeHandlerClass.class)
     Class<?> subClass;
     @Comment("副实体ID")
     @Schema(description = "副实体ID")
@@ -55,7 +55,7 @@ public class BaseOperationLog extends BasePo {
     @Comment("使用的策略类")
     @Schema(description = "使用的策略类")
     @Column(length = 100)
-    @TableField(typeHandler = ClassTypeHandler.class)
+    @TableField(typeHandler = TypeHandlerClass.class)
     Class<?> strategyClass;
     @Comment("请求参数")
     @Schema(description = "请求参数")

@@ -1,4 +1,4 @@
-package com.gin.springboot3template.operationlog.bo;
+package com.gin.springboot3template.sys.utils;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 被调用方法的参数和参数值
+ * 方法的参数和参数值
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2023/2/20 12:31

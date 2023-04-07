@@ -16,7 +16,7 @@ import java.sql.SQLException;
  */
 @MappedJdbcTypes(JdbcType.VARCHAR)
 @MappedTypes(Class.class)
-public class ClassTypeHandler extends BaseTypeHandler<Class<?>> {
+public class TypeHandlerClass extends BaseTypeHandler<Class<?>> {
 
 
     @Override
