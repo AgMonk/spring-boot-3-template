@@ -1,5 +1,6 @@
 package com.gin.springboot3template.sys.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.gin.springboot3template.sys.vo.response.Res;
 import jakarta.validation.ConstraintViolationException;
@@ -50,7 +51,10 @@ public class GlobalExceptionHandler {
             data.add(ee.getLocalizedMessage());
             return new ResponseEntity<>(Res.of(data, "请求参数非法"), HttpStatus.BAD_REQUEST);
         }
-        return exceptionHandler((Exception) e);
+        if (e.getCause() instanceof InvalidFormatException ex) {
+            return new ResponseEntity<>(Res.of(ex.getLocalizedMessage(), "非法的参数格式"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(Res.of(e.getLocalizedMessage(), "消息读取失败"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({MissingServletRequestParameterException.class})
