@@ -51,6 +51,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 /**
  * 用户接口
+ *
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/13 10:28
@@ -82,7 +83,8 @@ public class SystemUserController implements OperationLogController {
             @SuppressWarnings("unused") HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam @Parameter(description = "旧密码") String oldPass,
-            @RequestParam @Parameter(description = "新密码,长度范围为 [" + PASSWORD_MIN_LENGTH + "," + PASSWORD_MAX_LENGTH + "]") @Password String newPass
+            @RequestParam @Parameter(description = "新密码,长度范围为 [" + PASSWORD_MIN_LENGTH + "," + PASSWORD_MAX_LENGTH + "]")
+            @Password String newPass
     ) throws ServletException, IOException {
         final Long userId = getUserId();
         systemUserService.changePwd(userId, oldPass, newPass);
@@ -105,6 +107,7 @@ public class SystemUserController implements OperationLogController {
 
     /**
      * 主实体类型
+     *
      * @return 主实体类型
      */
     @Override
@@ -114,6 +117,7 @@ public class SystemUserController implements OperationLogController {
 
     /**
      * 主实体ID
+     *
      * @return 主实体ID
      */
     @Override
@@ -181,6 +185,4 @@ public class SystemUserController implements OperationLogController {
         final SystemUserInfo info = systemUserInfoService.saveOrUpdate(getUserId(), form);
         return Res.of(new SystemUserInfoVo(info), "修改成功");
     }
-
-
 }
