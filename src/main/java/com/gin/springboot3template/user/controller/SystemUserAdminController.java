@@ -1,5 +1,9 @@
 package com.gin.springboot3template.user.controller;
 
+import com.gin.springboot3template.operationlog.controller.OperationLogController;
+import com.gin.springboot3template.operationlog.dto.param.OperationLogPageParam;
+import com.gin.springboot3template.operationlog.vo.SubClassOption;
+import com.gin.springboot3template.operationlog.vo.SystemOperationLogVo;
 import com.gin.springboot3template.route.annotation.MenuEntry;
 import com.gin.springboot3template.route.annotation.MenuItem;
 import com.gin.springboot3template.route.annotation.MenuPath;
@@ -23,6 +27,7 @@ import com.gin.springboot3template.user.vo.SystemUserInfoVo;
 import com.gin.springboot3template.user.vo.SystemUserVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +41,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_ADMIN;
 
 /**
  * 用户接口
+ *
  * @author : ginstone
  * @version : v1.0.0
  * @since : 2022/12/13 10:28
@@ -51,7 +58,7 @@ import static com.gin.springboot3template.sys.bo.Constant.Messages.NOT_CONFIG_AD
 @Tag(name = SystemUserAdminController.GROUP_NAME)
 @Slf4j
 @MenuItem(title = "用户管理", description = "用户的管理, 管理用户持有的角色", order = 10, path = @MenuPath(title = "用户和权限", order = 1))
-public class SystemUserAdminController {
+public class SystemUserAdminController implements OperationLogController {
     /**
      * 接口路径前缀
      */
@@ -138,4 +145,54 @@ public class SystemUserAdminController {
         return Res.of(new SystemUserInfoVo(userInfo), "修改成功");
     }
 
+    /**
+     * 主实体类型
+     *
+     * @return 主实体类型
+     */
+    @Override
+    public Class<?> mainClass() {
+        return SystemUser.class;
+    }
+
+
+    /**
+     * 主实体ID
+     *
+     * @param mainId 用户传入的主实体Id
+     * @return 主实体ID
+     */
+    @Nullable
+    @Override
+    public Long mainId(Long mainId) {
+        return mainId;
+    }
+
+    /**
+     * 列出该主实体类型(和主实体ID)下, 所有的副实体类型,及每个副实体类型下的操作类型
+     *
+     * @param old     是否查询旧日志
+     * @param mainId  主实体Id ， 是否由用户指定由接口决定
+     * @param request 请求
+     * @return 所有的副实体类型, 及每个副实体类型下的操作类型
+     */
+    @Override
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    public Res<List<SubClassOption>> getLogOptions(Boolean old, Long mainId, HttpServletRequest request) {
+        return OperationLogController.super.getLogOptions(old, mainId, request);
+    }
+
+    /**
+     * 日志分页查询
+     *
+     * @param old     是否查询旧日志
+     * @param param   查询参数
+     * @param request 请求
+     * @return 日志
+     */
+    @Override
+    @PreAuthorize(Constant.Security.PRE_AUTHORITY_URI_OR_ADMIN)
+    public ResPage<SystemOperationLogVo> getLogPage(Boolean old, OperationLogPageParam param, HttpServletRequest request) {
+        return OperationLogController.super.getLogPage(old, param, request);
+    }
 }
